@@ -1,0 +1,61 @@
+# ======================== ISEK AI Configuration =========================
+#
+# NOTE:
+#
+# ---------------------------------- Agent -----------------------------------
+#
+# Use a descriptive name for your cluster:
+#
+agent:
+  debug: false
+  persona_path: ""
+#
+# ---------------------------------- Distributed Node -----------------------------------
+#
+# Configure distributed nodes. If the distributed capability is not available, set distributed to false.
+#
+distributed: true
+#
+# The host and port configuration of the distributed node rpc service will start a gRPC server.
+#
+distributed.server:
+  host: "localhost"
+  port: 8080
+distributed.search_partner_by_vector: false
+#
+# The configuration related to the interaction between distributed nodes and the registration center,
+# currently supports etcd and isek center. you can specify it using the following settings.
+#
+# Registry description
+#   isek_center: A registration center for quick testing, only for demo debugging and not for production use.
+#   etcd: A registration center for production use requires developers to deploy it themselves. isekai provides integration support.
+#
+registry: "isek_center"
+
+registry.etcd:
+  host: "47.236.116.81"
+  port: 2379
+  user: null
+  password: null
+
+registry.isek_center:
+  host: "127.0.0.1"
+  port: 8088
+#
+# ---------------------------------- LLM -----------------------------------
+#
+# LLM API related configuration, currently only support OpenAI platform API configuration,
+# you can also develop plug-ins to adapt to your local model
+#
+llm: "openai"
+llm.openai:
+  model_name: "gpt-4o-mini"
+  base_url: null
+  api_key: ""
+
+#embedding: "openai"
+#embedding.openai:
+#  model_name: "text-embedding-3-small"
+#  dim: 1536
+#  base_url: null
+#  api_key: null
