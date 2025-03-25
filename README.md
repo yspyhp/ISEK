@@ -33,22 +33,11 @@ Isek is a robust, lightweight, and highly scalable distributed multi-agent frame
 
 ### Local Installation
 
-Ensure Hatch is installed:
-
-```bash
-pip install hatch
-```
-Then build and install the package using Hatch:
-
-```bash
-hatch build
-pip install dist/isek-*.whl
-```
 
 Dependencies are specified in `pyproject.toml`. To install all project dependencies:
 
 ```bash
-hatch run pip install -e .
+pip install -e .
 ```
 
 ---
@@ -79,6 +68,8 @@ Run a specific example:
 
 ```bash
 isek example run <example_name>
+
+isek example run distributed_agent_demo
 ```
 
 ---
