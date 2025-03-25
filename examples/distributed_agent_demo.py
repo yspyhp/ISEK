@@ -51,8 +51,10 @@ def main():
         "knowledge": "social media, social media marketing, social media management",
         "routine": "you are responsiable for publish content on twitter, facebook, and instagram"
     }
-    
+
     model = OpenAIModel(
+        model_name=os.environ.get("OPENAI_MODEL_NAME"),
+        base_url=os.environ.get("OPENAI_BASE_URL"),
         api_key=os.environ.get("OPENAI_API_KEY")
     )
 

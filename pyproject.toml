@@ -27,7 +27,8 @@ dependencies = [
     "etcd3>=0.12.0",
     "ecdsa",
     "faiss-cpu",
-    "numpy"
+    "numpy",
+    "python-dotenv"
 ]
 
 [project.scripts]

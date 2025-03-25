@@ -47,6 +47,8 @@ pip install -e .
 Before running examples or other tasks, first configure your API key in a `.env` file:
 
 ```bash
+OPENAI_MODEL_NAME=your_model_name_here
+OPENAI_BASE_URL=your_base_url_here
 OPENAI_API_KEY=your_api_key_here
 ```
 
