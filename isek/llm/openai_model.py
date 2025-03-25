@@ -25,7 +25,7 @@ class OpenAIModel(AbstractModel):
             base_url: Optional[str] = None
     ):
         super().__init__()
-        self.model_name = model_name
+        self.model_name = model_name or "gpt-4o-mini"
         self.client = OpenAI(base_url=base_url, api_key=api_key)
 
     def generate_json(self, prompt, system_messages=None, retry=3, check_json_def=None):
