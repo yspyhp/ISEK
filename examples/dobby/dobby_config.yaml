@@ -8,7 +8,7 @@
 #
 agent:
   debug: false
-  persona_path: "dobby/dobby.character.json"
+  persona_path: "examples/dobby/dobby.character.json"
 #
 # ---------------------------------- Distributed Node -----------------------------------
 #
