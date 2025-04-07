@@ -1,17 +1,21 @@
 
-# Isek: Distributed Multi-Agent Framework
+# Isek: Distributed Cooperative-Autonomous Multi-Agent Framework
 
-Isek is a robust, lightweight, and highly scalable distributed multi-agent framework specifically engineered to streamline the coordination, collaboration, and autonomous operation of intelligent agents across distributed environments. Featuring seamless integration with large language models (LLMs), flexible node operations, and easy-to-use command-line interactions, Isek empowers efficient and scalable multi-agent orchestration through cooperative autonomy.
+**Isek** is a lightweight, modular, and distributed multi-agent framework built for the next generation of **cooperative autonomous systems**. Agents in Isek aren’t just isolated functions — they form a **decentralized society**, discovering peers, sharing context, and collaboratively solving complex tasks across nodes.
+
+With built-in LLM integration and an intuitive CLI, Isek is ideal for researchers, developers, and builders designing intelligent, collaborative agents in distributed environments.
+
+> 🧪 **Isek is under active development** — your feedback, experiments, and contributions are highly welcome.
 
 ---
 
 ## Key Features
 
-- **Multi-Agent Management:**
-  Easily deploy and manage intelligent agents to perform complex distributed tasks efficiently.
-
 - **Cooperative Autonomy:**
-  Enables intelligent agents to autonomously collaborate, communicate, and make coordinated decisions in distributed scenarios.
+  Agents autonomously discover suitable peers in the network, communicate, and collaborate to complete tasks in a decentralized fashion.
+
+- **Distributed Agent Orchestration:**
+  Spin up and manage intelligent agents across multiple nodes with flexible task assignment and coordination..
 
 - **LLM Integration:**
   Built-in support for integrating Large Language Models such as OpenAI, enabling advanced NLP functionalities.
@@ -24,41 +28,37 @@ Isek is a robust, lightweight, and highly scalable distributed multi-agent frame
 
 ---
 
-## Installation
-
-### Prerequisites
-
-- Python >= 3.8
-- [Hatch](https://hatch.pypa.io/) (recommended)
-
-### Local Installation
-
-
-Dependencies are specified in `pyproject.toml`. To install all project dependencies:
+## 📦 Installation
 
 ```bash
-pip install -e .
+pip install isek
 ```
+
+**Python 3.8+** is required.
 
 ---
 
-## Get Started
+## 🚀 Quick Start
 
-Before running examples or other tasks, first configure your API key in a `.env` file:
+### 1. Set Your API Environment
 
-```bash
-OPENAI_MODEL_NAME=your_model_name_here
-OPENAI_BASE_URL=your_base_url_here
-OPENAI_API_KEY=your_api_key_here
+Create a `.env` file at the root:
+
+```env
+OPENAI_MODEL_NAME=gpt-4
+OPENAI_BASE_URL=https://api.openai.com/v1
+OPENAI_API_KEY=your_api_key
 ```
 
-Then start the local registry:
+### 2. Start the Local Registry
 
 ```bash
 isek registry
 ```
 
-Next, execute example scripts:
+This launches a local orchestrator to manage distributed agents.
+
+### 3. Explore the Examples
 
 List available examples:
 
@@ -66,34 +66,27 @@ List available examples:
 isek example list
 ```
 
-Run a specific example:
+Run a demo:
 
 ```bash
-isek example run <example_name>
-
 isek example run distributed_agent_demo
 ```
 
 ---
 
-## Usage
+## 🧪 CLI Usage
 
-Isek provides straightforward CLI commands to manage your distributed agent tasks:
-
-- **System Cleanup**
-
-Run the cleanup script to clear temporary files or reset configurations:
+Clean up configs and temp files:
 
 ```bash
 isek clean
 ```
 
-Use the following command for detailed help:
+Show all available commands:
 
 ```bash
 isek --help
 ```
-
 ---
 
 ## Project Structure
@@ -138,15 +131,34 @@ Ensure tests cover new code submissions to maintain high-quality standards.
 
 ---
 
-## Contributing
+## 🤝 Contributing
 
-Community contributions are welcomed!
+We welcome collaborators, researchers, and early adopters.
 
-- Submit suggestions or issues via the GitHub repository.
-- Email the Isek Team directly at [sparks@isek.xyz](mailto:sparks@isek.xyz).
+- 💬 Open issues or ideas via GitHub
+- 📧 Contact us: [team@isek.xyz](mailto:team@isek.xyz)
 
 ---
 
-## License
+## 📜 License
 
-This project is open-sourced under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## 🌱 What’s Next?
+
+- 🔄 Real-time P2P agent messaging  
+- 🧭 Adaptive role assignment based on peer context  
+- 🌐 Decentralized discovery protocol  
+- 🧰 GUI Dashboard for agent orchestration  
+
+Stay tuned — and help shape the future of distributed autonomous systems.
+
+---
+
+<p align="center">
+  Made with ❤️ by the <strong>Isek Team</strong><br>
+  <em>Autonomy is not isolation. It's cooperation, at scale.</em>
+</p>
+
