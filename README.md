@@ -36,6 +36,11 @@ pip install isek
 
 **Python 3.8+** is required.
 
+# Known Issue
+  for 3.9.6 on MAC ifsphinx-quickstart you see faiss-cpu error. try:
+  brew install swig
+
+
 ---
 
 ## 🚀 Quick Start
