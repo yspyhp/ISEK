@@ -41,5 +41,7 @@ html_static_path = ['_static']
 intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
 
 # import sphinx_rtd_theme # 如果使用
-html_theme = 'sphinx_rtd_theme' # 或者 'alabaster', 'pydata_sphinx_theme' 等
+# html_theme = 'sphinx_rtd_theme' # 或者 'alabaster', 'pydata_sphinx_theme' 等
+html_permalinks_icon = '<span>#</span>'
+html_theme = 'sphinxawesome_theme'
 # html_theme_path = [sphinx_rtd_theme.get_html_theme_path()] # 如果需要指定路径

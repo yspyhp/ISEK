@@ -1,3 +1,6 @@
+Core Components
+===============
+
 .. automodule:: isek.isek_center
    :members:
    :undoc-members:
