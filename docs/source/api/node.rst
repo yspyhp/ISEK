@@ -1,3 +1,6 @@
+*********************
+Node
+*********************
 .. automodule:: isek.node
    :members:
    :undoc-members:
