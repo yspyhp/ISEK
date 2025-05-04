@@ -9,10 +9,6 @@ from isek.util.tools import function_to_schema, load_json_from_chat_response
 from typing import Union, List, Optional, Dict, Callable
 from openai import OpenAI
 
-
-
-
-
 class OpenAIModel(AbstractModel):
     """
     OpenAIModel
