@@ -41,13 +41,14 @@ class DistributedAgent(AbstractAgent, Node):
 
     def search_partners(self, query: str) -> str:
         """
-        in case of lacking knowledge to answer the query, search for partners based on the query,
+        search for partners based on the query
         Args:
             query: str
         Returns: partner name and node_id
         """
         logger.info(f"[{self.persona.name}] Searching partners with query: {query}")
         nodes = str(self.get_nodes_by_vector(query))
+        print(nodes)
         # 前期node少，用语意理解来匹配 后期vector来匹配
         
         matching_node_template = f"""

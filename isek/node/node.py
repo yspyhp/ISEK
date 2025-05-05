@@ -119,6 +119,9 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
         return f"{response.reply}"
 
     def get_nodes_by_vector(self, query, limit=20):
+        """
+        scan the network and get all the nodes name
+        """
         return self.all_nodes.values()
         # todo
         # if len(self.all_nodes) > limit and self.node_index is not None:
@@ -127,6 +130,12 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
         # else:
         #     results = self.all_nodes.values()
         # return results
+        
+    def get_all_nodes(self,node_id=None):
+        """
+        scan the network and get all the nodes name
+        """
+        return self.all_nodes.values()
 
     def call(self, request, context):
         # 返回消息

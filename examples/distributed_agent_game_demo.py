@@ -9,6 +9,15 @@ from isek.util.logger import LoggerManager, logger
 from isek.llm import OpenAIModel
 from dotenv import load_dotenv
 
+def get_all_nodes(agent: DistributedAgent) -> str:
+    """
+    Get all nodes in the registry
+    Returns:
+        list: list of nodes
+    """
+    nodes = agent.all_nodes
+    return str(nodes)
+
 def main():
     
     load_dotenv()
@@ -26,12 +35,13 @@ def main():
         "4, the player loses the game if he/she has no coins left",
         "5. the last player who has coins left wins the game",
         "your job is to host the game and make sure the game is running smoothly",
+        "first, scan all the nodes to understand how many player in the game",
+        "then, you need to ask each player to join the game",
         "in the beginning of the game, you need to explain the game rules to each player",
         "you need to make sure each player knows the game rules",
         "in the beginig of each round, you need to ask each player how many coins they want to donate to the bank",
         "after each round, you need to check if any player has no coins left",
         "if any player has no coins left, you need to ask the player to leave the game",
-        
         ]
     }
     P1_info = {
@@ -84,10 +94,11 @@ def main():
 
     GM_agent = DistributedAgent(persona=GM, host="localhost", port=8080, registry=registry, model=model)
     GM_agent.tool_manager.register_tools([
+        GM_agent.get_all_nodes,
         GM_agent.search_partners,
         GM_agent.send_message,
     ])
-    GM_agent.build(daemon=True)
+    GM_agent.build(daemon=False)
 
     P1_agent = DistributedAgent(persona=P1, host="localhost", port=8081, registry=registry, model=model)
     P1_agent.tool_manager.register_tools([
