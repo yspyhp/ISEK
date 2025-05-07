@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from concurrent import futures
 from typing import Dict
 
-import faiss
+# import faiss
 import copy
 import grpc
 import numpy as np
@@ -13,7 +13,7 @@ from isek.constant.exceptions import NodeUnavailableError
 from isek.node.noderpc import node_pb2, node_pb2_grpc
 from isek.node.registry import Registry
 from isek.util.logger import logger
-from isek.node.node_index import NodeIndex
+# from isek.node.node_index import NodeIndex
 from isek.embedding.abstract_embedding import AbstractEmbedding
 from isek.node.isek_center_registry import IsekCenterRegistry
 
@@ -34,8 +34,8 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
         self.registry = registry
         self.all_nodes = {}
         self.node_index = None
-        if embedding:
-            self.node_index = NodeIndex(embedding)
+        # if embedding:
+            # self.node_index = NodeIndex(embedding)
         self.node_list = None
         # self.__build_server()
 
