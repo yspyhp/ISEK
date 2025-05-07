@@ -120,6 +120,7 @@ def main():
     P5_agent.build(daemon=True)
     
     time.sleep(2)
+    
     GM_agent.run("Start the game")
     # GM_agent.run_cli()
 

@@ -1,15 +1,15 @@
 from abc import ABC, abstractmethod
 from isek.llm.openai_model import OpenAIModel
-from isek.embedding.openai_embedding import OpenAIEmbedding
+# from isek.embedding.openai_embedding import OpenAIEmbedding
 from isek.llm.abstract_model import AbstractModel
-from isek.embedding.abstract_embedding import AbstractEmbedding
+# from isek.embedding.abstract_embedding import AbstractEmbedding
 from typing import Optional, List, Callable
 from isek.agent.persona import Persona
 from isek.agent.memory import AgentMemory
 from isek.agent.toolbox import ToolBox
 import time
 # add logging
-from isek.util.logger import LoggerManager, logger
+from isek.util.logger import logger
 
 
 class AbstractAgent(ABC):

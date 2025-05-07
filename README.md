@@ -50,7 +50,7 @@ pip install isek
 Create a `.env` file at the root:
 
 ```env
-OPENAI_MODEL_NAME=gpt-4
+OPENAI_MODEL_NAME=gpt-4o-mini
 OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_API_KEY=your_api_key
 ```

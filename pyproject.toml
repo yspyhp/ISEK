@@ -28,7 +28,9 @@ dependencies = [
     "ecdsa",
     "faiss-cpu==1.7.4",
     "numpy>=1.23,<2.0",
-    "python-dotenv"
+    "python-dotenv",
+    "sphinx",
+    "sphinxawesome-theme"
 ]
 
 [project.scripts]
