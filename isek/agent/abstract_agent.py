@@ -93,7 +93,7 @@ class AbstractAgent(ABC):
                 systems=[],
                 tool_schemas=tool_schemas or None,
             ).choices[0].message
-            print(deepthink)
+            # print(deepthink)
             messages.append(deepthink)
         
         # Main action loop
