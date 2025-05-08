@@ -40,7 +40,6 @@ pip install isek
   for 3.9.6 on MAC ifsphinx-quickstart you see faiss-cpu error. try:
   brew install swig
 
-
 ---
 
 ## 🚀 Quick Start
@@ -55,27 +54,18 @@ OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_API_KEY=your_api_key
 ```
 
-### 2. Start the Local Registry
+### 2. Quickly Build Distributed Agents
 
-```bash
-isek registry
+``` python
+from dotenv import load_dotenv
+from isek.agent.distributed_agent import DistributedAgent
+
+load_dotenv()
+agent = DistributedAgent()
+agent.build(daemon=True)
+agent.run_cli()
 ```
-
-This launches a local orchestrator to manage distributed agents.
-
-### 3. Explore the Examples
-
-List available examples:
-
-```bash
-isek example list
-```
-
-Run a demo:
-
-```bash
-isek example run distributed_agent_demo
-```
+This launches an agent with distributed interaction capabilities, and you can talk to it through the console.
 
 ---
 
@@ -84,13 +74,13 @@ isek example run distributed_agent_demo
 Clean up configs and temp files:
 
 ```bash
-isek clean
+ isek clean
 ```
 
 Show all available commands:
 
 ```bash
-isek --help
+ isek --help
 ```
 ---
 

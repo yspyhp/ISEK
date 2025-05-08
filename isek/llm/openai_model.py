@@ -16,12 +16,14 @@ class OpenAIModel(AbstractModel):
 
     def __init__(
             self,
-            model_name: Optional[str] = "gpt-4o-mini",
+            model_name: Optional[str] = None,
             api_key: Optional[str] = None,
             base_url: Optional[str] = None
     ):
         super().__init__()
-        self.model_name = model_name or "gpt-4o-mini"
+        self.model_name = model_name or os.environ.get("OPENAI_MODEL_NAME", None)
+        base_url = base_url or os.environ.get("OPENAI_BASE_URL", None)
+        api_key = api_key or os.environ.get("OPENAI_API_KEY", None)
         self.client = OpenAI(base_url=base_url, api_key=api_key)
 
     def generate_json(self, prompt, system_messages=None, retry=3, check_json_def=None):
