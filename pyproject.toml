@@ -26,9 +26,11 @@ dependencies = [
     "flask>=2.0.0",
     "etcd3>=0.12.0",
     "ecdsa",
-    "faiss-cpu==1.7.4",
     "numpy>=1.23,<2.0",
-    "python-dotenv"
+    "python-dotenv",
+    "sphinx",
+    "sphinxawesome-theme"
+
 ]
 
 [project.scripts]
