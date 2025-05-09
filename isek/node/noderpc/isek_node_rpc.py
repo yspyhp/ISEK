@@ -7,5 +7,4 @@ class IsekNodeServiceServicer(node_pb2_grpc.IsekNodeServiceServicer):
         self.isek_node = isek_node
 
     def send_message(self, request, context):
-        # 返回消息
         return node_pb2.CallResponse(reply=f"Hello, {request.message}, I am {self.isek_node.node_id}!")

@@ -8,7 +8,7 @@
 #
 agent:
   debug: false
-  persona_path: "examples/sylana/sylana.character.json"
+  persona_path: "sylana/sylana.character.json"
 #
 # ---------------------------------- Distributed Node -----------------------------------
 #
@@ -52,10 +52,3 @@ llm.openai:
   model_name: null
   base_url: null
   api_key: null
-
-#embedding: "openai"
-#embedding.openai:
-#  model_name: ""
-#  dim: 1536
-#  base_url: ""
-#  api_key: :""

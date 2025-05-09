@@ -10,12 +10,8 @@ class DistributedAgent(AbstractAgent, Node):
             self,
             **kwargs
     ):
-        # 调用 AbstractAgent 的构造方法
         AbstractAgent.__init__(self, **kwargs)
-        # 生成 intro
         self.intro = self.persona.bio
-        # self.intro_vector = self.embedding.embedding_one(self.intro)
-        # 调用 Node 的构造方法
         Node.__init__(self, **kwargs)
 
     def build(self, daemon=False):
@@ -48,8 +44,7 @@ class DistributedAgent(AbstractAgent, Node):
         """
         logger.info(f"[{self.persona.name}] Searching partners with query: {query}")
         nodes = str(self.get_nodes_by_vector(query))
-        # 前期node少，用语意理解来匹配 后期vector来匹配
-        
+
         matching_node_template = f"""
             I am looking for partners to help me with a query, here are the nodes I found:
             {nodes}

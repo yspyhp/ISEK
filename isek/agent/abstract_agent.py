@@ -1,15 +1,15 @@
 from abc import ABC, abstractmethod
 from isek.llm.openai_model import OpenAIModel
-from isek.embedding.openai_embedding import OpenAIEmbedding
+# from isek.embedding.openai_embedding import OpenAIEmbedding
 from isek.llm.abstract_model import AbstractModel
-from isek.embedding.abstract_embedding import AbstractEmbedding
+# from isek.embedding.abstract_embedding import AbstractEmbedding
 from typing import Optional, List, Callable
 from isek.agent.persona import Persona
 from isek.agent.memory import AgentMemory
 from isek.agent.toolbox import ToolBox
 import time
 # add logging
-from isek.util.logger import LoggerManager, logger
+from isek.util.logger import logger
 
 
 class AbstractAgent(ABC):
@@ -18,13 +18,14 @@ class AbstractAgent(ABC):
             persona: Persona = None,
             model: Optional[AbstractModel] = None,
             tools: List[Callable] = None,
-            heartbeat: bool = False,
+            deepthink_enabled: bool = False,
             **kwargs
     ) -> None:
         self.persona = persona or Persona.default()
         self.model = model or OpenAIModel()
         self.memory_manager = AgentMemory()
         self.tool_manager = ToolBox(persona=self.persona)
+        self.deepthink_enabled = deepthink_enabled
         # Register action tools
         if tools:
             self.tool_manager.register_tools(tools)
@@ -77,17 +78,29 @@ class AbstractAgent(ABC):
         self.memory_manager.store_memory_item("User:" + input)
         # Build template for action phase
         template = self._build_templates()
-        messages = []
+        # logger.info(f"[{template}] ")
+        
+        messages = [{"role": "user", "content": template}]
         
         # Setup available tools for action phase
         tools = self.tool_manager.get_tool_names()
         tool_schemas = self.tool_manager.get_tool_schemas()
         
+        if self.deepthink_enabled:
+            # Decompose the task into subtasks
+            deepthink = self.model.create(
+                messages=[{"role": "system", "content": "you are a deep thnker and you are going to think deeply about the user's task and return yout thinking step as text, limit your think to 50 words"}] + messages,
+                systems=[],
+                tool_schemas=tool_schemas or None,
+            ).choices[0].message
+            # print(deepthink)
+            messages.append(deepthink)
+        
         # Main action loop
         while True:
             # Get AI completion with tool calling
             response = self.model.create(
-                messages=[{"role": "system", "content": template}] + messages,
+                messages=[{"role": "system", "content": "you are a helpful assistant"}] + messages,
                 systems=[],
                 tool_schemas=tool_schemas or None,
             ).choices[0].message
@@ -99,6 +112,7 @@ class AbstractAgent(ABC):
                 
             # Check if we're done with tool calls
             if not response.tool_calls:
+                
                 return response.content
 
             # Handle tool calls
@@ -110,6 +124,8 @@ class AbstractAgent(ABC):
                     "content": result,
                 }
                 messages.append(result_message)
+            
+        
                 
     def _build_templates(self):
         """Build templates for the action phase."""

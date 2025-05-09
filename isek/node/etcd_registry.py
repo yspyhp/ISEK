@@ -35,12 +35,10 @@ class EtcdRegistry(Registry):
 
         self.sk = SigningKey.generate(curve=NIST256p)
 
-        # 设置租约生存时间（秒）
         self.ttl = ttl
         self.leases = {}
 
     def register_node(self, node_id: str, host: str, port: int, metadata: Optional[Dict[str, str]] = None):
-        """注册节点到注册中心，使用租约保证节点自动过期"""
         vk = self.sk.verifying_key
         vk_bytes = vk.to_string()
         vk_base64 = base64.b64encode(vk_bytes).decode('utf-8')
@@ -61,7 +59,6 @@ class EtcdRegistry(Registry):
             "signature": signature
         }
 
-        # 创建租约，设置TTL，自动删除失效节点
         lease = self.etcd_client.lease(self.ttl)
         self.leases[node_id] = lease
 
@@ -71,7 +68,6 @@ class EtcdRegistry(Registry):
         logger.info(f"Node {node_id} registered with info: {node_info}")
 
     def lease_refresh(self, node_id: str):
-        """启动后台线程进行自动续约"""
         lease_refresh_response = None
         try:
             self.__verify_signature(node_id)
@@ -81,7 +77,6 @@ class EtcdRegistry(Registry):
             logger.exception(f"Lease renewal failed for node {node_id}, response: {lease_refresh_response}: {e}")
 
     def get_available_nodes(self) -> Dict[str, dict]:
-        """获取当前可用节点列表"""
         nodes = {}
         for value, metadata in self.etcd_client.get_prefix(f"/{self.parent_node_id}/"):
             node_id = metadata.key.decode("utf-8").split(f"/{self.parent_node_id}/")[-1]
@@ -92,7 +87,6 @@ class EtcdRegistry(Registry):
         return nodes
 
     def deregister_node(self, node_id: str):
-        """从注册中心移除节点并撤销租约"""
         key = f"/{self.parent_node_id}/{node_id}"
         self.__verify_signature(node_id)
         self.etcd_client.delete(key)
