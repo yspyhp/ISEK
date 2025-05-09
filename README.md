@@ -1,30 +1,31 @@
+# Isek: Decentralized Agent-to-Agent (A2A) Network
 
-# Isek: Distributed Cooperative-Autonomous Multi-Agent Framework
+> **Building the Internet of Agents**
 
-**Isek** is a lightweight, modular, and distributed multi-agent framework built for the next generation of **cooperative autonomous systems**. Agents in Isek aren’t just isolated functions — they form a **decentralized society**, discovering peers, sharing context, and collaboratively solving complex tasks across nodes.
+**Isek** is a decentralized agent network framework designed for building intelligent, collaborative agent-to-agent (A2A) systems. Agents in Isek autonomously discover peers, share context, and cooperatively solve tasks—forming a self-organizing, decentralized society.
 
-With built-in LLM integration and an intuitive CLI, Isek is ideal for researchers, developers, and builders designing intelligent, collaborative agents in distributed environments.
+With native integration of large language models (LLMs) and a user-friendly CLI, Isek empowers developers and researchers to quickly prototype, deploy, and manage intelligent agent networks.
 
-> 🧪 **Isek is under active development** — your feedback, experiments, and contributions are highly welcome.
+> 🧪 **ISEK is under active development.** Contributions, feedback, and experiments are highly welcome.
 
 ---
 
-## Key Features
+## 🌟 Key Features
 
-- **Cooperative Autonomy:**
-  Agents autonomously discover suitable peers in the network, communicate, and collaborate to complete tasks in a decentralized fashion.
+* **Decentralized Cooperation:**
+  Autonomous agent discovery and direct agent-to-agent collaboration without central points of failure.
 
-- **Distributed Agent Orchestration:**
-  Spin up and manage intelligent agents across multiple nodes with flexible task assignment and coordination..
+* **Distributed Deployment:**
+  Deploy agents seamlessly across multiple nodes or cloud environments for scalability and resilience.
 
-- **LLM Integration:**
-  Built-in support for integrating Large Language Models such as OpenAI, enabling advanced NLP functionalities.
+* **LLM-Enhanced Intelligence:**
+  Built-in integration with models like OpenAI for enhanced reasoning, planning, and natural language interactions.
 
-- **Modular Design:**
-  Highly modular architecture ensures ease of maintenance, scalability, and flexibility for customization.
+* **Modular and Extensible:**
+  Easy to customize, integrate new models, and extend functionalities.
 
-- **Lightweight and User-Friendly:**
-  Designed for easy adoption, providing a streamlined user experience without complex setup or heavy dependencies.
+* **Developer-Friendly CLI:**
+  Simplified CLI for easy agent setup and management with minimal friction.
 
 ---
 
@@ -34,19 +35,15 @@ With built-in LLM integration and an intuitive CLI, Isek is ideal for researcher
 pip install isek
 ```
 
-**Python 3.8+** is required.
-
-# Known Issue
-  for 3.9.6 on MAC ifsphinx-quickstart you see faiss-cpu error. try:
-  brew install swig
+> Requires **Python 3.8+**
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Set Your API Environment
+### 1. Set Up Environment
 
-Create a `.env` file at the root:
+Create a `.env` file:
 
 ```env
 OPENAI_MODEL_NAME=gpt-4o-mini
@@ -54,17 +51,15 @@ OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_API_KEY=your_api_key
 ```
 
-### 2. Start Local Registry
-
-Open a new terminal and run:
+### 2. Start Registry
 
 ```bash
 isek registry
 ```
 
-### 3. Quickly Build Distributed Agents
+### 3. Launch Agent
 
-``` python
+```python
 from dotenv import load_dotenv
 from isek.agent.distributed_agent import DistributedAgent
 
@@ -73,23 +68,18 @@ agent = DistributedAgent()
 agent.build(daemon=True)
 agent.run_cli()
 ```
-This launches an agent with distributed interaction capabilities, and you can talk to it through the console.
+
+Interact with your decentralized agent directly from your terminal.
 
 ---
 
-## 🧪 CLI Usage
-
-Clean up configs and temp files:
+## 🧪 CLI Commands
 
 ```bash
- isek clean
+isek clean       # Clean temporary files
+isek --help      # View available commands
 ```
 
-Show all available commands:
-
-```bash
- isek --help
-```
 ---
 
 ## Project Structure
@@ -122,22 +112,10 @@ Main configurations are managed via:
 
 ---
 
-## Testing
-
-Tests are included and managed with `pytest`. To run tests:
-
-```bash
-hatch run pytest
-```
-
-Ensure tests cover new code submissions to maintain high-quality standards.
-
----
-
 ## 🤝 Contributing
 
 We welcome collaborators, researchers, and early adopters.
-
+Please see our [Contribution Guidelines](CONTRIBUTION.md).
 - 💬 Open issues or ideas via GitHub
 - 📧 Contact us: [team@isek.xyz](mailto:team@isek.xyz)
 
@@ -145,18 +123,7 @@ We welcome collaborators, researchers, and early adopters.
 
 ## 📜 License
 
-This project is licensed under the [MIT License](LICENSE).
-
----
-
-## 🌱 What’s Next?
-
-- 🔄 Real-time P2P agent messaging  
-- 🧭 Adaptive role assignment based on peer context  
-- 🌐 Decentralized discovery protocol  
-- 🧰 GUI Dashboard for agent orchestration  
-
-Stay tuned — and help shape the future of distributed autonomous systems.
+Licensed under [MIT License](LICENSE).
 
 ---
 
