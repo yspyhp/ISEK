@@ -54,7 +54,15 @@ OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_API_KEY=your_api_key
 ```
 
-### 2. Quickly Build Distributed Agents
+### 2. Start Local Registry
+
+Open a new terminal and run:
+
+```bash
+isek registry
+```
+
+### 3. Quickly Build Distributed Agents
 
 ``` python
 from dotenv import load_dotenv
