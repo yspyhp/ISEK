@@ -93,41 +93,41 @@ for index,player in enumerate(info_array):
 
 time.sleep(2)
 def print_participants_status(participants):
-    """打印所有参与者的状态"""
-    print("\n--- 当前状态 ---")
+    """Prints the status of all participants"""
+    print("\n--- Current Status ---")
     for p in participants:
-        # 为了清晰显示谁出局了，可以显示0或负数金币
-        status = "出局" if p['coins'] <= 0 else f"{p['coins']} 金币"
+        # To clearly show who is out, 0 or negative coins can be displayed
+        status = "Eliminated" if p['coins'] <= 0 else f"{p['coins']} coins"
         print(f"{p['name']}: {status}")
     print("------------------")
 
 def get_player_donation(player):
-    """获取玩家的有效捐赠输入"""
+    """Gets valid donation input from the player"""
     while True:
-        # 如果玩家已经没金币了，直接跳过输入 (理论上不应发生，因为会被active_participants过滤)
+        # If the player has no coins left, skip input directly (theoretically shouldn't happen, as they'd be filtered by active_participants)
         if player['coins'] <= 0:
-            print(f"{player['name']} 已出局，无法捐赠。")
+            print(f"{player['name']} is eliminated and cannot donate.")
             return 0
 
         try:
-            donation = int(input(f"{player['name']} (你有 {player['coins']} 金币), 请输入你要捐赠的金币数 (1 - {player['coins']}): "))
+            donation = int(input(f"{player['name']} (you have {player['coins']} coins), please enter the amount of coins you want to donate (1 - {player['coins']}): "))
             if donation < 1:
-                print("错误：捐赠数必须至少为 1。")
+                print("Error: Donation amount must be at least 1.")
             elif donation > player['coins']:
-                print(f"错误：你只有 {player['coins']} 个金币，不能捐赠 {donation} 个。")
+                print(f"Error: You only have {player['coins']} coins, you cannot donate {donation}.")
             else:
                 return donation
         except ValueError:
-            print("错误：请输入一个有效的数字。")
+            print("Error: Please enter a valid number.")
 
 def get_computer_donation(computer,donations_last_round):
     # convert donations_last_round to string
     donations_last_round_str = str(donations_last_round)
-    print(f"index {computer['index']} 正在思考...")
-    """获取电脑的随机捐赠"""
+    print(f"index {computer['index']} is thinking...")
+    """Gets the computer's donation"""
     if computer['coins'] <= 0:
-        return 0 # 不能捐了
-    # 电脑随机捐赠 1 到 其拥有的所有金币 之间的数量
+        return 0 # Cannot donate anymore
+    # The computer donates an amount based on agent's decision
     max_donation = computer['coins']
     donation_amount = Agent_array[int(computer['index'])-1].run(f"you are {computer['name']}, you have {max_donation} coins, in last round, the donation status is {donations_last_round_str}, now, please, donate coins, output only the donation amount number without any explanation and nothing else")
     
@@ -136,133 +136,151 @@ def get_computer_donation(computer,donations_last_round):
     return int(donation_amount)
 
 def run_game(num_computers):
-    """运行捐金币游戏"""
+    """Runs the coin donation game"""
     participants = []
     start_coins = 100
 
-    # 初始化玩家
-    participants.append({'name': '玩家','index':'1', 'coins': start_coins, 'is_player': True})
+    # Initialize player
+    participants.append({'name': 'Player','index':'1', 'coins': start_coins, 'is_player': True})
 
-    # 初始化电脑
+    # Initialize computers
     for i in range(num_computers):
-        participants.append({'name': f'电脑 {i+1}','index':f'{i+1}', 'coins': start_coins, 'is_player': False})
+        participants.append({'name': f'Computer {i+1}','index':f'{i+1}', 'coins': start_coins, 'is_player': False})
 
     round_number = 1
     donations_last_round = {}
     while True:
-        print(f"\n=============== 第 {round_number} 轮开始 ===============")
+        print(f"\n=============== Round {round_number} Begins ===============")
 
-        # --- 检查游戏是否应在轮次开始前结束 ---
+        # --- Check if the game should end before the round starts ---
         active_participants = [p for p in participants if p['coins'] > 0]
         if len(active_participants) <= 1:
-            print("\n--- 游戏结束 ---")
+            print("\n--- Game Over ---")
             if len(active_participants) == 1:
-                print(f"只剩下 {active_participants[0]['name']}！")
-                print(f"{active_participants[0]['name']} 是最终的赢家！")
+                print(f"Only {active_participants[0]['name']} remains!")
+                print(f"{active_participants[0]['name']} is the final winner!")
             else:
-                # 这种情况可能发生在最后一轮两个玩家同时出局
-                print("所有人都出局了！没有赢家。")
-            print_participants_status(participants) # 显示最终状态
-            break # 结束游戏主循环
+                # This situation can occur if two players are eliminated simultaneously in the last round
+                print("Everyone is eliminated! No winner.")
+            print_participants_status(participants) # Display final status
+            break # End the main game loop
 
-        # 打印本轮开始时的状态
+        # Print status at the beginning of the round
         print_participants_status(participants)
 
         donations_this_round = {}
-        # participants_in_round 列表现在就是 active_participants
+        # The participants_in_round list is now active_participants
         participants_in_round = active_participants
 
-        # --- 获取捐赠 (只向活跃玩家请求) ---
+        # --- Get donations (only request from active players) ---
         for p in participants_in_round:
             donation = 0
             if p['is_player']:
                 donation = get_player_donation(p)
             else:
-                print(f"{p['name']} 正在思考...")
-                time.sleep(0.5) # 模拟电脑思考
+                print(f"{p['name']} is thinking...")
+                time.sleep(0.5) # Simulate computer thinking
                 donation = get_computer_donation(p,donations_last_round)
-                print(f"{p['name']} 决定捐赠 {donation}")
+                print(f"{p['name']} decides to donate {donation}")
 
             donations_this_round[p['name']] = donation
-        time.sleep(0.5) # 模拟电脑思考
-        # 如果本轮没有人能捐赠了（不太可能发生），结束游戏
+        time.sleep(0.5) # Simulate computer thinking
+        # If no one can donate this round (unlikely to happen), end the game
         if not donations_this_round:
-             print("\n错误：本轮无人捐赠，游戏意外结束！")
+             print("\nError: No one donated this round, game ended unexpectedly!")
              break
 
-        print("\n--- 本轮捐赠结算 ---")
-        donations_last_round = donations_this_round.copy() # 备份本轮捐赠
+        print("\n--- Round Donation Settlement ---")
+        donations_last_round = donations_this_round.copy() # Backup this round's donations
         for name, donation_amount in donations_this_round.items():
-             # print(f"{name} 捐赠了: {donation_amount}") # 获取捐赠时已经打印电脑的了，玩家是自己输入的
-             # 在这里实际扣除捐赠的金币
+             # print(f"{name} donated: {donation_amount}") # Computer's donation is already printed when obtained, player's is self-inputted
+             # Actually deduct the donated coins here
              for p in participants:
                  if p['name'] == name:
                      p['coins'] -= donation_amount
-                     break # 找到就跳出内循环
+                     break # If found, break the inner loop
 
-        # --- 找出捐赠最少的人并惩罚 ---
-        if donations_this_round: # 确保有人捐赠了
-            # 找出参与本轮捐赠的人的捐赠额
+        # --- Find the person who donated the least and penalize them ---
+        if donations_this_round: # Ensure someone has donated
+            # Find the donation amounts of those who participated in this round's donations
             valid_donations = {name: amount for name, amount in donations_this_round.items() if name in [p['name'] for p in participants_in_round]}
 
-            if valid_donations: # 确保有有效的捐赠者（金币>0的人）
+            if valid_donations: # Ensure there are valid donors (people with coins > 0)
                 min_donation = min(valid_donations.values())
                 losers = [name for name, donation_amount in valid_donations.items() if donation_amount == min_donation]
 
-                print(f"\n本轮最少捐赠额: {min_donation}")
+                print(f"\nMinimum donation this round: {min_donation}")
                 if len(losers) > 0:
-                    print(f"惩罚! 以下参与者额外扣除 10 金币:")
+                    print(f"Penalty! The following participants will have an additional 10 coins deducted:")
                     for loser_name in losers:
                         print(f"- {loser_name}")
-                        # 找到对应的参与者并扣除金币
+                        # Find the corresponding participant and deduct coins
                         for p in participants:
                             if p['name'] == loser_name:
                                 p['coins'] -= 10
                                 break
-                # else: # 这个else理论上不会触发，因为总会有最小值
-                #    print("本轮无人受到惩罚。")
+                # else: # This else should theoretically not be triggered, as there will always be a minimum value
+                #    print("No one was penalized this round.")
             else:
-                print("本轮没有有效的捐赠者进行比较。")
+                print("No valid donors this round for comparison.")
 
 
-        # --- 检查游戏是否应在本轮结束后结束 ---
+        # --- Check if the game should end after this round ---
         active_participants_after_round = [p for p in participants if p['coins'] > 0]
         if len(active_participants_after_round) <= 1:
-            print("\n--- 游戏结束 ---")
-            # 可以选择性地打印本轮出局的人
+            print("\n--- Game Over ---")
+            # Optionally print who was eliminated this round
             eliminated_this_round = []
             current_active_names = {p['name'] for p in active_participants_after_round}
-            for p_start in participants_in_round: # 检查开始时活跃，但现在不活跃的玩家
+            for p_start in participants_in_round: # Check players who were active at the start but are no longer active
                 if p_start['name'] not in current_active_names:
                     eliminated_this_round.append(p_start['name'])
 
             if eliminated_this_round:
-                print("本轮金币耗尽的玩家:", ", ".join(eliminated_this_round))
+                print("Players who ran out of coins this round:", ", ".join(eliminated_this_round))
 
 
             if len(active_participants_after_round) == 1:
-                print(f"\n只剩下 {active_participants_after_round[0]['name']}！")
-                print(f"{active_participants_after_round[0]['name']} 是最终的赢家！")
+                print(f"\nOnly {active_participants_after_round[0]['name']} remains!")
+                print(f"{active_participants_after_round[0]['name']} is the final winner!")
             else:
-                print("\n所有人都出局了！没有赢家。")
-            print_participants_status(participants) # 显示最终状态
-            break # 结束游戏主循环
+                print("\nEveryone is eliminated! No winner.")
+            print_participants_status(participants) # Display final status
+            break # End the main game loop
 
-        # --- 准备下一轮 ---
+        # --- Prepare for the next round ---
         round_number += 1
-        # time.sleep(1) # 可以取消或保留这个暂停
+        # time.sleep(1) # This pause can be removed or kept
 
-# --- 游戏开始 ---
+# --- Game Start ---
 if __name__ == "__main__":
+    print("    ▗▖ ▗▄▖ ▗▖ ▗▖▗▄▄▄▖▗▄▄▖      ▗▄▄▖ ▗▄▖ ▗▖  ▗▖▗▄▄▄▖    ▗▖  ▗▖    ▗▄▄▄▖ ▗▄▄▖▗▄▄▄▖▗▖ ▗▖")
+    print("    ▐▌▐▌ ▐▌▐▌▗▞▘▐▌   ▐▌ ▐▌    ▐▌   ▐▌ ▐▌▐▛▚▞▜▌▐▌        ▝▚▞▘       █  ▐▌   ▐▌   ▐▌▗▞▘")
+    print("    ▐▌▐▌ ▐▌▐▛▚▖ ▐▛▀▀▘▐▛▀▚▖    ▐▌▝▜▌▐▛▀▜▌▐▌  ▐▌▐▛▀▀▘      ▐▌        █   ▝▀▚▖▐▛▀▀▘▐▛▚▖ ")
+    print(" ▗▄▄▞▘▝▚▄▞▘▐▌ ▐▌▐▙▄▄▖▐▌ ▐▌    ▝▚▄▞▘▐▌ ▐▌▐▌  ▐▌▐▙▄▄▖    ▗▞▘▝▚▖    ▗▄█▄▖▗▄▄▞▘▐▙▄▄▖▐▌ ▐▌")
+    print()
+                                                                                                
+    print("\nWelcome to the Coin Donation Game!")
+    print("=========== How to Play ===============")
+    print("1. In this game, each player starts with 100 coins.")
+    print("2. In each round, each player must donate at least one coin to the bank.")
+    print("3. The player who donates the least coins to the bank will have to donate an extra 10 coins as punishment.")
+    print("4. If a player runs out of coins, they lose the game.")
+    print("5. The last player with coins left wins the game.")
+    print("=========== Copy Right ===============")
+    print("This game is designed by Joker Game (www.thejokergame.com) and authorized to Isek to use this game as demo, all rights reserved.")
+    print()
     while True:
         try:
-            num_cpu = int(input("请输入电脑玩家的数量 (例如: 3): "))
+
+            # Print("This game is ")
+            num_cpu = int(input("Please enter the number of computer players (e.g., 3): "))
             if num_cpu >= 0:
                 break
             else:
-                print("电脑数量不能为负数。")
+                print("Number of computers cannot be negative.")
         except ValueError:
-            print("请输入一个有效的数字。")
+            print("Please enter a valid number.")
 
     run_game(num_cpu)
-    print("\n游戏模拟结束。")
+    print("\nGame simulation finished.")
