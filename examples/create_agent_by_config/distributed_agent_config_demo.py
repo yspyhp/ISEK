@@ -1,4 +1,6 @@
 import time
+
+import isek.agent.persona
 from isek.isek_config import IsekConfig
 
 
@@ -15,7 +17,7 @@ def main():
     hello = f"Hello! My name is {sylana_agent.persona.name}"
     print(f"{sylana_agent.persona.name}: {hello}")
 
-    response = sylana_agent.send_message(dobby_agent.node_id, hello)
+    response = sylana_agent.send_message(hello)
     print(f"{dobby_agent.persona.name}: {response}")
 
 

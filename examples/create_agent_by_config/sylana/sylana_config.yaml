@@ -49,13 +49,6 @@ registry.isek_center:
 #
 llm: "openai"
 llm.openai:
-  model_name: "ep-20241014143448-kgndv"
-  base_url: "https://ark.cn-beijing.volces.com/api/v3"
-  api_key: "8b524dd5-b556-4b7a-8d6d-f9aca772aa4a"
-
-#embedding: "openai"
-#embedding.openai:
-#  model_name: ""
-#  dim: 1536
-#  base_url: ""
-#  api_key: :""
+  model_name: null
+  base_url: null
+  api_key: null
