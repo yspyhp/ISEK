@@ -26,6 +26,19 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
                  embedding: AbstractEmbedding = None,
                  **kwargs
                  ):
+        """
+        Provides network communication capabilities for distributed agents,
+        is responsible for interacting with the registration center,
+        and provides communication capabilities between agents.
+
+        Node will create a channel to interact with the registry center through Registry,
+        and create a grpc service to listen to messages from other agents.
+
+        Args:
+            host: The network-oriented host, other nodes connect to the current node through the host
+            port: The startup port of the grpc service, used together with the host
+            registry: Channel connecting to the registry center
+        """
         if not host or not port or not registry:
             raise ValueError("Node")
         self.node_id = self.build_node_id()
@@ -101,15 +114,23 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
         """
         send message to another node by providing receiver_node_id= agent_name and message = message
         """
+        retry = 0
+        while retry < 3:
+            try:
+                return self.__send_message_impl(receiver_node_id, message)
+            except:
+                logger.exception(f"Send message to node[{receiver_node_id}] error, message[{message}]")
+                retry += 1
+        return "Error: I'm not online at the moment, please find someone else to help you"
+
+    def __send_message_impl(self, receiver_node_id, message):
         logger.info(f"[{self.node_id}] send msg to [{receiver_node_id}]: {message}")
         receiver_node = self.all_nodes.get(receiver_node_id, None)
         if not receiver_node:
             raise NodeUnavailableError(receiver_node)
-        # 连接到 gRPC 服务
         channel = grpc.insecure_channel(f"{receiver_node['host']}:{receiver_node['port']}")
         stub = node_pb2_grpc.IsekNodeServiceStub(channel)
 
-        # 创建请求消息
         request = node_pb2.CallRequest(sender=self.node_id, receiver=receiver_node_id, message=message)
 
         # 调用远程服务方法

@@ -12,7 +12,6 @@ message CallResponse {
     string reply = 1;
 }
 
-// 定义服务
 service IsekNodeService {
     rpc call(CallRequest) returns (CallResponse);
 }
