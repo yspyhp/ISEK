@@ -296,14 +296,14 @@ class AgentMemory:
             return "No action is taken for state interaction due to unknown action."
         
     def knowledge_interaction(self, action: str, content: str) -> str:
+        #TODO:
+        # For "insert" action, the `topic` should ideally be extracted from the `content`
+        # or provided as a separate parameter, rather than using `content` for both.
         """
         Manages interactions with the agent's knowledge store.
 
         Allows querying for existing knowledge or inserting new knowledge.
 
-        .. todo::
-            For "insert" action, the `topic` should ideally be extracted from the `content`
-            or provided as a separate parameter, rather than using `content` for both.
 
         :param action: The action to perform: "query" or "insert".
         :type action: str
