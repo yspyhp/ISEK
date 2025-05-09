@@ -6,7 +6,7 @@ import isek.node.noderpc.node_pb2 as node__pb2
 
 
 class IsekNodeServiceStub(object):
-    """定义服务
+    """IsekNodeServiceStub
     """
 
     def __init__(self, channel):
@@ -23,7 +23,7 @@ class IsekNodeServiceStub(object):
 
 
 class IsekNodeServiceServicer(object):
-    """定义服务
+    """IsekNodeServiceServicer
     """
 
     def call(self, request, context):
@@ -48,7 +48,7 @@ def add_IsekNodeServiceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class IsekNodeService(object):
-    """定义服务
+    """IsekNodeService
     """
 
     @staticmethod
