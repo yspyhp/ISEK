@@ -114,6 +114,7 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
         """
         send message to another node by providing receiver_node_id= agent_name and message = message
         """
+        logger.info(f"[{self.node_id}] send msg to [{receiver_node_id}]: {message}")
         retry = 0
         while retry < 3:
             try:
@@ -124,7 +125,6 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
         return "Error: I'm not online at the moment, please find someone else to help you"
 
     def __send_message_impl(self, receiver_node_id, message):
-        logger.info(f"[{self.node_id}] send msg to [{receiver_node_id}]: {message}")
         receiver_node = self.all_nodes.get(receiver_node_id, None)
         if not receiver_node:
             raise NodeUnavailableError(receiver_node)
