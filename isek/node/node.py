@@ -199,8 +199,8 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
             # Simple update: replace the old list.
             # More sophisticated updates might involve diffing for logging or specific actions.
             if self.all_nodes != current_available_nodes: # Basic check for changes
-                logger.info(f"Node list updated for '{self.node_id}'. "
-                            f"Previous count: {len(self.all_nodes)}, New count: {len(current_available_nodes)}.")
+                # logger.info(f"Node list updated for '{self.node_id}'. "
+                #             f"Previous count: {len(self.all_nodes)}, New count: {len(current_available_nodes)}.")
                 self.all_nodes = current_available_nodes
             else:
                 logger.debug(f"Node list for '{self.node_id}' remains unchanged. Count: {len(self.all_nodes)}.")
