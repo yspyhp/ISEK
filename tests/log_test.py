@@ -7,4 +7,3 @@ def test_build(debug=False):
     logger.info("Logger initialized with debug mode: {}".format(debug))
     logger.debug("This is a debug message")
     logger.info("This is an info message")
-    return True
