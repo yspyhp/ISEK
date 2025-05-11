@@ -1,7 +1,7 @@
 repos:
   - repo: local
     hooks:
-      - id: pytest
+      - id: isek-test
         name: Run pytest
         entry: pytest
         language: system

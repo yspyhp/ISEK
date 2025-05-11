@@ -27,4 +27,4 @@ jobs:
         run: poetry install
 
       - name: Run pre-commit
-        run: poetry run pre-commit run test
+        run: poetry run pre-commit run isek-test
