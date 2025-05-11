@@ -1,0 +1,8 @@
+repos:
+  - repo: local
+    hooks:
+      - id: isek-test
+        name: Run pytest
+        entry: pytest
+        language: system
+        types: [python]
