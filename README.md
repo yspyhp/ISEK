@@ -4,7 +4,6 @@
 </p>
 
 <h1 align="center">Isek: Decentralized Agent-to-Agent (A2A) Network</h1>
-<p align="center"><strong>Building the Internet of Agents</strong></p>
 
 <p align="center">
   <a href="https://pypi.org/project/isek/"><img src="https://img.shields.io/pypi/v/isek" alt="PyPI version" /></a>
