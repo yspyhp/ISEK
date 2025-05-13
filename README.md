@@ -1,6 +1,6 @@
 <!-- Banner Image -->
 <p align="center">
-  <img src="assets/banner.png" alt="Isek Banner" width="100%" />
+  <img src="assets/banner_cn.png" alt="Isek Banner" width="100%" />
 </p>
 
 <h1 align="center">Isek: Decentralized Agent-to-Agent (A2A) Network</h1>
