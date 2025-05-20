@@ -29,7 +29,9 @@ dependencies = [
     "numpy>=1.23,<2.0",
     "python-dotenv",
     "sphinx",
-    "sphinxawesome-theme"
+    "sphinxawesome-theme",
+    "pytest",
+    "pre-commit"
 
 ]
 
