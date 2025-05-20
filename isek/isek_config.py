@@ -1,5 +1,5 @@
 import yaml
-import etcd3
+import etcd3gw
 from isek.util.logger import logger, LoggerManager
 from isek.agent.persona import Persona
 from isek.agent.single_agent import SingleAgent
@@ -9,7 +9,6 @@ from isek.embedding.openai_embedding import OpenAIEmbedding
 from isek.node import EtcdRegistry, IsekCenterRegistry
 from isek.llm import llms
 from isek.embedding import embeddings
-import etcd3
 
 
 class IsekConfig:
@@ -60,7 +59,7 @@ class IsekConfig:
             return self.load_isek_center_registry()
 
     def load_etcd_registry(self):
-        etcd_client = etcd3.Etcd3Client(**self.get_sub_config("registry.etcd"))
+        etcd_client = etcd3gw.Etcd3Client(**self.get_sub_config("registry.etcd"))
         return EtcdRegistry(etcd_client=etcd_client)
 
     def load_isek_center_registry(self):

@@ -1,7 +1,7 @@
 import json
 from typing import Optional, Dict
 
-import etcd3
+import etcd3gw
 import base64
 from ecdsa.keys import SigningKey, VerifyingKey
 from ecdsa.curves import NIST256p
@@ -15,7 +15,7 @@ class EtcdRegistry(Registry):
                  host: Optional[str] = None,
                  port: Optional[int] = None,
                  parent_node_id: Optional[str] = "root",
-                 etcd_client: Optional[etcd3.Etcd3Client] = None,
+                 etcd_client: Optional[etcd3gw.Etcd3Client] = None,
                  ttl: int = 30):
 
         if host and port and etcd_client:
@@ -24,7 +24,7 @@ class EtcdRegistry(Registry):
         if etcd_client:
             self.etcd_client = etcd_client
         elif host and port:
-            self.etcd_client = etcd3.client(host=host, port=port)
+            self.etcd_client = etcd3gw.client(host=host, port=port)
         else:
             raise TypeError("Either 'host' and 'port' or 'etcd_client' must be provided.")
 
@@ -79,7 +79,7 @@ class EtcdRegistry(Registry):
     def get_available_nodes(self) -> Dict[str, dict]:
         nodes = {}
         for value, metadata in self.etcd_client.get_prefix(f"/{self.parent_node_id}/"):
-            node_id = metadata.key.decode("utf-8").split(f"/{self.parent_node_id}/")[-1]
+            node_id = metadata.get('key').decode("utf-8").split(f"/{self.parent_node_id}/")[-1]
             try:
                 nodes[node_id] = json.loads(value.decode("utf-8"))['node_info']
             except Exception as e:
