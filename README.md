@@ -1,8 +1,19 @@
-# Isek: Decentralized Agent-to-Agent (A2A) Network
+<!-- Banner Image -->
+<p align="center">
+  <img src="assets/banner.png" alt="Isek Banner" width="100%" />
+</p>
 
-> **Building the Internet of Agents**
+<h1 align="center">Isek: Decentralized Agent-to-Agent (A2A) Network</h1>
 
-**Isek** is a decentralized agent network framework designed for building intelligent, collaborative agent-to-agent (A2A) systems. Agents in Isek autonomously discover peers, share context, and cooperatively solve tasks—forming a self-organizing, decentralized society.
+<p align="center">
+  <a href="https://pypi.org/project/isek/"><img src="https://img.shields.io/pypi/v/isek" alt="PyPI version" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT" /></a>
+  <a href="mailto:team@isek.xyz"><img src="https://img.shields.io/badge/contact-team@isek.xyz-blue" alt="Email" /></a>
+</p>
+
+---
+
+**Isek** is a decentralized agent network framework designed for building intelligent, collaborative agent-to-agent (A2A) systems. Agents in Isek autonomously discover peers, share context, and cooperatively solve tasks, forming a self-organizing, decentralized society.
 
 With native integration of large language models (LLMs) and a user-friendly CLI, Isek empowers developers and researchers to quickly prototype, deploy, and manage intelligent agent networks.
 
@@ -10,22 +21,22 @@ With native integration of large language models (LLMs) and a user-friendly CLI,
 
 ---
 
-## 🌟 Key Features
+## 🌟 Features
 
-* **Decentralized Cooperation:**
-  Autonomous agent discovery and direct agent-to-agent collaboration without central points of failure.
+- **🧠 Decentralized Cooperation:**  
+  Autonomous peer discovery and agent-to-agent collaboration with no single point of failure.
 
-* **Distributed Deployment:**
-  Deploy agents seamlessly across multiple nodes or cloud environments for scalability and resilience.
+- **🌐 Distributed Deployment:**  
+  Seamless multi-node or cloud deployment for scalability and robustness.
 
-* **LLM-Enhanced Intelligence:**
-  Built-in integration with models like OpenAI for enhanced reasoning, planning, and natural language interactions.
+- **🗣️ LLM-Enhanced Intelligence:**  
+  Built-in integration with models like OpenAI for natural interaction and reasoning.
 
-* **Modular and Extensible:**
-  Easy to customize, integrate new models, and extend functionalities.
+- **🔌 Modular and Extensible:**  
+  Easily customize agents, add new models, or extend functionalities.
 
-* **Developer-Friendly CLI:**
-  Simplified CLI for easy agent setup and management with minimal friction.
+- **💻 Developer-Friendly CLI:**  
+  Streamlined CLI for painless agent setup and control.
 
 ---
 
@@ -33,7 +44,6 @@ With native integration of large language models (LLMs) and a user-friendly CLI,
 
 ```bash
 pip install isek
-```
 
 > Requires **Python 3.8+**
 
@@ -41,7 +51,7 @@ pip install isek
 
 ## 🚀 Quick Start
 
-### 1. Set Up Environment
+### 1️⃣ Set Up Environment
 
 Create a `.env` file:
 
@@ -51,13 +61,13 @@ OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_API_KEY=your_api_key
 ```
 
-### 2. Start Registry
+### 2️⃣ Start Registry
 
 ```bash
 isek registry
 ```
 
-### 3. Launch Agent
+### 3️⃣ Launch Agent
 
 ```python
 from dotenv import load_dotenv
@@ -69,7 +79,7 @@ agent.build(daemon=True)
 agent.run_cli()
 ```
 
-Interact with your decentralized agent directly from your terminal.
+Now you're ready to interact with your decentralized agent in the terminal!
 
 ---
 
@@ -82,53 +92,53 @@ isek --help      # View available commands
 
 ---
 
-## Project Structure
+## 🧱 Project Structure
 
 ```
 isek/
-├── examples                   # Demonstration scripts for using the Isek framework
-├── isek                       # Core modules and logic
-│   ├── agent                  # Agent-related functionalities
-│   ├── constant               # Project-wide constants
-│   ├── embedding              # Embedding-related functionalities
-│   ├── node                   # Node management functionalities
-│   ├── llm                    # LLM integrations
-│   ├── util                   # Utility and helper functions
-│   ├── cli.py                 # Command-line interface
-│   ├── isek_config.py         # Main configuration file
-│   └── isek_center.py         # Central orchestrator (local registry)
+├── examples                   # Sample scripts demonstrating Isek usage
+├── isek                       # Core functionality and modules
+│   ├── agent                  # Agent logic and behavior
+│   ├── constant               # Shared constants
+│   ├── embedding              # Embedding systems
+│   ├── node                   # Node orchestration
+│   ├── llm                    # LLM backends and interfaces
+│   ├── util                   # Utility functions
+│   ├── cli.py                 # CLI entry point
+│   ├── isek_config.py         # Configuration handler
+│   └── isek_center.py         # Local registry and coordinator
 ├── script                     # Utility scripts (e.g., clean.py)
-├── pyproject.toml             # Build and project configuration
-└── README.md                  # Project documentation
+├── pyproject.toml             # Build and dependency configuration
+└── README.md                  # Project overview and documentation
 ```
 
 ---
 
-## Configuration
+## ⚙️ Configuration
 
 Main configurations are managed via:
 
-- **`isek/default_config.yaml`**: Default settings for quick deployments.
+* `isek/default_config.yaml`: Predefined defaults for rapid deployment.
 
 ---
 
 ## 🤝 Contributing
 
-We welcome collaborators, researchers, and early adopters.
-Please see our [Contribution Guidelines](CONTRIBUTION.md).
-- 💬 Open issues or ideas via GitHub
-- 📧 Contact us: [team@isek.xyz](mailto:team@isek.xyz)
+We welcome collaborators, researchers, and early adopters!
+
+* 💬 Open issues or suggestions via [GitHub Issues](https://github.com/your-repo/issues)
+* 📧 Contact us directly: [team@isek.xyz](mailto:team@isek.xyz)
+* 📄 See our [Contribution Guidelines](CONTRIBUTION.md)
 
 ---
 
 ## 📜 License
 
-Licensed under [MIT License](LICENSE).
+Licensed under the [MIT License](LICENSE).
 
 ---
 
 <p align="center">
-  Made with ❤️ by the <strong>Isek Team</strong><br>
+  Made with ❤️ by the <strong>Isek Team</strong><br />
   <em>Autonomy is not isolation. It's cooperation, at scale.</em>
 </p>
-

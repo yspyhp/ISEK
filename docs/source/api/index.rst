@@ -2,7 +2,7 @@
 API Reference
 #############
 
-这是 ISEK 库的自动生成的 API 参考文档。
+ISEK provides a comprehensive API for developers to interact with its components. This section outlines the key modules and their functionalities.
 
 .. toctree::
    :maxdepth: 2
@@ -13,9 +13,4 @@ API Reference
    llm       
    embedding 
    node      
-   storage   
    util      
-   constant  
-   concepts
-   agents
-   configuration

@@ -1,8 +1,11 @@
-# Agents
+************
+Agents
+************
 
 In Isek, an **Agent** is an intelligent entity that autonomously acts, communicates, collaborates, and learns within a decentralized network. Each agent combines reasoning, tool usage, memory, and distinct personas to perform tasks and achieve goals.
 
-## Agent Architecture
+Agent Architecture
+==================
 
 An Isek Agent is structured into two key components:
 
@@ -11,7 +14,8 @@ An Isek Agent is structured into two key components:
 
 This modular approach ensures flexible deployment—agents think locally but coordinate globally.
 
-## Using Personas
+Using Personas
+==============
 
 A persona defines an agent's identity, guiding its interactions, responses, and overall behavior.
 
@@ -26,21 +30,21 @@ Example:
 
 .. code-block:: python
 
-```
-from isek.agent.persona import Persona
+   from isek.agent.persona import Persona
+   from isek.agent.single_agent import SingleAgent # Assuming SingleAgent is needed here
 
-researcher = Persona(
-    name="Athena",
-    bio="AI research assistant",
-    lore="advance AI research knowledge",
-    knowledge="machine learning, NLP, research trends",
-    routine="identify new trends daily"
-)
+   researcher = Persona(
+       name="Athena",
+       bio="AI research assistant",
+       lore="advance AI research knowledge",
+       knowledge="machine learning, NLP, research trends",
+       routine="identify new trends daily"
+   )
 
-agent = SingleAgent(persona=researcher)
-```
+   agent = SingleAgent(persona=researcher)
 
-## Core Capabilities
+Core Capabilities
+=================
 
 Agents have powerful built-in features:
 
@@ -54,53 +58,54 @@ Example Task Decomposition:
 
 .. code-block:: python
 
-```
-subtasks = agent.decompose_task("Organize a virtual AI conference")
-# subtasks → ["Identify keynote speakers", "Schedule sessions", "Invite participants"]
-```
+   # Assuming 'agent' is an initialized agent instance
+   subtasks = agent.decompose_task("Organize a virtual AI conference")
+   # subtasks → ["Identify keynote speakers", "Schedule sessions", "Invite participants"]
 
-## Running an Agent
+Running an Agent
+================
 
 Agents can run interactively via command-line:
 
 .. code-block:: python
 
-```
-agent.run_cli()
-```
+   # Assuming 'agent' is an initialized agent instance
+   agent.run_cli()
 
 Or respond to single queries:
 
 .. code-block:: python
 
-```
-response = agent.run("What's the latest breakthrough in AI?")
-print(response)
-```
+   # Assuming 'agent' is an initialized agent instance
+   response = agent.run("What's the latest breakthrough in AI?")
+   print(response)
 
-## Heartbeat and Autonomy
+Heartbeat and Autonomy
+======================
 
 Agents support autonomous background tasks using a heartbeat:
 
 .. code-block:: python
 
-```
-agent.heartbeat()
-```
+   # Assuming 'agent' is an initialized agent instance
+   agent.heartbeat()
 
 This periodically triggers internal routines, updates, or peer interactions without direct user input.
 
-## Deep Thinking Mode
+Deep Thinking Mode
+==================
 
 Enabling `deepthink_enabled` allows agents to reflect more deeply before responding, leading to smarter, more structured outcomes:
 
 .. code-block:: python
 
-```
-agent = SingleAgent(persona=researcher, deepthink_enabled=True)
-```
+   from isek.agent.single_agent import SingleAgent # Assuming SingleAgent
+   # Assuming 'researcher' persona is defined as above
 
-## Decentralized Cooperation
+   agent = SingleAgent(persona=researcher, deepthink_enabled=True)
+
+Decentralized Cooperation
+=========================
 
 Agents naturally form decentralized, evolving societies. Without any central control, agents autonomously:
 
@@ -112,14 +117,14 @@ Example Distributed Agent:
 
 .. code-block:: python
 
-```
-from isek.agent.distributed_agent import DistributedAgent
+   from isek.agent.distributed_agent import DistributedAgent
+   # Assuming 'researcher' persona is defined as above
 
-dist_agent = DistributedAgent(persona=researcher)
-dist_agent.run("Collaborate with peers to summarize recent AI developments")
-```
+   dist_agent = DistributedAgent(persona=researcher)
+   dist_agent.run("Collaborate with peers to summarize recent AI developments")
 
-## Tips for Effective Use
+Tips for Effective Use
+======================
 
 * Clearly define your agent's persona and mission.
 * Leverage memory to improve agent learning and context awareness.
