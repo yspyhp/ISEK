@@ -4,8 +4,6 @@ from isek.util.logger import logger, LoggerManager
 from isek.agent.persona import Persona
 from isek.agent.single_agent import SingleAgent
 from isek.agent.distributed_agent import DistributedAgent
-from isek.llm.openai_model import OpenAIModel
-from isek.embedding.openai_embedding import OpenAIEmbedding
 from isek.node import EtcdRegistry, IsekCenterRegistry
 from isek.llm import llms
 from isek.embedding import embeddings
@@ -47,8 +45,12 @@ class IsekConfig:
         registry = self.load_registry()
         embedding = self.load_embedding()
         return DistributedAgent(
-            host=host, port=port, registry=registry,
-            persona=persona, model=llm, embedding=embedding
+            host=host,
+            port=port,
+            registry=registry,
+            persona=persona,
+            model=llm,
+            embedding=embedding,
         )
 
     def load_registry(self):
@@ -75,4 +77,6 @@ class IsekConfig:
         embedding_mode = self.get("embedding")
         if embedding_mode is None:
             return None
-        return embeddings.get(embedding_mode)(**self.get_sub_config(f"embedding.{embedding_mode}"))
+        return embeddings.get(embedding_mode)(
+            **self.get_sub_config(f"embedding.{embedding_mode}")
+        )

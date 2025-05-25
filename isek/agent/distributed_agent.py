@@ -2,7 +2,7 @@ from isek.agent.abstract_agent import AbstractAgent
 from isek.node.node import Node
 from isek.util.logger import logger
 import threading
-from typing import Any, Dict, Optional # Added for type hinting in docstrings
+from typing import Any, Dict, Optional  # Added for type hinting in docstrings
 
 # Assuming AbstractModel and Persona are defined elsewhere and relevant for **kwargs
 # from isek.llm.abstract_model import AbstractModel
@@ -19,10 +19,7 @@ class DistributedAgent(AbstractAgent, Node):
     to define its identity and introduction within the network.
     """
 
-    def __init__(
-            self,
-            **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         """
         Initializes the DistributedAgent.
 
@@ -87,10 +84,7 @@ class DistributedAgent(AbstractAgent, Node):
         :return: A dictionary containing metadata, specifically "name" and "intro".
         :rtype: typing.Dict[str, str]
         """
-        return {
-            "name": self.persona.name,
-            "intro": self.intro
-        }
+        return {"name": self.persona.name, "intro": self.intro}
 
     def on_message(self, sender: Any, message: str) -> Optional[str]:
         """
@@ -135,7 +129,7 @@ class DistributedAgent(AbstractAgent, Node):
         logger.info(f"[{self.persona.name}] Searching partners with query: {query}")
         # Assuming get_nodes_by_vector returns a representation of nodes that can be stringified
         nodes_info = str(self.get_nodes_by_vector(query))
-        
+
         matching_node_template = f"""
             I am looking for partners to help me with a query, here are the nodes I found:
             {nodes_info}
@@ -154,8 +148,12 @@ class DistributedAgent(AbstractAgent, Node):
             result: str = self.model.generate_text(prompt=matching_node_template)
             return result
         except AttributeError:
-            logger.error(f"[{self.persona.name}] Model or generate_text method not available for partner search.")
+            logger.error(
+                f"[{self.persona.name}] Model or generate_text method not available for partner search."
+            )
             return "Error: Model not available for partner search."
         except Exception as e:
-            logger.error(f"[{self.persona.name}] Error during partner search LLM call: {e}")
+            logger.error(
+                f"[{self.persona.name}] Error during partner search LLM call: {e}"
+            )
             return f"Error during partner search: {e}"

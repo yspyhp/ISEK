@@ -1,7 +1,8 @@
-from loguru import logger as loguru_logger # Rename to avoid conflict
+from loguru import logger as loguru_logger  # Rename to avoid conflict
 import sys
 from threading import Lock
-from typing import Optional, ClassVar, Any # Added Any
+from typing import Optional, ClassVar, Any  # Added Any
+
 
 class LoggerManager:
     """
@@ -12,14 +13,15 @@ class LoggerManager:
     Access the configured logger via `LoggerManager.get_logger()` or the
     globally exported `logger` instance from this module.
     """
-    _instance: ClassVar[Optional['LoggerManager']] = None
+
+    _instance: ClassVar[Optional["LoggerManager"]] = None
     _lock: ClassVar[Lock] = Lock()
-    _configured_level: ClassVar[str] = "INFO" # Store current config state
+    _configured_level: ClassVar[str] = "INFO"  # Store current config state
     _configured_format: ClassVar[Optional[str]] = "{message}"
 
     # __new__ only creates the instance if it doesn't exist.
     # Configuration is now handled by a separate method called from init.
-    def __new__(cls, *args: Any, **kwargs: Any) -> 'LoggerManager':
+    def __new__(cls, *args: Any, **kwargs: Any) -> "LoggerManager":
         """
         Ensures only one instance of LoggerManager is created (Singleton).
         Actual logger configuration should be done via the `init` class method.
@@ -48,12 +50,12 @@ class LoggerManager:
         :param log_format: The Loguru format string. If None, Loguru's default rich format is used.
         :type log_format: typing.Optional[str]
         """
-        with cls._lock: # Protect access to global Loguru configuration
+        with cls._lock:  # Protect access to global Loguru configuration
             try:
-                loguru_logger.remove() # Remove all existing handlers
-            except ValueError: # Raised if no handlers to remove (Loguru <0.6.0)
+                loguru_logger.remove()  # Remove all existing handlers
+            except ValueError:  # Raised if no handlers to remove (Loguru <0.6.0)
                 pass
-            
+
             sink_args = {
                 "sink": sys.stdout,
                 "level": level.upper(),
@@ -63,19 +65,18 @@ class LoggerManager:
 
             if log_format:
                 sink_args["format"] = log_format
-            
+
             # For non-debug (INFO level), we want INFO and higher.
             # For DEBUG level, we want DEBUG and higher (which Loguru does by default).
             # The filter is only needed if you want to *strictly* log only one level,
             # which is not the case for standard INFO or DEBUG settings.
             # If level is INFO, messages of level INFO, WARNING, ERROR, CRITICAL will pass.
             # If level is DEBUG, messages of level DEBUG, INFO, ... will pass.
-            
+
             loguru_logger.add(**sink_args)
             cls._configured_level = level.upper()
             cls._configured_format = log_format
             # print(f"Loguru logger configured. Level: {cls._configured_level}, Format: '{cls._configured_format if cls._configured_format else 'Loguru Default'}'") # Debug
-
 
     @classmethod
     def init(cls, debug: bool = False) -> None:
@@ -95,13 +96,13 @@ class LoggerManager:
         # If debug, use Loguru's default rich format (by passing None for format).
         # Otherwise, use minimal "{message}".
         log_format = None if debug else "{message}"
-        
+
         # Ensure instance exists, then configure.
-        cls() # This calls __new__ to ensure _instance is created.
+        cls()  # This calls __new__ to ensure _instance is created.
         cls._configure_logger(level=level, log_format=log_format)
 
     @staticmethod
-    def get_logger(): # No type hint needed for Loguru's dynamic logger object
+    def get_logger():  # No type hint needed for Loguru's dynamic logger object
         """
         Provides access to the globally configured Loguru logger instance.
 

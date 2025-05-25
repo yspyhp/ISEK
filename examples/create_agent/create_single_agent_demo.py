@@ -14,9 +14,9 @@ def fast_create():
 def statement_llm_create():
     load_dotenv()
     model = OpenAIModel(
-        model_name = os.environ["OPENAI_MODEL_NAME"],
-        base_url = os.environ["OPENAI_BASE_URL"],
-        api_key = os.environ["OPENAI_API_KEY"]
+        model_name=os.environ["OPENAI_MODEL_NAME"],
+        base_url=os.environ["OPENAI_BASE_URL"],
+        api_key=os.environ["OPENAI_API_KEY"],
     )
     return SingleAgent(model=model)
 
@@ -28,7 +28,7 @@ def custom_create():
         "bio": "An agent for testing",
         "lore": "Be responsible for helping users conduct agent testing",
         "knowledge": "",
-        "routine": ""
+        "routine": "",
     }
     persona = Persona.from_json(persona_desc)
     # create your llm
@@ -36,7 +36,7 @@ def custom_create():
     model = OpenAIModel(
         model_name=os.environ["OPENAI_MODEL_NAME"],
         base_url=os.environ["OPENAI_BASE_URL"],
-        api_key=os.environ["OPENAI_API_KEY"]
+        api_key=os.environ["OPENAI_API_KEY"],
     )
     return SingleAgent(persona=persona, model=model)
 

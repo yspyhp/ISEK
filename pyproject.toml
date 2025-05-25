@@ -31,7 +31,8 @@ dependencies = [
     "sphinxawesome-theme",
     "pytest",
     "pre-commit",
-    "etcd3gw"
+    "etcd3gw",
+    "mypy"
 
 ]
 

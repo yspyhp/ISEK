@@ -1,25 +1,28 @@
-import json
 import threading
 from abc import ABC, abstractmethod
 from concurrent import futures
-from typing import Dict, Any, Optional, List # Added Optional, List
+from typing import Dict, Any, Optional, List  # Added Optional, List
 
 # import faiss # Commented out as per original
-import copy # Not used in this snippet, consider removing if not needed elsewhere
-import grpc # type: ignore # If grpc stubs are missing
+import grpc  # type: ignore # If grpc stubs are missing
 
 # import numpy as np # Commented out as per original
 
 from isek.constant.exceptions import NodeUnavailableError
-from isek.node.noderpc import node_pb2, node_pb2_grpc # Assuming these are generated gRPC files
+from isek.node.noderpc import (
+    node_pb2,
+    node_pb2_grpc,
+)  # Assuming these are generated gRPC files
 from isek.node.registry import Registry
-from isek.util.logger import logger # Assuming logger is configured
+from isek.util.logger import logger  # Assuming logger is configured
+
 # from isek.node.node_index import NodeIndex # Commented out
 from isek.embedding.abstract_embedding import AbstractEmbedding
 from isek.node.isek_center_registry import IsekCenterRegistry
 
 # Type alias for node information stored in self.all_nodes
-NodeDetails = Dict[str, Any] # e.g., {"host": str, "port": int, "metadata": dict}
+NodeDetails = Dict[str, Any]  # e.g., {"host": str, "port": int, "metadata": dict}
+
 
 class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
     """
@@ -34,13 +37,15 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
 
     Subclasses must implement `build_node_id`, `metadata`, and `on_message`.
     """
-    def __init__(self,
-                 host: str = "localhost",
-                 port: int = 8080,
-                 registry: Optional[Registry] = None, # Allow None for default
-                 embedding: Optional[AbstractEmbedding] = None,
-                 **kwargs: Any # To absorb any extra arguments
-                 ):
+
+    def __init__(
+        self,
+        host: str = "localhost",
+        port: int = 8080,
+        registry: Optional[Registry] = None,  # Allow None for default
+        embedding: Optional[AbstractEmbedding] = None,
+        **kwargs: Any,  # To absorb any extra arguments
+    ):
         """
         Initializes a Node instance.
 
@@ -67,29 +72,34 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
             raise ValueError("Node host cannot be empty.")
         if not isinstance(port, int) or not (0 < port < 65536):
             raise ValueError(f"Invalid port number for Node: {port}")
-        
+
         self.host: str = host
         self.port: int = port
-        self.registry: Registry = registry if registry is not None else IsekCenterRegistry()
+        self.registry: Registry = (
+            registry if registry is not None else IsekCenterRegistry()
+        )
         # self.embedding is stored but not fully used yet based on commented code
         self.embedding: Optional[AbstractEmbedding] = embedding
 
         self.node_id: str = self.build_node_id()
-        if not self.node_id: # build_node_id should return a non-empty string
+        if not self.node_id:  # build_node_id should return a non-empty string
             raise ValueError("build_node_id() must return a non-empty node identifier.")
 
-        self.all_nodes: Dict[str, NodeDetails] = {} # Cache of discovered nodes
-        self.grpc_server: Optional[grpc.Server] = None # To hold the gRPC server instance
+        self.all_nodes: Dict[str, NodeDetails] = {}  # Cache of discovered nodes
+        self.grpc_server: Optional[grpc.Server] = (
+            None  # To hold the gRPC server instance
+        )
 
         # Node index related attributes (currently partially implemented based on comments)
         # self.node_index = None # Placeholder for a potential Faiss index or similar
         # if embedding:
-            # self.node_index = NodeIndex(embedding) # Assuming NodeIndex class exists
+        # self.node_index = NodeIndex(embedding) # Assuming NodeIndex class exists
         # self.node_list = None # Placeholder for an ordered list of node_ids if using an index
 
-        logger.info(f"Node '{self.node_id}' initialized with host={host}, port={port}, "
-                    f"registry={type(self.registry).__name__}.")
-
+        logger.info(
+            f"Node '{self.node_id}' initialized with host={host}, port={port}, "
+            f"registry={type(self.registry).__name__}."
+        )
 
     @abstractmethod
     def build_node_id(self) -> str:
@@ -146,14 +156,24 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
         """
         try:
             node_metadata = self.metadata()
-            self.registry.register_node(node_id=self.node_id, host=self.host, port=self.port, metadata=node_metadata)
-            logger.info(f"Node '{self.node_id}' successfully registered with the registry.")
+            self.registry.register_node(
+                node_id=self.node_id,
+                host=self.host,
+                port=self.port,
+                metadata=node_metadata,
+            )
+            logger.info(
+                f"Node '{self.node_id}' successfully registered with the registry."
+            )
         except Exception as e:
-            logger.error(f"Failed to register node '{self.node_id}' with the registry: {e}", exc_info=True)
-            raise # Re-raise as this is a critical step
+            logger.error(
+                f"Failed to register node '{self.node_id}' with the registry: {e}",
+                exc_info=True,
+            )
+            raise  # Re-raise as this is a critical step
 
-        self.__bootstrap_heartbeat() # Starts the recurring heartbeat
-        self.__bootstrap_grpc_server() # Starts the gRPC server (blocking if not in a thread)
+        self.__bootstrap_heartbeat()  # Starts the recurring heartbeat
+        self.__bootstrap_grpc_server()  # Starts the gRPC server (blocking if not in a thread)
 
     def __bootstrap_heartbeat(self) -> None:
         """
@@ -169,22 +189,26 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
             self.registry.lease_refresh(self.node_id)
             logger.debug(f"Node '{self.node_id}' lease refreshed successfully.")
         except Exception as e:
-            logger.warning(f"Failed to refresh lease for node '{self.node_id}': {e}. "
-                           "Node might be deregistered if this persists.", exc_info=True)
+            logger.warning(
+                f"Failed to refresh lease for node '{self.node_id}': {e}. "
+                "Node might be deregistered if this persists.",
+                exc_info=True,
+            )
             # Depending on severity, could attempt re-registration or shutdown.
 
         try:
             self.__refresh_nodes()
         except Exception as e:
-            logger.warning(f"Failed to refresh node list for '{self.node_id}': {e}", exc_info=True)
+            logger.warning(
+                f"Failed to refresh node list for '{self.node_id}': {e}", exc_info=True
+            )
 
         # Schedule next heartbeat
         # Ensure timer is managed properly if the node is shut down
         timer = threading.Timer(5, self.__bootstrap_heartbeat)
-        timer.daemon = True # Allows main program to exit even if timer is active
+        timer.daemon = True  # Allows main program to exit even if timer is active
         timer.start()
         logger.debug(f"Node '{self.node_id}' heartbeat scheduled.")
-
 
     def __refresh_nodes(self) -> None:
         """
@@ -198,12 +222,14 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
             current_available_nodes = self.registry.get_available_nodes()
             # Simple update: replace the old list.
             # More sophisticated updates might involve diffing for logging or specific actions.
-            if self.all_nodes != current_available_nodes: # Basic check for changes
+            if self.all_nodes != current_available_nodes:  # Basic check for changes
                 # logger.info(f"Node list updated for '{self.node_id}'. "
                 #             f"Previous count: {len(self.all_nodes)}, New count: {len(current_available_nodes)}.")
                 self.all_nodes = current_available_nodes
             else:
-                logger.debug(f"Node list for '{self.node_id}' remains unchanged. Count: {len(self.all_nodes)}.")
+                logger.debug(
+                    f"Node list for '{self.node_id}' remains unchanged. Count: {len(self.all_nodes)}."
+                )
 
             # TODO: Implement node index building if self.embedding and NodeIndex are available.
             # The commented section for Faiss index:
@@ -217,9 +243,10 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
             #         logger.error(f"Error rebuilding node index: {e_idx}", exc_info=True)
         except Exception as e:
             # This exception is from self.registry.get_available_nodes()
-            logger.error(f"Failed to retrieve available nodes from registry: {e}", exc_info=True)
+            logger.error(
+                f"Failed to retrieve available nodes from registry: {e}", exc_info=True
+            )
             # self.all_nodes might become stale if this fails repeatedly.
-
 
     def __bootstrap_grpc_server(self) -> None:
         """
@@ -230,25 +257,34 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
         This method will block until the server is terminated if run in the main thread.
         """
         if self.grpc_server:
-            logger.warning(f"gRPC server for node '{self.node_id}' is already running or was not shut down properly.")
+            logger.warning(
+                f"gRPC server for node '{self.node_id}' is already running or was not shut down properly."
+            )
             return
 
         server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-        node_pb2_grpc.add_IsekNodeServiceServicer_to_server(self, server) # 'self' implements the service methods
+        node_pb2_grpc.add_IsekNodeServiceServicer_to_server(
+            self, server
+        )  # 'self' implements the service methods
 
-        listen_addr = f'[::]:{self.port}' # Listen on all IPv6 interfaces, includes IPv4 on many systems
+        listen_addr = f"[::]:{self.port}"  # Listen on all IPv6 interfaces, includes IPv4 on many systems
         try:
             server.add_insecure_port(listen_addr)
             server.start()
-            self.grpc_server = server # Store server instance for potential shutdown
-            logger.info(f"Node '{self.node_id}' gRPC server started, listening on {listen_addr}.")
+            self.grpc_server = server  # Store server instance for potential shutdown
+            logger.info(
+                f"Node '{self.node_id}' gRPC server started, listening on {listen_addr}."
+            )
             # server.wait_for_termination() # This blocks. If build_server is called in main thread,
-                                          # it will block here. Consider running this in a separate thread
-                                          # or making build_server non-blocking if the node needs to do other things.
+            # it will block here. Consider running this in a separate thread
+            # or making build_server non-blocking if the node needs to do other things.
             # For non-blocking startup, remove wait_for_termination() here and handle shutdown elsewhere.
         except Exception as e:
-            logger.error(f"Failed to start gRPC server for node '{self.node_id}' on {listen_addr}: {e}", exc_info=True)
-            self.grpc_server = None # Ensure it's None if start failed
+            logger.error(
+                f"Failed to start gRPC server for node '{self.node_id}' on {listen_addr}: {e}",
+                exc_info=True,
+            )
+            self.grpc_server = None  # Ensure it's None if start failed
             raise
 
     def stop_server(self, grace_period_seconds: float = 1.0) -> None:
@@ -267,11 +303,13 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
             # A grace period of None means immediate, hard shutdown.
             # A grace period allows ongoing RPCs to finish.
             shutdown_event = self.grpc_server.stop(grace_period_seconds)
-            shutdown_event.wait() # Wait for shutdown to complete
+            shutdown_event.wait()  # Wait for shutdown to complete
             self.grpc_server = None
             logger.info(f"gRPC server for node '{self.node_id}' stopped.")
         else:
-            logger.info(f"No active gRPC server found for node '{self.node_id}' to stop.")
+            logger.info(
+                f"No active gRPC server found for node '{self.node_id}' to stop."
+            )
 
         # Deregister from registry
         try:
@@ -279,15 +317,18 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
             self.registry.deregister_node(self.node_id)
             logger.info(f"Node '{self.node_id}' deregistered successfully.")
         except Exception as e:
-            logger.error(f"Failed to deregister node '{self.node_id}': {e}", exc_info=True)
+            logger.error(
+                f"Failed to deregister node '{self.node_id}': {e}", exc_info=True
+            )
             # Continue shutdown even if deregistration fails.
 
         # Note: Heartbeat timer is a daemon thread, so it should not prevent exit.
         # If it weren't a daemon, you'd need to cancel it here.
         logger.info(f"Node '{self.node_id}' shutdown process completed.")
 
-
-    def send_message(self, receiver_node_id: str, message: str, retry_count: int = 3) -> str:
+    def send_message(
+        self, receiver_node_id: str, message: str, retry_count: int = 3
+    ) -> str:
         """
         Sends a message to another node identified by `receiver_node_id`.
 
@@ -307,8 +348,10 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
         while current_retry < retry_count:
             try:
                 return self.__send_message_impl(receiver_node_id, message)
-            except NodeUnavailableError as nue: # Specific error for node not found
-                logger.warning(f"Attempt {current_retry + 1}/{retry_count}: Node '{receiver_node_id}' is unavailable. Error: {nue}")
+            except NodeUnavailableError as nue:  # Specific error for node not found
+                logger.warning(
+                    f"Attempt {current_retry + 1}/{retry_count}: Node '{receiver_node_id}' is unavailable. Error: {nue}"
+                )
                 # No point retrying immediately if node is simply not in all_nodes,
                 # unless all_nodes is expected to update quickly.
                 # Refreshing nodes here might be too aggressive.
@@ -316,24 +359,32 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
                     return f"Error: Node '{receiver_node_id}' is currently unavailable."
                 # Consider a short delay before retry if it's a transient issue
                 # time.sleep(1)
-            except grpc.RpcError as rpc_e: # Catch gRPC specific errors (network, server-side issues)
-                logger.warning(f"Attempt {current_retry + 1}/{retry_count}: gRPC error sending message to "
-                               f"node '{receiver_node_id}'. Error: {rpc_e.details() if hasattr(rpc_e, 'details') else rpc_e}",
-                               exc_info=True)
+            except (
+                grpc.RpcError
+            ) as rpc_e:  # Catch gRPC specific errors (network, server-side issues)
+                logger.warning(
+                    f"Attempt {current_retry + 1}/{retry_count}: gRPC error sending message to "
+                    f"node '{receiver_node_id}'. Error: {rpc_e.details() if hasattr(rpc_e, 'details') else rpc_e}",
+                    exc_info=True,
+                )
                 # Could check rpc_e.code() for specific handling (e.g., grpc.StatusCode.UNAVAILABLE)
-            except Exception as e: # Catch other unexpected errors
-                logger.error(f"Attempt {current_retry + 1}/{retry_count}: Unexpected error sending message to "
-                              f"node '{receiver_node_id}'. Message: '{message}'. Error: {e}", exc_info=True)
-            
+            except Exception as e:  # Catch other unexpected errors
+                logger.error(
+                    f"Attempt {current_retry + 1}/{retry_count}: Unexpected error sending message to "
+                    f"node '{receiver_node_id}'. Message: '{message}'. Error: {e}",
+                    exc_info=True,
+                )
+
             current_retry += 1
             if current_retry < retry_count:
                 logger.info(f"Retrying message to '{receiver_node_id}'...")
                 # Optional: implement a backoff strategy for retries
                 # time.sleep(current_retry) # Simple linear backoff
-            
-        logger.error(f"Failed to send message to node '{receiver_node_id}' after {retry_count} retries.")
-        return f"Error: Message delivery to '{receiver_node_id}' failed after {retry_count} attempts."
 
+        logger.error(
+            f"Failed to send message to node '{receiver_node_id}' after {retry_count} retries."
+        )
+        return f"Error: Message delivery to '{receiver_node_id}' failed after {retry_count} attempts."
 
     def __send_message_impl(self, receiver_node_id: str, message: str) -> str:
         """
@@ -348,37 +399,55 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
         :raises NodeUnavailableError: If the `receiver_node_id` is not found in the local cache (`self.all_nodes`).
         :raises grpc.RpcError: If a gRPC communication error occurs.
         """
-        logger.info(f"Node '{self.node_id}' attempting to send message to '{receiver_node_id}': '{message[:50]}...'")
-        
+        logger.info(
+            f"Node '{self.node_id}' attempting to send message to '{receiver_node_id}': '{message[:50]}...'"
+        )
+
         receiver_node_details = self.all_nodes.get(receiver_node_id)
         if not receiver_node_details:
             # Refresh nodes once if not found, in case cache is stale.
-            logger.warning(f"Receiver node '{receiver_node_id}' not found in local cache. Refreshing node list once.")
+            logger.warning(
+                f"Receiver node '{receiver_node_id}' not found in local cache. Refreshing node list once."
+            )
             self.__refresh_nodes()
             receiver_node_details = self.all_nodes.get(receiver_node_id)
             if not receiver_node_details:
-                 raise NodeUnavailableError(receiver_node_id, "Node not found in registry after refresh.")
+                raise NodeUnavailableError(
+                    receiver_node_id, "Node not found in registry after refresh."
+                )
 
-        target_address = f"{receiver_node_details['host']}:{receiver_node_details['port']}"
+        target_address = (
+            f"{receiver_node_details['host']}:{receiver_node_details['port']}"
+        )
         # Consider using grpc.secure_channel if security is needed.
         # Channel and stub creation could be cached for frequently contacted nodes.
         try:
-            with grpc.insecure_channel(target_address) as channel: # `with` ensures channel is closed
+            with grpc.insecure_channel(
+                target_address
+            ) as channel:  # `with` ensures channel is closed
                 stub = node_pb2_grpc.IsekNodeServiceStub(channel)
-                grpc_request = node_pb2.CallRequest(sender=self.node_id, receiver=receiver_node_id, message=message)
+                grpc_request = node_pb2.CallRequest(
+                    sender=self.node_id, receiver=receiver_node_id, message=message
+                )
 
                 # Add a timeout to the gRPC call
                 timeout_seconds = 10.0
                 grpc_response = stub.call(grpc_request, timeout=timeout_seconds)
-                
-                logger.info(f"Node '{self.node_id}' received reply from '{receiver_node_id}': '{grpc_response.reply[:50]}...'")
-                return grpc_response.reply # Assuming reply is always a string
-        except grpc.RpcError as e:
-            logger.error(f"gRPC call to node '{receiver_node_id}' at {target_address} failed: {e.code()} - {e.details()}",
-                         exc_info=True)
-            raise # Re-raise the RpcError to be handled by the retry logic in send_message
 
-    def get_nodes_by_vector(self, query_vector: List[float], limit: int = 20) -> List[NodeDetails]:
+                logger.info(
+                    f"Node '{self.node_id}' received reply from '{receiver_node_id}': '{grpc_response.reply[:50]}...'"
+                )
+                return grpc_response.reply  # Assuming reply is always a string
+        except grpc.RpcError as e:
+            logger.error(
+                f"gRPC call to node '{receiver_node_id}' at {target_address} failed: {e.code()} - {e.details()}",
+                exc_info=True,
+            )
+            raise  # Re-raise the RpcError to be handled by the retry logic in send_message
+
+    def get_nodes_by_vector(
+        self, query_vector: List[float], limit: int = 20
+    ) -> List[NodeDetails]:
         """
         Retrieves a list of nodes based on a query vector, potentially using a vector index.
 
@@ -396,8 +465,10 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
         """
         # TODO: Implement actual vector search using self.node_index (e.g., Faiss)
         # The current implementation is a placeholder.
-        logger.debug(f"get_nodes_by_vector called. Query (vector type): {type(query_vector)}, Limit: {limit}")
-        
+        logger.debug(
+            f"get_nodes_by_vector called. Query (vector type): {type(query_vector)}, Limit: {limit}"
+        )
+
         # Placeholder logic:
         if not self.all_nodes:
             return []
@@ -428,9 +499,10 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
         all_node_values = list(self.all_nodes.values())
         return all_node_values[:limit]
 
-
     # --- gRPC Service Implementation ---
-    def call(self, request: node_pb2.CallRequest, context: grpc.ServicerContext) -> node_pb2.CallResponse:
+    def call(
+        self, request: node_pb2.CallRequest, context: grpc.ServicerContext
+    ) -> node_pb2.CallResponse:
         """
         gRPC service method implementation for handling incoming calls from other nodes.
 
@@ -448,18 +520,29 @@ class Node(node_pb2_grpc.IsekNodeServiceServicer, ABC):
         :rtype: node_pb2.CallResponse
         """
         try:
-            client_ip = context.peer().split(':')[1] if context.peer() else "unknown" # Basic client IP
-            logger.info(f"Node '{self.node_id}' received gRPC call from sender '{request.sender}' (IP: {client_ip}). "
-                        f"Message: '{request.message[:50]}...'")
-            
+            client_ip = (
+                context.peer().split(":")[1] if context.peer() else "unknown"
+            )  # Basic client IP
+            logger.info(
+                f"Node '{self.node_id}' received gRPC call from sender '{request.sender}' (IP: {client_ip}). "
+                f"Message: '{request.message[:50]}...'"
+            )
+
             # Delegate to the user-defined message handler
-            reply_content = self.on_message(sender=request.sender, message=request.message)
-            
-            logger.info(f"Node '{self.node_id}' sending reply to '{request.sender}': '{reply_content[:50]}...'")
+            reply_content = self.on_message(
+                sender=request.sender, message=request.message
+            )
+
+            logger.info(
+                f"Node '{self.node_id}' sending reply to '{request.sender}': '{reply_content[:50]}...'"
+            )
             return node_pb2.CallResponse(reply=reply_content)
         except Exception as e:
-            logger.error(f"Error processing gRPC call in on_message for node '{self.node_id}' "
-                         f"from sender '{request.sender}': {e}", exc_info=True)
+            logger.error(
+                f"Error processing gRPC call in on_message for node '{self.node_id}' "
+                f"from sender '{request.sender}': {e}",
+                exc_info=True,
+            )
             # Send an error back to the client
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(f"Internal server error processing message: {e}")

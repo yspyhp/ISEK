@@ -3,9 +3,14 @@ from typing import Optional, Dict
 
 
 class Registry(ABC):
-
     @abstractmethod
-    def register_node(self, node_id: str, host: str, port: int, metadata: Optional[Dict[str, str]] = None):
+    def register_node(
+        self,
+        node_id: str,
+        host: str,
+        port: int,
+        metadata: Optional[Dict[str, str]] = None,
+    ):
         pass
 
     @abstractmethod

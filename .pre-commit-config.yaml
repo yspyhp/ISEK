@@ -1,8 +1,20 @@
 repos:
-  - repo: local
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: 'v0.7.4'
     hooks:
-      - id: isek-test
-        name: Run pytest
-        entry: bash -c 'cd $(git rev-parse --show-toplevel) && pytest'
-        language: system
-        types: [python]
+      - id: ruff
+        args: [ --fix, --exit-non-zero-on-fix, --show-fixes ]
+        exclude: ^(docs/|examples/|assets/)
+      - id: ruff-format
+        exclude: ^(docs/|examples/|assets/)
+
+
+
+  - repo: https://github.com/codespell-project/codespell
+    # Configuration for codespell is in pyproject.toml
+    rev: v2.4.1
+    hooks:
+      - id: codespell
+        exclude: ^(examples/|assets/)  # Ignore files under examples/usecases
+        additional_dependencies:
+          - tomli  # for python_version < '3.11'

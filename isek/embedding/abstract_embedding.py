@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, List # Changed to List for Python 3.9+ type hinting
+from typing import Optional, List  # Changed to List for Python 3.9+ type hinting
 
 
 class AbstractEmbedding(ABC):
@@ -38,19 +38,21 @@ class AbstractEmbedding(ABC):
         embeddings = self.embedding([data])
         if not embeddings:
             # This case should ideally not happen if embedding() correctly processes a single item list
-            raise ValueError("Embedding method returned an empty list for a single input.")
+            raise ValueError(
+                "Embedding method returned an empty list for a single input."
+            )
         return embeddings[0]
 
     @abstractmethod
-    def embedding(self, datas: List[str]) -> List[List[float]]:
+    def embedding(self, data_list: List[str]) -> List[List[float]]:
         """
         Generates embeddings for a list of text strings.
 
         This method must be implemented by concrete subclasses to perform
         the actual embedding generation.
 
-        :param datas: A list of text strings to be embedded.
-        :type datas: typing.List[str]
+        :param data_list: A list of text strings to be embedded.
+        :type data_list: typing.List[str]
         :return: A list of embedding vectors. Each inner list is a list of floats
                  representing the embedding for the corresponding input string.
         :rtype: typing.List[typing.List[float]]

@@ -1,6 +1,6 @@
 from isek.util.logger import logger
 import json
-from typing import Dict, Any, List # Added for type hinting
+from typing import Dict, Any, List  # Added for type hinting
 
 
 class Persona:
@@ -10,6 +10,7 @@ class Persona:
     A persona defines how an agent behaves, its knowledge base, its mission,
     and its typical routines or operational procedures.
     """
+
     def __init__(self, name: str, bio: str, lore: str, knowledge: str, routine: str):
         """
         Initializes a new Persona instance.
@@ -30,9 +31,11 @@ class Persona:
         self.lore: str = lore
         self.knowledge: str = knowledge
         self.routine: str = routine
-        self.agencies: List[Any] = [] # Assuming agencies could be a list of related agent instances or identifiers
-        logger.info(f'Created Persona: {self.name}')
-    
+        self.agencies: List[
+            Any
+        ] = []  # Assuming agencies could be a list of related agent instances or identifiers
+        logger.info(f"Created Persona: {self.name}")
+
     def __str__(self) -> str:
         """
         Returns the string representation of the Persona, which is its name.
@@ -43,7 +46,7 @@ class Persona:
         return self.name
 
     @classmethod
-    def default(cls) -> 'Persona':
+    def default(cls) -> "Persona":
         """
         Creates a default Persona instance.
 
@@ -52,19 +55,21 @@ class Persona:
         :return: A default Persona instance.
         :rtype: Persona
         """
-        return cls.from_json({
-            "name": "Helper",
-            "bio": "You are good at handling various things",
-            "lore": "Your mission is to provide users with various assistance. "
-                    "Be sure to reject all requests involving politics, religion, and pornography, "
-                    "and do not provide anything that violates the law or morality.",
-            "knowledge": "Provide solutions and implementation steps",
-            "routine": "You should first understand the user's request, then provide a solution, "
-                       "and finally ask the user if the solution is satisfactory."
-        })
-    
+        return cls.from_json(
+            {
+                "name": "Helper",
+                "bio": "You are good at handling various things",
+                "lore": "Your mission is to provide users with various assistance. "
+                "Be sure to reject all requests involving politics, religion, and pornography, "
+                "and do not provide anything that violates the law or morality.",
+                "knowledge": "Provide solutions and implementation steps",
+                "routine": "You should first understand the user's request, then provide a solution, "
+                "and finally ask the user if the solution is satisfactory.",
+            }
+        )
+
     @classmethod
-    def load(cls, path: str) -> 'Persona':
+    def load(cls, path: str) -> "Persona":
         """
         Loads Persona data from a JSON file and creates a Persona instance.
 
@@ -77,19 +82,21 @@ class Persona:
         :raises KeyError: If the JSON data is missing required fields for persona creation.
         """
         try:
-            with open(path, 'r') as file:
+            with open(path, "r") as file:
                 data: Dict[str, str] = json.load(file)
                 return cls.from_json(data)
         except FileNotFoundError:
-            logger.error(f'Persona file not found: {path}') # Changed to error for missing file
+            logger.error(
+                f"Persona file not found: {path}"
+            )  # Changed to error for missing file
             raise
         except json.JSONDecodeError as e:
-            logger.error(f'Error decoding JSON from persona file {path}: {e}')
+            logger.error(f"Error decoding JSON from persona file {path}: {e}")
             raise
         # KeyError will be handled by from_json if data structure is incorrect
 
     @classmethod
-    def from_json(cls, data: Dict[str, str]) -> 'Persona':
+    def from_json(cls, data: Dict[str, str]) -> "Persona":
         """
         Creates a Persona instance from a dictionary of data.
 
@@ -112,8 +119,8 @@ class Persona:
                 logger.error(err_msg)
                 raise KeyError(err_msg)
             return cls(**data)
-        except TypeError as e: # Handles incorrect argument types if not caught by simple presence check
-            logger.error(f'Type error creating Persona from data: {data}. Error: {e}')
+        except TypeError as e:  # Handles incorrect argument types if not caught by simple presence check
+            logger.error(f"Type error creating Persona from data: {data}. Error: {e}")
             raise
         # No need for a specific KeyError catch here if the above check is robust,
         # as cls(**data) itself will raise KeyError for missing args not caught above,

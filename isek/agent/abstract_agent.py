@@ -1,13 +1,16 @@
 from abc import ABC, abstractmethod
 from isek.llm.openai_model import OpenAIModel
+
 # from isek.embedding.openai_embedding import OpenAIEmbedding
 from isek.llm.abstract_model import AbstractModel
+
 # from isek.embedding.abstract_embedding import AbstractEmbedding
 from typing import Optional, List, Callable
 from isek.agent.persona import Persona
 from isek.agent.memory import AgentMemory
 from isek.agent.toolbox import ToolBox
 import time
+
 # add logging
 from isek.util.logger import logger
 
@@ -20,13 +23,14 @@ class AbstractAgent(ABC):
     persona management, interaction with language models, memory,
     and tool usage.
     """
+
     def __init__(
-            self,
-            persona: Persona = None,
-            model: Optional[AbstractModel] = None,
-            tools: List[Callable] = None,
-            deepthink_enabled: bool = False,
-            **kwargs
+        self,
+        persona: Persona = None,
+        model: Optional[AbstractModel] = None,
+        tools: List[Callable] = None,
+        deepthink_enabled: bool = False,
+        **kwargs,
     ) -> None:
         """
         Initializes the AbstractAgent.
@@ -67,7 +71,7 @@ class AbstractAgent(ABC):
         """
         pass
 
-    def run(self, input : str = None) -> None:
+    def run(self, input: str = None) -> None:
         """
         Runs a single cycle of the agent's operation.
 
@@ -88,10 +92,10 @@ class AbstractAgent(ABC):
         response = self.response(input)
         logger.info(f"[{self.persona.name}][Response]: {response}")
         logger.info(f"[{self.persona.name}] ----------Cycle Ended------------")
-        
+
         return response
-    
-    def hearbeat(self):
+
+    def heartbeat(self):
         """
         Executes a heartbeat cycle for the agent.
 
@@ -100,7 +104,7 @@ class AbstractAgent(ABC):
         It calls the :meth:`run` method with no input.
         """
         self.run()
-        
+
     def run_cli(self):
         """
         Runs the agent in a command-line interface (CLI) mode.
@@ -114,13 +118,13 @@ class AbstractAgent(ABC):
             if text == "exit":
                 break
             self.run(text)
-            
+
     def response(self, input: str) -> str:
         """
         Generates a response to the given input.
 
         This method orchestrates the agent's core logic:
-        
+
         1. Logs the trigger (input or heartbeat).
         2. Stores the user input in memory (if provided).
         3. Builds prompt templates incorporating persona, system instructions, tools, and conversation history.
@@ -144,41 +148,58 @@ class AbstractAgent(ABC):
             self.memory_manager.store_memory_item("User:" + input)
         else:
             logger.info(f"[{self.persona.name}][Trigger: Heartbeat]")
-        
+
         # Build template for action phase
         template = self._build_templates()
         # logger.info(f"[{template}] ")
-        
+
         messages = [{"role": "user", "content": template}]
-        
+
         # Setup available tools for action phase
-        tools = self.tool_manager.get_tool_names()
+        # tools = self.tool_manager.get_tool_names()
         tool_schemas = self.tool_manager.get_tool_schemas()
-        
+
         if self.deepthink_enabled:
             # Decompose the task into subtasks
-            deepthink = self.model.create(
-                messages=[{"role": "system", "content": "you are a deep thnker and you are going to think deeply about the user's task and return yout thinking step as text, limit your think to 50 words"}] + messages,
-                systems=[],
-                tool_schemas=tool_schemas or None,
-            ).choices[0].message
+            deepthink = (
+                self.model.create(
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": "you are a deep thnker and you are going to think deeply about the user's task and return yout thinking step as text, limit your think to 50 words",
+                        }
+                    ]
+                    + messages,
+                    systems=[],
+                    tool_schemas=tool_schemas or None,
+                )
+                .choices[0]
+                .message
+            )
             # print(deepthink)
             messages.append(deepthink)
-        
+
         # Main action loop
         while True:
             # Get AI completion with tool calling
-            response = self.model.create(
-                messages=[{"role": "system", "content": "you are a helpful assistant"}] + messages,
-                systems=[],
-                tool_schemas=tool_schemas or None,
-            ).choices[0].message
+            response = (
+                self.model.create(
+                    messages=[
+                        {"role": "system", "content": "you are a helpful assistant"}
+                    ]
+                    + messages,
+                    systems=[],
+                    tool_schemas=tool_schemas or None,
+                )
+                .choices[0]
+                .message
+            )
             messages.append(response)
-            
+
             # Process text response
             if response.content:
                 self.memory_manager.store_memory_item("Agent:" + response.content)
-                
+
             # Check if we're done with tool calls
             if not response.tool_calls:
                 return response.content
@@ -192,7 +213,7 @@ class AbstractAgent(ABC):
                     "content": result,
                 }
                 messages.append(result_message)
-            
+
     def _build_templates(self) -> str:
         """
         Builds the prompt templates for the agent's interaction with the LLM.
@@ -208,45 +229,44 @@ class AbstractAgent(ABC):
         recent_memory = self.memory_manager.get_recent_memory_items()
         # state = self.memory_manager.get_all_state_variables()
         # tasks = self.memory_manager.get_pending_tasks()
-       
+
         # Return all templates as a dictionary
-        routine=""
+        routine = ""
         if "routine" in self.persona.__dict__:
             routine = self.persona.routine
-        
+
         templates = {
-            "persona": f'''       
+            "persona": f"""       
                 "You Name is:
                 "{self.persona.name}"
                 "You are a {self.persona.bio}"
                 "Your mission is to {self.persona.lore}"
                 "You have the following knowledge: {self.persona.knowledge}"
-            ''',
-            "system": f'''
+            """,
+            "system": """
                 "You have the freedom to reason and act to help you achieve your goal."
                 "try your best to use tools to improve responses quality."
                 "please be concise and clear in your responses."
                 "in most cases, you should only provide one or two sentence."
                 "in rare cases, you may provide a longer response." 
-            ''',
-            "routine": f'''
+            """,
+            "routine": f"""
             "{routine}"
-            ''',
-            "tool": f'''
+            """,
+            "tool": f"""
                 "You have the following tools available: {self.tool_manager.get_tool_names()}"
-            ''',
-            
-            "closing": f'''
+            """,
+            "closing": f"""
                 response base on the following conversation: 
                 {recent_memory}
-            '''
+            """,
         }
         # add all the templates together
         template = ""
         for key in templates:
             template += templates[key]
         return template
-        
+
     def decompose_task(self, command: str) -> str:
         """
         Decomposes a given command or task into a list of subtasks using the LLM.
@@ -273,22 +293,30 @@ class AbstractAgent(ABC):
         Ensure that the task plan is created without asking any questions.
         Be specific and clear.
         """
-        response = self.model.create(
+        response = (
+            self.model.create(
                 messages=[{"role": "system", "content": task_decomposer_template}],
                 systems=[],
-                tool_schemas= None,
-            ).choices[0].message
+                tool_schemas=None,
+            )
+            .choices[0]
+            .message
+        )
 
         # parse the response to get the subtasks
         subtasks_str = response.content
         try:
-            subtasks = eval(subtasks_str) # Potential security risk with eval
+            subtasks = eval(subtasks_str)  # Potential security risk with eval
             if not isinstance(subtasks, list):
-                logger.warning(f"[{self.persona.name}] Subtask decomposition did not return a list: {subtasks_str}")
-                return str([]) # Return empty list string on failure
+                logger.warning(
+                    f"[{self.persona.name}] Subtask decomposition did not return a list: {subtasks_str}"
+                )
+                return str([])  # Return empty list string on failure
         except Exception as e:
-            logger.error(f"[{self.persona.name}] Error parsing subtasks: {e}. Response was: {subtasks_str}")
-            return str([]) # Return empty list string on error
+            logger.error(
+                f"[{self.persona.name}] Error parsing subtasks: {e}. Response was: {subtasks_str}"
+            )
+            return str([])  # Return empty list string on error
 
         # for subtask in subtasks:
         #   self.memory_manager.create_task(subtask)

@@ -1,7 +1,7 @@
 import json
 import inspect
 from isek.agent.persona import Persona
-from isek.util.logger import logger # Assuming logger has a standard logging interface
+from isek.util.logger import logger  # Assuming logger has a standard logging interface
 from typing import List, Dict, Callable, Any, Optional, Union
 
 
@@ -13,6 +13,7 @@ class ToolBox:
     (like descriptions and schemas for LLM interaction), and the execution
     of tool calls based on requests from a language model.
     """
+
     def __init__(self, persona: Optional[Persona] = None) -> None:
         """
         Initializes a ToolBox instance.
@@ -22,14 +23,20 @@ class ToolBox:
         :type persona: typing.Optional[isek.agent.persona.Persona]
         """
         self.logger = logger
-        self.persona: Optional[Persona] = persona # Store persona for context in logging
+        self.persona: Optional[Persona] = (
+            persona  # Store persona for context in logging
+        )
 
         # Tool containers
-        self.all_tools: Dict[str, Callable[..., Any]] = {} # Maps tool name to callable function
+        self.all_tools: Dict[
+            str, Callable[..., Any]
+        ] = {}  # Maps tool name to callable function
 
         # Tool metadata
-        self.tool_descriptions: Dict[str, str] = {} # Maps tool name to its docstring
-        self.tool_schemas: Dict[str, Dict[str, Any]] = {} # Maps tool name to its LLM-compatible schema
+        self.tool_descriptions: Dict[str, str] = {}  # Maps tool name to its docstring
+        self.tool_schemas: Dict[
+            str, Dict[str, Any]
+        ] = {}  # Maps tool name to its LLM-compatible schema
 
     def _log(self, message: str) -> None:
         """
@@ -57,7 +64,9 @@ class ToolBox:
         name = func.__name__
 
         if name in self.all_tools:
-            self._log(f"Warning: Tool '{name}' is being re-registered. Overwriting existing tool.")
+            self._log(
+                f"Warning: Tool '{name}' is being re-registered. Overwriting existing tool."
+            )
 
         # Store the function
         self.all_tools[name] = func
@@ -66,13 +75,18 @@ class ToolBox:
         try:
             self.tool_schemas[name] = self._function_to_schema(func)
         except (ValueError, KeyError) as e:
-            self._log(f"Error generating schema for tool '{name}': {e}. Tool not fully registered.")
+            self._log(
+                f"Error generating schema for tool '{name}': {e}. Tool not fully registered."
+            )
             # Optionally, decide if an incomplete registration is allowed or if it should raise
-            if name in self.all_tools: del self.all_tools[name] # Rollback
+            if name in self.all_tools:
+                del self.all_tools[name]  # Rollback
             return
 
         # Store metadata (docstring)
-        self.tool_descriptions[name] = (func.__doc__ or f"No description provided for tool {name}.").strip()
+        self.tool_descriptions[name] = (
+            func.__doc__ or f"No description provided for tool {name}."
+        ).strip()
 
         self._log(f"Tool added: {name}")
 
@@ -121,7 +135,11 @@ class ToolBox:
         :return: A list of tool schemas. Each schema is a dictionary.
         :rtype: typing.List[typing.Dict[str, typing.Any]]
         """
-        return [self.tool_schemas[name] for name in self.all_tools.keys() if name in self.tool_schemas]
+        return [
+            self.tool_schemas[name]
+            for name in self.all_tools.keys()
+            if name in self.tool_schemas
+        ]
 
     def execute_tool_call(self, tool_call: Any, **extra_kwargs: Any) -> str:
         """
@@ -160,11 +178,15 @@ class ToolBox:
             # Ensure arguments is a string before trying to load JSON
             arguments_json = tool_call.function.arguments
             if not isinstance(arguments_json, str):
-                raise ValueError(f"Tool arguments for '{name}' must be a JSON string, got {type(arguments_json)}")
+                raise ValueError(
+                    f"Tool arguments for '{name}' must be a JSON string, got {type(arguments_json)}"
+                )
 
             args_from_llm = json.loads(arguments_json)
             if not isinstance(args_from_llm, dict):
-                raise ValueError(f"Parsed tool arguments for '{name}' must be a dictionary, got {type(args_from_llm)}")
+                raise ValueError(
+                    f"Parsed tool arguments for '{name}' must be a dictionary, got {type(args_from_llm)}"
+                )
 
             # Merge LLM args with any extra_kwargs, extra_kwargs take precedence
             final_args = {**args_from_llm, **extra_kwargs}
@@ -172,12 +194,16 @@ class ToolBox:
             self._log(f"Executing tool '{name}' with arguments: {final_args}")
             result = func(**final_args)
             # Ensure result is stringifiable for consistent return type
-            return str(result) if result is not None else "Tool executed successfully with no return value."
+            return (
+                str(result)
+                if result is not None
+                else "Tool executed successfully with no return value."
+            )
         except json.JSONDecodeError as e:
             error_msg = f"Error decoding JSON arguments for tool '{name}': {e}. Arguments: '{tool_call.function.arguments}'"
             self._log(f"Error: {error_msg}")
             return error_msg
-        except TypeError as e: # Catches issues with calling func (e.g. wrong number of args, unexpected args)
+        except TypeError as e:  # Catches issues with calling func (e.g. wrong number of args, unexpected args)
             error_msg = f"Type error executing tool '{name}': {e}. Check tool signature and provided arguments."
             self._log(f"Error: {error_msg}")
             return error_msg
@@ -214,8 +240,8 @@ class ToolBox:
             int: "integer",
             float: "number",
             bool: "boolean",
-            list: "array", # Note: This doesn't specify item types for the array.
-            dict: "object", # Note: This doesn't specify properties for the object.
+            list: "array",  # Note: This doesn't specify item types for the array.
+            dict: "object",  # Note: This doesn't specify properties for the object.
             type(None): "null",
             # For Union types, one might pick the first non-NoneType, or handle more complexly.
             # For Optional[X] (which is Union[X, NoneType]), this basic map won't inherently make it optional.
@@ -224,53 +250,75 @@ class ToolBox:
 
         try:
             signature = inspect.signature(func)
-        except ValueError as e: # e.g., for built-in functions in C
+        except ValueError as e:  # e.g., for built-in functions in C
             raise ValueError(
                 f"Failed to get signature for function '{func.__name__}': {e}"
             )
 
         parameters_properties: Dict[str, Dict[str, str]] = {}
         for param in signature.parameters.values():
-            if param.name == 'self' and param.kind == inspect.Parameter.POSITIONAL_OR_KEYWORD: # Skip self for methods
+            if (
+                param.name == "self"
+                and param.kind == inspect.Parameter.POSITIONAL_OR_KEYWORD
+            ):  # Skip self for methods
                 continue
-            if param.kind == inspect.Parameter.VAR_POSITIONAL or param.kind == inspect.Parameter.VAR_KEYWORD: # Skip *args, **kwargs
+            if (
+                param.kind == inspect.Parameter.VAR_POSITIONAL
+                or param.kind == inspect.Parameter.VAR_KEYWORD
+            ):  # Skip *args, **kwargs
                 continue
 
             param_type_annotation = param.annotation
-            json_type = "string" # Default type
+            json_type = "string"  # Default type
 
             # Handle Optional[T] and Union[T, None]
-            if hasattr(param_type_annotation, '__origin__') and param_type_annotation.__origin__ is Union:
+            if (
+                hasattr(param_type_annotation, "__origin__")
+                and param_type_annotation.__origin__ is Union
+            ):
                 # Filter out NoneType for Optional fields
-                args = [arg for arg in param_type_annotation.__args__ if arg is not type(None)]
-                if len(args) == 1: # This was Optional[X] or Union[X, None]
+                args = [
+                    arg
+                    for arg in param_type_annotation.__args__
+                    if arg is not type(None)
+                ]
+                if len(args) == 1:  # This was Optional[X] or Union[X, None]
                     param_type_annotation = args[0]
                 # else: complex Union, default to string or handle as needed
 
             if param_type_annotation is not inspect.Parameter.empty:
-                json_type = type_map.get(param_type_annotation, "string") # Default to string if type not in map
-            
+                json_type = type_map.get(
+                    param_type_annotation, "string"
+                )  # Default to string if type not in map
+
             # Basic description from annotation if possible, could be expanded
-            param_description = f"Parameter '{param.name}' of type {param_type_annotation}"
+            param_description = (
+                f"Parameter '{param.name}' of type {param_type_annotation}"
+            )
             if param.default != inspect.Parameter.empty:
                 param_description += f" (default: {param.default})"
 
-            parameters_properties[param.name] = {"type": json_type, "description": param_description}
+            parameters_properties[param.name] = {
+                "type": json_type,
+                "description": param_description,
+            }
 
         required = [
             param.name
             for param in signature.parameters.values()
-            if param.default == inspect.Parameter.empty and
-               param.name != 'self' and # Ensure self is not in required
-               param.kind != inspect.Parameter.VAR_POSITIONAL and # *args not required
-               param.kind != inspect.Parameter.VAR_KEYWORD # **kwargs not required
+            if param.default == inspect.Parameter.empty
+            and param.name != "self"  # Ensure self is not in required
+            and param.kind != inspect.Parameter.VAR_POSITIONAL  # *args not required
+            and param.kind != inspect.Parameter.VAR_KEYWORD  # **kwargs not required
         ]
 
         return {
             "type": "function",
             "function": {
                 "name": func.__name__,
-                "description": (func.__doc__ or f"No description provided for tool {func.__name__}.").strip(),
+                "description": (
+                    func.__doc__ or f"No description provided for tool {func.__name__}."
+                ).strip(),
                 "parameters": {
                     "type": "object",
                     "properties": parameters_properties,
