@@ -2,13 +2,20 @@ import inspect
 import re
 import json
 import hashlib
-from typing import Callable, Any, List, Dict, Optional, Union # Added more specific types
+from typing import (
+    Callable,
+    Any,
+    List,
+    Dict,
+    Optional,
+    Union,
+)  # Added more specific types
 
 # --- Type Aliases for Clarity ---
 JsonType = Union[str, int, float, bool, None, Dict[str, Any], List[Any]]
-FunctionSchema = Dict[str, Any] # Type alias for the schema structure
-InputListType = List[Any] # Generic list for split_list input
-ChunkedListType = List[List[Any]] # Generic chunked list for split_list output
+FunctionSchema = Dict[str, Any]  # Type alias for the schema structure
+InputListType = List[Any]  # Generic list for split_list input
+ChunkedListType = List[List[Any]]  # Generic chunked list for split_list output
 DictContent = Dict[str, Any]
 ExcludeFields = Optional[List[str]]
 
@@ -44,13 +51,13 @@ def function_to_schema(func: Callable[..., Any]) -> FunctionSchema:
         float: "number",
         bool: "boolean",
         list: "array",  # Note: Does not specify item types for the array.
-        dict: "object", # Note: Does not specify properties for the object.
-        type(None): "null", # For NoneType
+        dict: "object",  # Note: Does not specify properties for the object.
+        type(None): "null",  # For NoneType
     }
 
     try:
         signature = inspect.signature(func)
-    except ValueError as e: # e.g., for built-in functions in C
+    except ValueError as e:  # e.g., for built-in functions in C
         raise ValueError(
             f"Failed to get signature for function '{func.__name__}': {e}"
         ) from e
@@ -58,9 +65,15 @@ def function_to_schema(func: Callable[..., Any]) -> FunctionSchema:
     parameters_properties: Dict[str, Dict[str, str]] = {}
     for param in signature.parameters.values():
         # Skip 'self' for methods, and varargs/varkwargs for simplicity in schema
-        if param.name == 'self' and param.kind == inspect.Parameter.POSITIONAL_OR_KEYWORD:
+        if (
+            param.name == "self"
+            and param.kind == inspect.Parameter.POSITIONAL_OR_KEYWORD
+        ):
             continue
-        if param.kind in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD):
+        if param.kind in (
+            inspect.Parameter.VAR_POSITIONAL,
+            inspect.Parameter.VAR_KEYWORD,
+        ):
             continue
 
         param_type_annotation = param.annotation
@@ -69,51 +82,62 @@ def function_to_schema(func: Callable[..., Any]) -> FunctionSchema:
         # Handle Optional[T] (which is Union[T, NoneType]) and Union[T, None]
         # by extracting the non-NoneType part for the schema type.
         # The 'required' list will handle if the parameter itself is optional.
-        if hasattr(param_type_annotation, '__origin__') and param_type_annotation.__origin__ is Union:
+        if (
+            hasattr(param_type_annotation, "__origin__")
+            and param_type_annotation.__origin__ is Union
+        ):
             # Filter out NoneType for Optional fields
-            union_args = [arg for arg in param_type_annotation.__args__ if arg is not type(None)]
+            union_args = [
+                arg for arg in param_type_annotation.__args__ if arg is not type(None)
+            ]
             if len(union_args) == 1:  # This was Optional[X] or Union[X, None]
                 param_type_annotation = union_args[0]
             # else: complex Union, defaults to "string" or requires more sophisticated handling
 
         if param_type_annotation is not inspect.Parameter.empty:
-            json_type = type_map.get(param_type_annotation, "string") # Default to string if type not in map
-        
+            json_type = type_map.get(
+                param_type_annotation, "string"
+            )  # Default to string if type not in map
+
         # Create a basic description for the parameter
         param_description = f"Parameter '{param.name}'."
         # Adding type information to description can be helpful for LLMs
         if param_type_annotation is not inspect.Parameter.empty:
-             param_description += f" Expected type: {getattr(param_type_annotation, '__name__', str(param_type_annotation))}."
+            param_description += f" Expected type: {getattr(param_type_annotation, '__name__', str(param_type_annotation))}."
         if param.default != inspect.Parameter.empty:
             param_description += f" Default value: {param.default!r}."
 
-
-        parameters_properties[param.name] = {"type": json_type, "description": param_description.strip()}
+        parameters_properties[param.name] = {
+            "type": json_type,
+            "description": param_description.strip(),
+        }
 
     required: List[str] = [
         param.name
         for param in signature.parameters.values()
-        if param.default == inspect.Parameter.empty and
-           param.name != 'self' and # Ensure self is not in required
-           param.kind not in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD)
+        if param.default == inspect.Parameter.empty
+        and param.name != "self"  # Ensure self is not in required
+        and param.kind
+        not in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD)
     ]
 
     # Use function's docstring for description, default if none.
-    func_description = (func.__doc__ or f"No description provided for function {func.__name__}.").strip()
+    func_description = (
+        func.__doc__ or f"No description provided for function {func.__name__}."
+    ).strip()
     # Take only the first line of the docstring for a concise description, if multi-line.
     # Or process it further if a more detailed description is desired.
-    concise_description = func_description.split('\n', 1)[0]
-
+    concise_description = func_description.split("\n", 1)[0]
 
     return {
         "type": "function",
         "function": {
             "name": func.__name__,
-            "description": concise_description, # Using concise description
+            "description": concise_description,  # Using concise description
             "parameters": {
                 "type": "object",
                 "properties": parameters_properties,
-                "required": sorted(required), # Sort for consistent schema output
+                "required": sorted(required),  # Sort for consistent schema output
             },
         },
     }
@@ -135,8 +159,10 @@ def load_json_from_chat_response(chat_result: str) -> JsonType:
     """
     # Regex to find JSON content within ```json ... ``` blocks
     # re.DOTALL allows '.' to match newline characters.
-    pattern = r'```(?:json)?\s*(.*?)\s*```' # Made 'json' optional in marker, added optional whitespace
-    match = re.search(pattern, chat_result, re.DOTALL | re.IGNORECASE) # Added IGNORECASE for 'json' marker
+    pattern = r"```(?:json)?\s*(.*?)\s*```"  # Made 'json' optional in marker, added optional whitespace
+    match = re.search(
+        pattern, chat_result, re.DOTALL | re.IGNORECASE
+    )  # Added IGNORECASE for 'json' marker
 
     if match:
         json_data_str: str = match.group(1).strip()
@@ -147,7 +173,7 @@ def load_json_from_chat_response(chat_result: str) -> JsonType:
             raise json.JSONDecodeError(
                 f"Failed to parse extracted JSON content: {e.msg}. Extracted string: '{json_data_str[:200]}...'",
                 e.doc,
-                e.pos
+                e.pos,
             ) from e
     else:
         # Fallback: try to parse the whole string if no markdown block is found
@@ -156,8 +182,10 @@ def load_json_from_chat_response(chat_result: str) -> JsonType:
             return json.loads(chat_result)
         except json.JSONDecodeError:
             # If this also fails, then raise the original error.
-            raise RuntimeError(f"No JSON content found in markdown code blocks, "
-                               f"and the entire string is not valid JSON. Input: '{chat_result[:200]}...'")
+            raise RuntimeError(
+                f"No JSON content found in markdown code blocks, "
+                f"and the entire string is not valid JSON. Input: '{chat_result[:200]}...'"
+            )
 
 
 def split_list(input_list: InputListType, chunk_size: int) -> ChunkedListType:
@@ -174,9 +202,11 @@ def split_list(input_list: InputListType, chunk_size: int) -> ChunkedListType:
     """
     if not isinstance(chunk_size, int) or chunk_size <= 0:
         raise ValueError("chunk_size must be a positive integer.")
-    if not input_list: # Handle empty input list
+    if not input_list:  # Handle empty input list
         return []
-    return [input_list[i:i + chunk_size] for i in range(0, len(input_list), chunk_size)]
+    return [
+        input_list[i : i + chunk_size] for i in range(0, len(input_list), chunk_size)
+    ]
 
 
 def md5(source: str) -> str:
@@ -192,7 +222,7 @@ def md5(source: str) -> str:
     """
     if not isinstance(source, str):
         raise TypeError("Input 'source' for md5 must be a string.")
-    return hashlib.md5(source.encode('utf-8')).hexdigest()
+    return hashlib.md5(source.encode("utf-8")).hexdigest()
 
 
 def dict_md5(dict_content: DictContent, exclude_fields: ExcludeFields = None) -> str:
@@ -221,7 +251,7 @@ def dict_md5(dict_content: DictContent, exclude_fields: ExcludeFields = None) ->
 
     if exclude_fields:
         for field in exclude_fields:
-            dict_to_hash.pop(field, None) # Safely remove field if it exists
+            dict_to_hash.pop(field, None)  # Safely remove field if it exists
 
     # Serialize to JSON with sorted keys and ensure_ascii=False for consistent hashing
     # ensure_ascii=False is important for proper handling of unicode characters.
@@ -231,4 +261,4 @@ def dict_md5(dict_content: DictContent, exclude_fields: ExcludeFields = None) ->
         # This can happen if the dictionary contains non-serializable types
         raise TypeError(f"Dictionary contains non-JSON-serializable data: {e}") from e
 
-    return hashlib.md5(sorted_json_str.encode('utf-8')).hexdigest()
+    return hashlib.md5(sorted_json_str.encode("utf-8")).hexdigest()

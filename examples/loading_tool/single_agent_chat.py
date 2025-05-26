@@ -1,6 +1,5 @@
 import time
 import os
-import sys
 
 from isek.agent.single_agent import SingleAgent
 from isek.llm.openai_model import OpenAIModel
@@ -51,24 +50,27 @@ def main():
     model = OpenAIModel(
         model_name=os.environ.get("OPENAI_MODEL_NAME"),
         base_url=os.environ.get("OPENAI_BASE_URL"),
-        api_key=os.environ.get("OPENAI_API_KEY")
+        api_key=os.environ.get("OPENAI_API_KEY"),
     )
-    
+
     Eddie_info = {
-    "name": "Eddie",
-    "bio": "An experienced card game player",
-    "lore": "Your mission is to assist user with card game related questions",
-    "knowledge": "probability calculation, card game rules, card game strategies",
-    "routine": "if you receive tasks that are not related to card game, reject the task"
+        "name": "Eddie",
+        "bio": "An experienced card game player",
+        "lore": "Your mission is to assist user with card game related questions",
+        "knowledge": "probability calculation, card game rules, card game strategies",
+        "routine": "if you receive tasks that are not related to card game, reject the task",
     }
-    
+
     Eddie = Persona.from_json(Eddie_info)
-    
-    eddie_agent = SingleAgent(model=model, persona = Eddie)
-    eddie_agent.tool_manager.register_tools([combination_calculator, add, subtract, multiply, divide])
+
+    eddie_agent = SingleAgent(model=model, persona=Eddie)
+    eddie_agent.tool_manager.register_tools(
+        [combination_calculator, add, subtract, multiply, divide]
+    )
     time.sleep(2)
     eddie_agent.run_cli()
     # what is the chance of picking 4 cards and they are 4 Ace in card game
+
 
 if __name__ == "__main__":
     main()

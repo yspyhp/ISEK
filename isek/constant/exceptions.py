@@ -10,6 +10,7 @@ class NodeUnavailableError(Exception):
     :ivar message: The complete error message, including the node name and specific reason.
     :vartype message: str
     """
+
     def __init__(self, node_name: str, message: str = "Node is unavailable"):
         """
         Initializes the NodeUnavailableError.

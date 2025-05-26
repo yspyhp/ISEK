@@ -20,5 +20,5 @@ def main():
     print(f"{dobby_agent.persona.name}: {response}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,10 +1,10 @@
 import datetime
 import uuid
-from typing import Dict, List, Any, Optional, Callable, TypeVar, Union
-from isek.util.logger import logger # Assuming logger has a standard logging interface
-import json
+from typing import Dict, List, Any, Optional, TypeVar, Union
+from isek.util.logger import logger  # Assuming logger has a standard logging interface
 
-T = TypeVar('T')
+T = TypeVar("T")
+
 
 class AgentMemory:
     """
@@ -14,26 +14,28 @@ class AgentMemory:
     store, a queue for scheduled tasks, and internal state variables that
     track the agent's status and goals.
     """
-    
+
     def __init__(self):
         """
         Initializes the agent's memory systems.
 
         Sets up the core components:
-        
+
         - ``state_variables``: A dictionary to store key-value pairs representing the agent's current state.
         - ``working_memory``: A list to store recent interactions or thoughts.
         - ``task_queue``: A dictionary to manage tasks, their status, and priority.
         - ``knowledge_store``: A dictionary to store learned information or facts.
         """
-        self.logger = logger # Assuming logger is an instance of a logging object
-        
+        self.logger = logger  # Assuming logger is an instance of a logging object
+
         # Core memory components
         self.state_variables: Dict[str, Any] = {"is_registered": False, "goal": None}
         self.working_memory: List[str] = []
-        self.task_queue: Dict[str, Dict[str, Any]] = {} # task_id -> task_details
-        self.knowledge_store: Dict[str, Dict[str, str]] = {} # knowledge_id -> knowledge_details
-    
+        self.task_queue: Dict[str, Dict[str, Any]] = {}  # task_id -> task_details
+        self.knowledge_store: Dict[
+            str, Dict[str, str]
+        ] = {}  # knowledge_id -> knowledge_details
+
     def log_operation(self, operation_name: str, details: str) -> None:
         """
         Logs a memory operation using the configured logger.
@@ -45,7 +47,7 @@ class AgentMemory:
         """
         if self.logger:
             self.logger.debug(f"Memory: {operation_name} - {details}")
-    
+
     def generate_timestamp(self) -> str:
         """
         Generates a current timestamp string.
@@ -56,7 +58,7 @@ class AgentMemory:
         :rtype: str
         """
         return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
+
     def generate_unique_id(self) -> str:
         """
         Generates a short unique ID.
@@ -67,7 +69,7 @@ class AgentMemory:
         :rtype: str
         """
         return str(uuid.uuid4())[:8]
-    
+
     # --- State variable methods ---
     def set_state_variable(self, variable_name: str, value: Any) -> str:
         """
@@ -83,8 +85,10 @@ class AgentMemory:
         self.state_variables[variable_name] = value
         self.log_operation("set_state_variable", f"{variable_name}: {value}")
         return f"State variable '{variable_name}' set to '{value}'"
-    
-    def get_state_variable(self, variable_name: str, default: T = None) -> Union[Any, T]:
+
+    def get_state_variable(
+        self, variable_name: str, default: T = None
+    ) -> Union[Any, T]:
         """
         Retrieves the value of a state variable.
 
@@ -97,7 +101,7 @@ class AgentMemory:
         :rtype: typing.Union[typing.Any, T]
         """
         return self.state_variables.get(variable_name, default)
-    
+
     def get_all_state_variables(self) -> Dict[str, Any]:
         """
         Retrieves all current state variables and their values.
@@ -105,9 +109,11 @@ class AgentMemory:
         :return: A dictionary containing all state variables.
         :rtype: typing.Dict[str, typing.Any]
         """
-        self.log_operation("get_all_state_variables", f"count: {len(self.state_variables)}")
+        self.log_operation(
+            "get_all_state_variables", f"count: {len(self.state_variables)}"
+        )
         return self.state_variables.copy()
-    
+
     # --- Working memory methods ---
     def store_memory_item(self, content: str) -> str:
         """
@@ -121,9 +127,11 @@ class AgentMemory:
         :rtype: str
         """
         self.working_memory.append(content)
-        self.log_operation("store_memory_item", f"item: {content[:50]}...") # Log truncated content
-        return f"Memory item stored"
-    
+        self.log_operation(
+            "store_memory_item", f"item: {content[:50]}..."
+        )  # Log truncated content
+        return "Memory item stored"
+
     def get_recent_memory_items(self, count: int = 4) -> List[str]:
         """
         Retrieves the most recent items from working memory.
@@ -135,8 +143,10 @@ class AgentMemory:
         """
         if len(self.working_memory) > count:
             return self.working_memory[-count:]
-        return self.working_memory.copy() # Return a copy to prevent external modification
-    
+        return (
+            self.working_memory.copy()
+        )  # Return a copy to prevent external modification
+
     # --- Task queue methods ---
     def create_task(self, task_description: str, priority: int = 1) -> str:
         """
@@ -158,11 +168,11 @@ class AgentMemory:
             "description": task_description,
             "created_at": self.generate_timestamp(),
             "completed": False,
-            "priority": priority
+            "priority": priority,
         }
         self.log_operation("create_task", f"id: {task_id}, task: {task_description}")
         return task_id
-    
+
     def mark_task_completed(self, task_id: str) -> bool:
         """
         Marks a specified task in the queue as completed.
@@ -181,7 +191,7 @@ class AgentMemory:
             return True
         self.log_operation("mark_task_completed", f"Task ID not found: {task_id}")
         return False
-    
+
     def get_pending_tasks(self) -> Dict[str, Dict[str, Any]]:
         """
         Retrieves all tasks that are currently not marked as completed.
@@ -191,12 +201,13 @@ class AgentMemory:
         :rtype: typing.Dict[str, typing.Dict[str, typing.Any]]
         """
         pending = {
-            task_id: task_info for task_id, task_info in self.task_queue.items() 
+            task_id: task_info
+            for task_id, task_info in self.task_queue.items()
             if not task_info.get("completed", False)
         }
         self.log_operation("get_pending_tasks", f"count: {len(pending)}")
         return pending
-    
+
     def get_all_tasks(self) -> Dict[str, Dict[str, Any]]:
         """
         Retrieves all tasks from the queue, both pending and completed.
@@ -205,8 +216,8 @@ class AgentMemory:
                  values are dictionaries of task details.
         :rtype: typing.Dict[str, typing.Dict[str, typing.Any]]
         """
-        return self.task_queue.copy() # Return a copy
-    
+        return self.task_queue.copy()  # Return a copy
+
     # --- Knowledge store methods ---
     def store_knowledge(self, topic: str, content: str) -> str:
         """
@@ -226,11 +237,11 @@ class AgentMemory:
         self.knowledge_store[knowledge_id] = {
             "topic": topic,
             "content": content,
-            "created_at": self.generate_timestamp()
+            "created_at": self.generate_timestamp(),
         }
         self.log_operation("store_knowledge", f"id: {knowledge_id}, topic: {topic}")
         return knowledge_id
-    
+
     def retrieve_knowledge(self, topic: str) -> Optional[str]:
         """
         Retrieves knowledge content associated with a specific topic.
@@ -248,14 +259,17 @@ class AgentMemory:
         :rtype: typing.Optional[str]
         """
         # Search existing knowledge
-        for k_id, item in self.knowledge_store.items(): # k_id is not used here, could be `_`
+        for (
+            k_id,
+            item,
+        ) in self.knowledge_store.items():  # k_id is not used here, could be `_`
             if item["topic"] == topic:
                 self.log_operation("retrieve_knowledge", f"found - topic: {topic}")
                 return item["content"]
-        
+
         self.log_operation("retrieve_knowledge", f"not found - topic: {topic}")
         return None
-    
+
     def get_all_knowledge_topics(self) -> List[str]:
         """
         Retrieves a list of all topics currently in the knowledge store.
@@ -264,7 +278,7 @@ class AgentMemory:
         :rtype: typing.List[str]
         """
         return [item["topic"] for item in self.knowledge_store.values()]
-    
+
     # --- Interaction Methods ---
     def state_interaction(self, action: str, title: str, value: Any) -> str:
         """
@@ -286,7 +300,7 @@ class AgentMemory:
         if action == "update":
             self.set_state_variable(title, value)
             return f"State updated with '{title}' as '{value}'"
-        elif action == "insert": # Functionally same as update for a dict
+        elif action == "insert":  # Functionally same as update for a dict
             self.set_state_variable(title, value)
             return f"State inserted with '{title}' as '{value}'"
         elif action == "fetch":
@@ -294,9 +308,9 @@ class AgentMemory:
         else:
             self.log_operation("state_interaction", f"Unknown action: {action}")
             return "No action is taken for state interaction due to unknown action."
-        
+
     def knowledge_interaction(self, action: str, content: str) -> str:
-        #TODO:
+        # TODO:
         # For "insert" action, the `topic` should ideally be extracted from the `content`
         # or provided as a separate parameter, rather than using `content` for both.
         """
@@ -314,20 +328,30 @@ class AgentMemory:
         :rtype: str
         """
         if action == "query":
-           retrieved_knowledge = self.retrieve_knowledge(content) # `content` is treated as topic
-           if retrieved_knowledge:
-               return f"Knowledge found for '{content}': {retrieved_knowledge}"
-           else:
-               return f"No knowledge found for topic: '{content}'"
+            retrieved_knowledge = self.retrieve_knowledge(
+                content
+            )  # `content` is treated as topic
+            if retrieved_knowledge:
+                return f"Knowledge found for '{content}': {retrieved_knowledge}"
+            else:
+                return f"No knowledge found for topic: '{content}'"
         elif action == "insert":
             # TODO: topic should be extracted from the content
-            knowledge_id = self.store_knowledge(topic=content, content=content) # Using content as topic
+            knowledge_id = self.store_knowledge(
+                topic=content, content=content
+            )  # Using content as topic
             return f"Knowledge '{content[:50]}...' inserted with ID {knowledge_id} (topic: '{content[:30]}...')"
         else:
             self.log_operation("knowledge_interaction", f"Unknown action: {action}")
             return "No action is taken for knowledge interaction due to unknown action."
-        
-    def scheduling(self, option: str, id: Optional[str] = None, task: Optional[str] = None, finished: bool = False) -> str:
+
+    def scheduling(
+        self,
+        option: str,
+        id: Optional[str] = None,
+        task: Optional[str] = None,
+        finished: bool = False,
+    ) -> str:
         """
         Manages the agent's task schedule.
 
@@ -353,8 +377,10 @@ class AgentMemory:
             if task is None:
                 return "Task description cannot be None for 'add' option."
             task_id_created = self.create_task(task)
-            return f"Task '{task}' added to your schedule. Task ID is {task_id_created}."
-        
+            return (
+                f"Task '{task}' added to your schedule. Task ID is {task_id_created}."
+            )
+
         elif option == "complete":
             if id is None:
                 return "Task ID cannot be None for 'complete' option."
@@ -362,11 +388,15 @@ class AgentMemory:
                 # The original code used 'task_id' here, which was not defined in this scope.
                 # It should probably refer to 'id' or fetch the task description.
                 # For now, let's use 'id' as the identifier.
-                task_description = self.task_queue.get(id, {}).get("description", "Unknown task")
+                task_description = self.task_queue.get(id, {}).get(
+                    "description", "Unknown task"
+                )
                 return f"Task '{task_description}' (ID: {id}) marked as completed in your schedule."
             else:
-                return f"Failed to mark task with ID '{id}' as completed (task not found)."
-        
+                return (
+                    f"Failed to mark task with ID '{id}' as completed (task not found)."
+                )
+
         elif option == "fetch":
             return f"Your schedule is {str(self.get_all_tasks())}"
         else:

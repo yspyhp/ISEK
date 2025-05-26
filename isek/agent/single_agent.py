@@ -1,6 +1,6 @@
 import threading
 from isek.agent.abstract_agent import AbstractAgent
-from typing import Any # Added for **kwargs type hint
+from typing import Any  # Added for **kwargs type hint
 
 
 class SingleAgent(AbstractAgent):
@@ -13,10 +13,7 @@ class SingleAgent(AbstractAgent):
     the :class:`~isek.agent.abstract_agent.AbstractAgent`.
     """
 
-    def __init__(
-            self,
-            **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         """
         Initializes the SingleAgent.
 
