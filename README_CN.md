@@ -1,7 +1,7 @@
 
 <!-- Banner Image -->
 <p align="center">
-  <img src="assets/banner.png" alt="Isek Banner" width="100%" />
+  <img src="assets/banner_cn.png" alt="Isek Banner" width="100%" />
 </p>
 
 <h1 align="center">Isek：去中心化的 Agent-to-Agent (A2A) 网络</h1>
@@ -135,7 +135,7 @@ isek/
 
 - 💬 通过 [GitHub Issues](https://github.com/your-repo/issues) 提出建议或问题
 - 📧 联系我们：[team@isek.xyz](mailto:team@isek.xyz)
-- 📄 阅读 [贡献指南](CONTRIBUTION.md)
+- 📄 阅读 [贡献指南](CONTRIBUTING.md)
 
 ---
 
