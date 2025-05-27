@@ -135,7 +135,7 @@ isek/
 
 - 💬 通过 [GitHub Issues](https://github.com/your-repo/issues) 提出建议或问题
 - 📧 联系我们：[team@isek.xyz](mailto:team@isek.xyz)
-- 📄 阅读 [贡献指南](CONTRIBUTION.md)
+- 📄 阅读 [贡献指南](CONTRIBUTING.md)
 
 ---
 
