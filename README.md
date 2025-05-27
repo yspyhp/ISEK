@@ -133,7 +133,7 @@ We welcome collaborators, researchers, and early adopters!
 
 * 💬 Open issues or suggestions via [GitHub Issues](https://github.com/your-repo/issues)
 * 📧 Contact us directly: [team@isek.xyz](mailto:team@isek.xyz)
-* 📄 See our [Contribution Guidelines](CONTRIBUTION.md)
+* 📄 See our [Contribution Guidelines](CONTRIBUTING.md)
 
 ---
 
