@@ -33,8 +33,9 @@ dependencies = [
     "pre-commit",
     "etcd3gw",
     "mypy",
-    "litellm"
-
+    "litellm",
+    "a2a-sdk",
+    "uvicorn"
 ]
 
 [project.scripts]
