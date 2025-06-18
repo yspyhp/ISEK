@@ -4,7 +4,7 @@ from typing import Optional, Dict, Any  # Added Any
 import requests  # type: ignore # If requests doesn't have stubs or for explicit ignoring
 from requests.exceptions import RequestException  # For better error handling
 
-from isek.util.logger import logger  # Assuming logger is configured
+from isek.utils.logger import logger  # Assuming logger is configured
 from isek.node.registry import Registry  # Assuming Registry is an ABC or base class
 
 # Type alias for node metadata and node info

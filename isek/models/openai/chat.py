@@ -3,9 +3,9 @@
 import time
 import os
 import json
-from isek.util.logger import logger  # Assuming logger is configured
+from isek.utils.logger import logger  # Assuming logger is configured
 from isek.models.abstract_model import AbstractModel
-from isek.util.tools import (
+from isek.utils.tools import (
     load_json_from_chat_response,
 )  # Assuming these utilities exist
 from typing import List, Optional, Dict, Callable, Any  # Added Any

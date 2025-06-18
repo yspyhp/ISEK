@@ -3,8 +3,8 @@
 import time
 import os
 import json
-from isek.util.logger import logger
-from isek.util.tools import (
+from isek.utils.logger import logger
+from isek.utils.tools import (
     load_json_from_chat_response,
 )
 from typing import List, Optional, Dict, Callable, Any

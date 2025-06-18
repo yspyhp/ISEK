@@ -1,6 +1,6 @@
 import yaml
 import etcd3gw
-from isek.util.logger import logger, LoggerManager
+from isek.utils.logger import logger, LoggerManager
 from isek.agent.persona import Persona
 from isek.agent.single_agent import SingleAgent
 from isek.agent.distributed_agent import DistributedAgent

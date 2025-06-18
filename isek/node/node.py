@@ -14,7 +14,7 @@ from isek.node.noderpc import (
     node_pb2_grpc,
 )  # Assuming these are generated gRPC files
 from isek.node.registry import Registry
-from isek.util.logger import logger  # Assuming logger is configured
+from isek.utils.logger import logger  # Assuming logger is configured
 
 # from isek.node.node_index import NodeIndex # Commented out
 from isek.embedding.abstract_embedding import AbstractEmbedding

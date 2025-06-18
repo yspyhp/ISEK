@@ -1,4 +1,4 @@
-from isek.util.logger import LoggerManager, logger
+from isek.utils.logger import LoggerManager, logger
 
 
 def test_build(debug=False):

@@ -1,7 +1,7 @@
 import json
 import inspect
 from isek.agent.persona import Persona
-from isek.util.logger import logger  # Assuming logger has a standard logging interface
+from isek.utils.logger import logger  # Assuming logger has a standard logging interface
 from typing import List, Dict, Callable, Any, Optional, Union
 
 
