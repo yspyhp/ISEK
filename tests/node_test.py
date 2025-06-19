@@ -4,7 +4,10 @@ from isek.util.logger import LoggerManager
 from isek.node.etcd_registry import EtcdRegistry
 
 
-def node():
+LoggerManager.init(debug=True)
+
+
+def test_node_message():
     registry = EtcdRegistry(host="47.236.116.81", port=2379)
     node1 = Node(node_id="Node1", registry=registry, port=8080)
 
@@ -16,5 +19,8 @@ def node():
     print(result)
 
 
-LoggerManager.init(debug=True)
-node()
+def build_node():
+    Node().build_server()
+
+
+build_node()
