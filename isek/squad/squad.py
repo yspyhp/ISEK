@@ -1,4 +1,14 @@
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
+
+
+@dataclass
+class SquadCard:
+    name: str
+    bio: str
+    lore: str
+    knowledge: str
+    routine: str
 
 
 class Squad(ABC):
@@ -7,5 +17,5 @@ class Squad(ABC):
         pass
 
     @abstractmethod
-    def get_squad_card(self) -> dict:
+    def get_squad_card(self) -> SquadCard:
         pass

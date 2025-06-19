@@ -113,6 +113,9 @@ class LoggerManager:
 
 # --- Global Logger Instance ---
 # Initialize logger on module import with default non-debug settings.
+# import logging
+#
+# logging.disable(logging.CRITICAL)
 LoggerManager.init(debug=False)
 
 # Provide a globally accessible logger instance from this module.

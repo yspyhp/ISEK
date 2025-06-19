@@ -1,20 +1,17 @@
 import threading
-
-# import faiss # Commented out as per original
-import uuid  # type: ignore # If grpc stubs are missing
-from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional  # Added Optional, List
-
-# from isek.node.node_index import NodeIndex # Commented out
+import uuid
+from abc import ABC
+from typing import Dict, Any, Optional
+from isek.constant.exceptions import NodeUnavailableError
 from isek.node.default_registry import DefaultRegistry
 from isek.node.registry import Registry
+from isek.protocol.a2a_protocol import A2AProtocol
+from isek.protocol.protocol import Protocol
 from isek.squad.squad import Squad
-from isek.util.logger import logger  # Assuming logger is configured
+from isek.squad.default_squad import DefaultSquad
+from isek.util.logger import logger
 
-# import numpy as np # Commented out as per original
-
-# Type alias for node information stored in self.all_nodes
-NodeDetails = Dict[str, Any]  # e.g., {"host": str, "port": int, "metadata": dict}
+NodeDetails = Dict[str, Any]
 
 
 class Node(ABC):
@@ -23,6 +20,7 @@ class Node(ABC):
         host: str = "localhost",
         port: int = 8080,
         node_id: Optional[str] = None,
+        protocol: Optional[Protocol] = None,
         registry: Optional[Registry] = None,
         squad: Optional[Squad] = None,
         **kwargs: Any,  # To absorb any extra arguments
@@ -39,26 +37,50 @@ class Node(ABC):
         self.node_id: str = node_id
         self.all_nodes: Dict[str, NodeDetails] = {}
         self.p2p = False
-        self.registry: Registry = (
-            registry if registry is not None else DefaultRegistry()
+        self.registry = registry or DefaultRegistry()
+        self.squad = squad or DefaultSquad()
+        self.protocol = protocol or A2AProtocol(
+            host=self.host, port=self.port, squad=self.squad
         )
-        self.squad = squad
 
-    # def with_p2p(self):
-    #     self.p2p = True
-    #     return self
+    def send_message(self, receiver_node_id: str, message: str, retry_count: int = 3):
+        current_retry = 0
+        while current_retry < retry_count:
+            try:
+                receiver_node_details = self.all_nodes.get(receiver_node_id)
+                if not receiver_node_details:
+                    # Refresh nodes once if not found, in case cache is stale.
+                    logger.warning(
+                        f"Receiver node '{receiver_node_id}' not found in local cache. Refreshing node list once."
+                    )
+                    self.__refresh_nodes()
+                    receiver_node_details = self.all_nodes.get(receiver_node_id)
+                    if not receiver_node_details:
+                        raise NodeUnavailableError(
+                            receiver_node_id,
+                            "Node not found in registry after refresh.",
+                        )
+                return self.protocol.send_message(
+                    receiver_node_details["metadata"]["url"], message
+                )
+            except Exception as e:
+                logger.exception(
+                    f"Attempt {current_retry + 1}/{retry_count}: Unexpected error sending message to "
+                    f"node '{receiver_node_id}'. Message: '{message}'. Error: {e}",
+                    exc_info=True,
+                )
 
-    def attach(self, squad):
-        self.squad = squad
-        return self
+            current_retry += 1
 
-    @abstractmethod
-    def bootstrap_server(self):
-        pass
+        logger.error(
+            f"Failed to send message to node '{receiver_node_id}' after {retry_count} retries."
+        )
+        return f"Error: Message delivery to '{receiver_node_id}' failed after {retry_count} attempts."
 
     def build_server(self, daemon: bool = False) -> None:
         if self.registry and self.squad:
-            node_metadata = self.squad.get_squad_card()
+            node_metadata = self.squad.get_squad_card().__dict__
+            node_metadata["url"] = f"http://{self.host}:{self.port}"
             self.registry.register_node(
                 node_id=self.node_id,
                 host=self.host,
@@ -68,9 +90,11 @@ class Node(ABC):
             self.__bootstrap_heartbeat()  # Starts the recurring heartbeat
 
         if not daemon:
-            self.bootstrap_server()
+            self.protocol.bootstrap_server()
         else:
-            server_thread = threading.Thread(target=self.bootstrap_server, daemon=True)
+            server_thread = threading.Thread(
+                target=self.protocol.bootstrap_server, daemon=True
+            )
             server_thread.start()
 
     def __bootstrap_heartbeat(self) -> None:
@@ -128,17 +152,6 @@ class Node(ABC):
                 logger.debug(
                     f"Node list for '{self.node_id}' remains unchanged. Count: {len(self.all_nodes)}."
                 )
-
-            # TODO: Implement node index building if self.embedding and NodeIndex are available.
-            # The commented section for Faiss index:
-            # if self.node_index and current_available_nodes: # Assuming self.node_index is an instance of NodeIndex
-            #     try:
-            #         # This implies NodeIndex.compare_and_build needs the full node info
-            #         # and handles extraction of vectors and building the index.
-            #         self.node_index.compare_and_build(current_available_nodes)
-            #         logger.debug("Node index rebuild finished based on refreshed nodes.")
-            #     except Exception as e_idx:
-            #         logger.error(f"Error rebuilding node index: {e_idx}", exc_info=True)
         except Exception as e:
             # This exception is from self.registry.get_available_nodes()
             logger.error(
@@ -147,4 +160,4 @@ class Node(ABC):
             # self.all_nodes might become stale if this fails repeatedly.
 
     def stop_server(self) -> None:
-        pass
+        self.protocol.stop_server()
