@@ -1,9 +1,14 @@
 from isek.util.logger import LoggerManager, logger
 
 
-def test_build(debug=False):
-    LoggerManager.init(debug=debug)
-
-    logger.info("Logger initialized with debug mode: {}".format(debug))
+def build():
+    # LoggerManager.init(debug=debug)
+    level = "NONE"
+    LoggerManager.init(level=level)
+    logger.info("Logger initialized with debug mode: {}".format(level))
+    logger.print("This is a print message")
     logger.debug("This is a debug message")
     logger.info("This is an info message")
+
+
+build()
