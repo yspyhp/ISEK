@@ -34,7 +34,7 @@ dependencies = [
     "etcd3gw",
     "mypy",
     "litellm",
-    "a2a-sdk",
+    "a2a-sdk>=0.2.8",
     "uvicorn"
 ]
 
