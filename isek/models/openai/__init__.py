@@ -1,4 +1,4 @@
-from isek.models.openai.chat import OpenAIModel
+from isek.models.openai.openai import OpenAIModel
 
 __all__ = [
     "OpenAIModel",

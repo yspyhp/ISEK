@@ -1,6 +1,6 @@
 from isek.agent.abstract_agent import AbstractAgent
 from isek.node.node import Node
-from isek.util.logger import logger
+from isek.utils.logger import logger
 import threading
 from typing import Any, Dict, Optional  # Added for type hinting in docstrings
 

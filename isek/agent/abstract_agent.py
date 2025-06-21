@@ -12,7 +12,7 @@ from isek.agent.toolbox import ToolBox
 import time
 
 # add logging
-from isek.util.logger import logger
+from isek.utils.logger import logger
 
 
 class AbstractAgent(ABC):

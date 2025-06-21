@@ -1,4 +1,4 @@
-from isek.util.logger import logger
+from isek.utils.logger import logger
 import json
 from typing import Dict, Any, List  # Added for type hinting
 

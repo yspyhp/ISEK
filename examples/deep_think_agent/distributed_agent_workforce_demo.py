@@ -4,7 +4,7 @@ import numpy as np
 from isek.agent.distributed_agent import DistributedAgent
 from isek.node.isek_center_registry import IsekCenterRegistry
 from isek.agent.persona import Persona
-from isek.util.logger import logger
+from isek.utils.logger import logger
 from isek.models import OpenAIModel
 from isek.models.litellm.chat import LLM
 from dotenv import load_dotenv

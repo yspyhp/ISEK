@@ -1,7 +1,7 @@
 import datetime
 import uuid
 from typing import Dict, List, Any, Optional, TypeVar, Union
-from isek.util.logger import logger  # Assuming logger has a standard logging interface
+from isek.utils.logger import logger  # Assuming logger has a standard logging interface
 
 T = TypeVar("T")
 
