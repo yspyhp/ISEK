@@ -20,20 +20,19 @@ from a2a.types import (
 from a2a.utils import new_agent_text_message
 
 from isek.protocol.protocol import Protocol
-from isek.squad.default_squad import DefaultSquad
-from isek.squad.squad import Squad
+from isek.team.team import Team
 
 
 class DefaultAgentExecutor(AgentExecutor):
-    def __init__(self, url: str, squad: Squad):
+    def __init__(self, url: str, team: Team):
         self.url = url
-        self.squad = squad
+        self.team = team
 
     def get_a2a_agent_card(self) -> AgentCard:
-        squad_card = self.squad.get_squad_card()
+        team_card = self.team.get_team_card()
         return AgentCard(
-            name=squad_card.name,
-            description=f"bio:{squad_card.bio}\nlore:{squad_card.lore}\nknowledge:{squad_card.knowledge}",
+            name=team_card.name,
+            description=f"bio:{team_card.bio}\nlore:{team_card.lore}\nknowledge:{team_card.knowledge}",
             url=self.url,
             version="1.0.0",
             defaultInputModes=["text"],
@@ -48,7 +47,8 @@ class DefaultAgentExecutor(AgentExecutor):
         context: RequestContext,
         event_queue: EventQueue,
     ) -> None:
-        result = self.squad.run(prompt=context.message)
+        prompt = str(context.message) if context.message else ""
+        result = self.team.run(prompt=prompt)
         await event_queue.enqueue_event(new_agent_text_message(result))
 
     async def cancel(self, context: RequestContext, event_queue: EventQueue) -> None:
@@ -61,16 +61,16 @@ class A2AProtocol(Protocol):
         a2a_application: Optional[JSONRPCApplication] = None,
         host: str = "localhost",
         port: int = 8080,
-        squad: Optional[Squad] = None,
+        team: Optional[Team] = None,
         **kwargs: Any,
     ):
         super().__init__(
             host=host,
             port=port,
-            squad=squad,
+            team=team,
             **kwargs,
         )
-
+        self.team = team
         if a2a_application:
             self.url = a2a_application.agent_card.url
             self.a2a_application = a2a_application
@@ -104,10 +104,10 @@ class A2AProtocol(Protocol):
         ]["text"]
 
     def build_a2a_application(self) -> JSONRPCApplication:
-        if not self.squad or not isinstance(self.squad, Squad):
-            return self.default_a2a_application()
+        if not self.team or not isinstance(self.team, Team):
+            raise ValueError("A Team must be provided to the A2AProtocol.")
         else:
-            agent_executor = DefaultAgentExecutor(self.url, self.squad)
+            agent_executor = DefaultAgentExecutor(self.url, self.team)
             request_handler = DefaultRequestHandler(
                 agent_executor=agent_executor,
                 task_store=InMemoryTaskStore(),
@@ -119,9 +119,9 @@ class A2AProtocol(Protocol):
             )
 
     def default_a2a_application(self):
-        if not self.squad:
-            self.squad = DefaultSquad()
-        agent_executor = DefaultAgentExecutor(self.url, self.squad)
+        if not self.team:
+            raise ValueError("A Team must be provided to the A2AProtocol.")
+        agent_executor = DefaultAgentExecutor(self.url, self.team)
         request_handler = DefaultRequestHandler(
             agent_executor=agent_executor,
             task_store=InMemoryTaskStore(),

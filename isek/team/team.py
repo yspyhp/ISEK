@@ -12,6 +12,15 @@ from isek.utils.log import log_debug, set_log_level_to_debug
 
 
 @dataclass
+class TeamCard:
+    name: str
+    bio: str
+    lore: str
+    knowledge: str
+    routine: str
+
+
+@dataclass
 class Team:
     """Ultra-simplified Team class that coordinates multiple agents."""
 
@@ -53,37 +62,54 @@ class Team:
             log_debug(f"Team mode: {self.mode}")
             log_debug(f"Number of members: {len(self.members)}")
 
-    def run(
-        self, message: str, user_id: str = "default", session_id: Optional[str] = None
-    ) -> str:
-        """Run the team with a message and return the response."""
+    def run(self, prompt: str) -> str:
+        """
+        Runs the team with a simple prompt.
+        For node-based interaction, this simplifies the interface.
+        It defaults to using the 'coordinate' mode for multi-agent response.
+        """
         if not self.members:
             raise ValueError("Team must have at least one member")
 
-        # Generate session ID if not provided
-        if session_id is None:
-            session_id = str(uuid4())
-
         if self.debug_mode:
-            log_debug(f"Team run started - Session: {session_id}, User: {user_id}")
-            log_debug(f"Team mode: {self.mode}")
-            log_debug(f"Message: {message}")
+            log_debug(f"Team run started with prompt: {prompt}")
 
-        # Handle different team modes
-        if self.mode == "route":
-            return self._run_route_mode(message, user_id, session_id)
-        elif self.mode == "coordinate":
-            return self._run_coordinate_mode(message, user_id, session_id)
-        elif self.mode == "collaborate":
-            return self._run_collaborate_mode(message, user_id, session_id)
-        else:
-            raise ValueError(f"Unknown team mode: {self.mode}")
+        # For simplicity, we delegate to the first member if there's only one.
+        if len(self.members) == 1 and isinstance(self.members[0], Agent):
+            return self.members[0].run(
+                prompt, user_id="node_user", session_id=str(uuid4())
+            )
+
+        # If multiple members, use the coordinate mode logic.
+        return self._run_coordinate_mode(prompt, "node_user", str(uuid4()))
+
+    def get_team_card(self) -> TeamCard:
+        """
+        Provide metadata about the team for discovery purposes.
+        """
+        routine_str = ""
+        if isinstance(self.instructions, list):
+            routine_str = "\n".join(self.instructions)
+        elif isinstance(self.instructions, str):
+            routine_str = self.instructions
+
+        return TeamCard(
+            name=self.name or "Unnamed Team",
+            bio=self.description or "No description",
+            lore="This is a team of agents.",
+            knowledge="",  # Knowledge is specific to agents, so leave blank for team.
+            routine=routine_str,
+        )
 
     def _run_route_mode(self, message: str, user_id: str, session_id: str) -> str:
         """Route the message to the most appropriate team member."""
         if self.model is None:
             # Simple routing: use the first member
-            return self.members[0].run(message, user_id, session_id)
+            member = self.members[0]
+            if isinstance(member, Agent):
+                return member.run(message, user_id, session_id)
+            else:  # It's a Team
+                return member.run(message)
 
         # Use the team model to decide which member to route to
         routing_prompt = self._build_routing_prompt(message)
@@ -101,7 +127,11 @@ class Team:
 
         # Simple routing logic: route to first member for now
         # In a more sophisticated implementation, you'd parse the routing decision
-        return self.members[0].run(message, user_id, session_id)
+        member = self.members[0]
+        if isinstance(member, Agent):
+            return member.run(message, user_id, session_id)
+        else:  # It's a Team
+            return member.run(message)
 
     def _run_coordinate_mode(self, message: str, user_id: str, session_id: str) -> str:
         """Coordinate team members to work together on the task."""
@@ -110,7 +140,10 @@ class Team:
             results = []
             for member in self.members:
                 try:
-                    result = member.run(message, user_id, session_id)
+                    if isinstance(member, Agent):
+                        result = member.run(message, user_id, session_id)
+                    else:  # It's a Team
+                        result = member.run(message)
                     results.append(f"{member.name or 'Member'}: {result}")
                 except Exception as e:
                     if self.debug_mode:
@@ -157,7 +190,10 @@ class Team:
 Please contribute to this collaborative discussion. Build on previous responses and add your expertise."""
 
             try:
-                response = member.run(collaboration_message, user_id, session_id)
+                if isinstance(member, Agent):
+                    response = member.run(collaboration_message, user_id, session_id)
+                else:  # It's a Team
+                    response = member.run(collaboration_message)
                 conversation_history.append(
                     f"{member.name or f'Member {i+1}'}: {response}"
                 )

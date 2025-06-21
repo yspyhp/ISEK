@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Optional
 
-from isek.squad.default_squad import DefaultSquad
-from isek.squad.squad import Squad
+from isek.team.team import Team
 
 
 class Protocol(ABC):
@@ -10,10 +9,10 @@ class Protocol(ABC):
         self,
         host: str = "localhost",
         port: int = 8080,
-        squad: Optional[Squad] = None,
+        team: Optional[Team] = None,
         **kwargs: Any,
     ):
-        self.squad = squad or DefaultSquad()
+        self.team = team
         self.host = host or "localhost"
         self.port = port or 8080
 

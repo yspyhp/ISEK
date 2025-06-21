@@ -6,7 +6,10 @@ from isek.models.base import Model
 
 
 class SimpleModel(Model):
-    """Simple model implementation for testing."""
+    """Simple model implementation for testing that echoes user messages."""
+
+    def __init__(self, model_id: str = "simple-model"):
+        super().__init__(id=model_id)
 
     def invoke(self, messages: List[SimpleMessage], **kwargs) -> Any:
         """Simple mock implementation."""

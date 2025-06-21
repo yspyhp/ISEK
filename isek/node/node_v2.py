@@ -7,8 +7,7 @@ from isek.node.default_registry import DefaultRegistry
 from isek.node.registry import Registry
 from isek.protocol.a2a_protocol import A2AProtocol
 from isek.protocol.protocol import Protocol
-from isek.squad.squad import Squad
-from isek.squad.default_squad import DefaultSquad
+from isek.team.team import Team
 from isek.util.logger import logger
 
 NodeDetails = Dict[str, Any]
@@ -22,7 +21,7 @@ class Node(ABC):
         node_id: Optional[str] = None,
         protocol: Optional[Protocol] = None,
         registry: Optional[Registry] = None,
-        squad: Optional[Squad] = None,
+        team: Optional[Team] = None,
         **kwargs: Any,  # To absorb any extra arguments
     ):
         if not host:
@@ -38,9 +37,9 @@ class Node(ABC):
         self.all_nodes: Dict[str, NodeDetails] = {}
         self.p2p = False
         self.registry = registry or DefaultRegistry()
-        self.squad = squad or DefaultSquad()
+        self.team = team
         self.protocol = protocol or A2AProtocol(
-            host=self.host, port=self.port, squad=self.squad
+            host=self.host, port=self.port, team=self.team
         )
 
     def send_message(self, receiver_node_id: str, message: str, retry_count: int = 3):
@@ -78,8 +77,8 @@ class Node(ABC):
         return f"Error: Message delivery to '{receiver_node_id}' failed after {retry_count} attempts."
 
     def build_server(self, daemon: bool = False) -> None:
-        if self.registry and self.squad:
-            node_metadata = self.squad.get_squad_card().__dict__
+        if self.registry and self.team:
+            node_metadata = self.team.get_team_card().__dict__
             node_metadata["url"] = f"http://{self.host}:{self.port}"
             self.registry.register_node(
                 node_id=self.node_id,
