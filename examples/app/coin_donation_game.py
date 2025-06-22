@@ -1,27 +1,23 @@
 import time
 import os
 
-from isek.models.openai.chat import OpenAIModel
-from isek.agent.persona import Persona
-from isek.node.isek_center_registry import IsekCenterRegistry
-from isek.agent.distributed_agent import DistributedAgent
+from isek.models.openai.openai import OpenAIModel
+from isek.agent.agent import Agent
 from dotenv import load_dotenv
 
 
 load_dotenv()
 
 model = OpenAIModel(
-    model_name=os.environ.get("OPENAI_MODEL_NAME"),
+    model_id=os.environ.get("OPENAI_MODEL_NAME"),
     base_url=os.environ.get("OPENAI_BASE_URL"),
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
 
 P1_info = {
     "name": "Doe",
-    "bio": "An experienced game player",
-    "lore": "Your mission is to win the game",
-    "knowledge": "probability calculation, game theory, game strategies",
-    "routine": [
+    "description": "An experienced game player",
+    "instructions": [
         "you are a player, you need to win the game",
         "you are asked to donate at least one coin each round",
         "if you donate the least coins, you will have to donate extra 10 coins as punishment",
@@ -34,10 +30,8 @@ P1_info = {
 
 P2_info = {
     "name": "Eddie",
-    "bio": "An experienced game player",
-    "lore": "Your mission is to win the game",
-    "knowledge": "probability calculation, game theory, game strategies",
-    "routine": [
+    "description": "An experienced game player",
+    "instructions": [
         "you are a player, you need to win the game",
         "you are asked to donate at least one coin each round",
         "if you donate the least coins, you will have to donate extra 10 coins as punishment",
@@ -51,10 +45,8 @@ P2_info = {
 
 P3_info = {
     "name": "Bob",
-    "bio": "An experienced game player",
-    "lore": "Your mission is to win the game",
-    "knowledge": "probability calculation, game theory, game strategies",
-    "routine": [
+    "description": "An experienced game player",
+    "instructions": [
         "you are a player, you need to win the game",
         "you are asked to donate at least one coin each round",
         "if you donate the least coins, you will have to donate extra 10 coins as punishment",
@@ -68,10 +60,8 @@ P3_info = {
 
 P4_info = {
     "name": "Alice",
-    "bio": "An experienced game player",
-    "lore": "Your mission is to win the game",
-    "knowledge": "probability calculation, game theory, game strategies",
-    "routine": [
+    "description": "An experienced game player",
+    "instructions": [
         "you are a player, you need to win the game",
         "you are asked to donate at least one coin each round",
         "if you donate the least coins, you will have to donate extra 10 coins as punishment",
@@ -86,21 +76,15 @@ P4_info = {
 info_array = [P1_info, P2_info, P3_info, P4_info]
 
 Agent_array = []
-registry = registry = IsekCenterRegistry()
 for index, player in enumerate(info_array):
-    # print(player)
-    persona_temp = Persona.from_json(player)
-
-    Agent_temp = DistributedAgent(
-        persona=persona_temp,
-        host="localhost",
-        port=int(8080 + index),
-        registry=registry,
+    agent = Agent(
+        name=player["name"],
+        description=player["description"],
+        instructions=player["instructions"],
         model=model,
-        deepthink_enabled=True,
+        debug_mode=False,
     )
-    Agent_temp.build(daemon=True)
-    Agent_array.append(Agent_temp)
+    Agent_array.append(agent)
 
 time.sleep(2)
 
