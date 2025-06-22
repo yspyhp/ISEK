@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Optional
 
-from isek.team.base import Team
+from isek.adapter.base import Adapter
 
 
 class Protocol(ABC):
@@ -9,10 +9,10 @@ class Protocol(ABC):
         self,
         host: str = "localhost",
         port: int = 8080,
-        team: Optional[Team] = None,
+        adapter: Optional[Adapter] = None,
         **kwargs: Any,
     ):
-        self.team = team
+        self.adapter = adapter
         self.host = host or "localhost"
         self.port = port or 8080
 
