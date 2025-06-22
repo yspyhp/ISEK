@@ -4,7 +4,7 @@ from typing import Optional, List  # Changed to List for Python 3.9+ type hintin
 from openai import OpenAI  # Assuming this is the official openai package
 
 from isek.embedding.abstract_embedding import AbstractEmbedding
-from isek.utils.logger import logger  # Assuming logger is configured
+from isek.util.logger import logger  # Assuming logger is configured
 from isek.utils.tools import split_list  # Assuming this utility function exists
 
 

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Optional
 
-from isek.team.team import Team
+from isek.team.base import Team
 
 
 class Protocol(ABC):

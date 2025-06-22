@@ -6,7 +6,7 @@ from isek.models.openai import OpenAIModel
 from isek.tools.calculator import calculator_tools
 from isek.memory.memory import Memory as SimpleMemory
 from isek.node.node_v2 import Node
-from isek.team.team import Team
+from isek.team.isek_team import IsekTeam
 from isek.util.logger import LoggerManager, PRINT_LOG_LEVEL
 
 # Load environment variables from .env file
@@ -40,7 +40,7 @@ def main():
     print("Agent initialized.")
 
     # 2. Create a Team and add the Agent as a member
-    agent_team = Team(
+    agent_team = IsekTeam(
         name="LV9 Agent Team",
         description="A team hosting a single, powerful agent.",
         members=[memory_tool_agent]

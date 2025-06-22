@@ -7,7 +7,7 @@ from isek.node.default_registry import DefaultRegistry
 from isek.node.registry import Registry
 from isek.protocol.a2a_protocol import A2AProtocol
 from isek.protocol.protocol import Protocol
-from isek.team.team import Team
+from isek.team.base import Team
 from isek.util.logger import logger
 
 NodeDetails = Dict[str, Any]

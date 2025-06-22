@@ -3,7 +3,7 @@ from isek.models.openai.openai import OpenAIModel
 from isek.memory.memory import Memory
 from isek.tools.calculator import calculator_tools
 from isek.tools.toolkit import Toolkit
-from isek.team.team import Team
+from isek.team.isek_team import IsekTeam
 import dotenv
 import os
 
@@ -50,7 +50,7 @@ def test_team_modes():
         print(f"{'='*60}")
         
         # Create the team with current mode
-        team = Team(
+        team = IsekTeam(
             name=f"AI Research Team ({mode})",
             members=[agent1, agent2],
             model=team_model,
@@ -108,7 +108,7 @@ def test_simple_team():
     )
 
     # Create the team without a coordination model
-    team = Team(
+    team = IsekTeam(
         name="Simple Research Team",
         members=[agent1, agent2],
         mode="coordinate",  # Will use simple coordination since no model

@@ -6,7 +6,7 @@ from openai import OpenAI
 from openai.types.chat import ChatCompletion
 
 from isek.models.base import Model, SimpleMessage, SimpleModelResponse
-from isek.utils.logger import logger
+from isek.util.logger import logger
 
 
 class OpenAIModel(Model):

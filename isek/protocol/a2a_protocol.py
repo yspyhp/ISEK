@@ -20,7 +20,7 @@ from a2a.types import (
 from a2a.utils import new_agent_text_message
 
 from isek.protocol.protocol import Protocol
-from isek.team.team import Team
+from isek.team.base import Team
 
 
 class DefaultAgentExecutor(AgentExecutor):

@@ -1,6 +1,7 @@
+import asyncio
 from isek.node.node_v2 import Node
 from isek.util.logger import LoggerManager, PRINT_LOG_LEVEL
-from isek.team.team import Team
+from isek.team.isek_team import IsekTeam
 from isek.agent.isek.agent import Agent
 from isek.models.simpleModel import SimpleModel
 
@@ -26,7 +27,7 @@ def main():
         description="An agent that echoes back whatever it receives."
     )
     
-    echo_team = Team(
+    echo_team = IsekTeam(
         name="Echo Team",
         members=[echo_agent]
     )

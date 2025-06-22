@@ -3,7 +3,7 @@ from isek.models.openai.openai import OpenAIModel
 from isek.memory.memory import Memory
 from isek.tools.calculator import calculator_tools
 from isek.tools.toolkit import Toolkit
-from isek.team.team import Team
+from isek.team.isek_team import IsekTeam
 import dotenv
 import os
 
@@ -39,7 +39,7 @@ agent2 = Agent(
 )
 
 # Create the team
-team = Team(
+team = IsekTeam(
     name="AI Research Team",
     members=[agent1, agent2],
     model=team_model,
