@@ -21,7 +21,7 @@ from a2a.utils import new_agent_text_message
 
 from isek.protocol.protocol import Protocol
 from isek.team.base import Team
-from isek.team.simple_team import SimpleTeam
+from isek.team.echo_team import EchoTeam
 
 
 class DefaultAgentExecutor(AgentExecutor):
@@ -71,7 +71,7 @@ class A2AProtocol(Protocol):
             team=team,
             **kwargs,
         )
-        self.team = team or SimpleTeam()
+        self.team = team or EchoTeam()
         if a2a_application:
             self.url = a2a_application.agent_card.url
             self.a2a_application = a2a_application

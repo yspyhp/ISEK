@@ -70,12 +70,12 @@ OPENAI_API_KEY=your_api_key
 ### 2️⃣ Launch Agent
 
 ```python
-from isek.agent.agent import Agent
+from isek.agent.isek_agent import IsekAgent
 from isek.models.openai import OpenAIModel
 import dotenv
 dotenv.load_dotenv()
 
-agent = Agent(
+agent = IsekAgent(
     name="My Agent",
     model=OpenAIModel(model_id="gpt-4o-mini"),
     description="A helpful assistant",

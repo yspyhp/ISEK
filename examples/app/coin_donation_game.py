@@ -2,7 +2,7 @@ import time
 import os
 
 from isek.models.openai.openai import OpenAIModel
-from isek.agent.agent import Agent
+from isek.agent.isek_agent import IsekAgent
 from dotenv import load_dotenv
 
 
@@ -77,7 +77,7 @@ info_array = [P1_info, P2_info, P3_info, P4_info]
 
 Agent_array = []
 for index, player in enumerate(info_array):
-    agent = Agent(
+    agent = IsekAgent(
         name=player["name"],
         description=player["description"],
         instructions=player["instructions"],

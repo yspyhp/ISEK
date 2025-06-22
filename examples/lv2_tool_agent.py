@@ -1,11 +1,11 @@
-from isek.agent.agent import Agent
+from isek.agent.isek_agent import IsekAgent
 from isek.models.openai import OpenAIModel
 from isek.models.base import SimpleMessage
 from isek.tools.calculator import calculator_tools
 import dotenv
 dotenv.load_dotenv()
 
-agent = Agent(
+agent = IsekAgent(
     name="My Agent",
     model=OpenAIModel(model_id="gpt-4o-mini"),
     tools=[calculator_tools],

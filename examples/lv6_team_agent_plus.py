@@ -1,4 +1,4 @@
-from isek.agent.agent import Agent
+from isek.agent.isek_agent import IsekAgent
 from isek.models.openai.openai import OpenAIModel
 from isek.memory.memory import Memory
 from isek.tools.calculator import calculator_tools
@@ -26,14 +26,14 @@ def test_team_modes():
     writer_toolkit = Toolkit(tools=[])  # Writer has no tools in this example
 
     # Create team members (agents)
-    agent1 = Agent(
+    agent1 = IsekAgent(
         name="Researcher",
         description="Expert in research and analysis. Can use tools to calculate or retrieve data.",
         model=researcher_model,
         memory=researcher_memory,
         tools=[researcher_toolkit]
     )
-    agent2 = Agent(
+    agent2 = IsekAgent(
         name="Writer",
         description="Expert in writing and communication. Summarizes and presents information clearly.",
         model=writer_model,
@@ -92,14 +92,14 @@ def test_simple_team():
     writer_toolkit = Toolkit(tools=[])
 
     # Create team members (agents)
-    agent1 = Agent(
+    agent1 = IsekAgent(
         name="Researcher",
         description="Expert in research and analysis. Can use tools to calculate or retrieve data.",
         model=researcher_model,
         memory=researcher_memory,
         tools=[researcher_toolkit]
     )
-    agent2 = Agent(
+    agent2 = IsekAgent(
         name="Writer",
         description="Expert in writing and communication. Summarizes and presents information clearly.",
         model=writer_model,

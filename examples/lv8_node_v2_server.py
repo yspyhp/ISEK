@@ -2,7 +2,7 @@ import asyncio
 from isek.node.node_v2 import Node
 from isek.utils.log import log
 from isek.team.isek_team import IsekTeam
-from isek.agent.agent import Agent
+from isek.agent.isek_agent import IsekAgent
 from isek.models.simpleModel import SimpleModel
 from isek.node.etcd_registry import EtcdRegistry
 
@@ -25,7 +25,7 @@ def main():
     
     # A node must host a team to be able to respond to messages.
     # We'll create a simple team with one agent that just echoes prompts.
-    echo_agent = Agent(
+    echo_agent = IsekAgent(
         name="Echo Agent",
         model=SimpleModel(),
         description="An agent that echoes back whatever it receives."

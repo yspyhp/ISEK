@@ -1,16 +1,13 @@
-from isek.agent.agent import Agent
-from isek.models.openai import OpenAIModel
+from isek.agent.isek_agent import IsekAgent
+from isek.models.openai.openai import OpenAIModel
 from isek.models.base import SimpleMessage
 import dotenv
 dotenv.load_dotenv()
 
-agent = Agent(
+agent = IsekAgent(
     name="My Agent",
-    model=OpenAIModel(model_id="gpt-4o-mini"),
-    description="A helpful assistant",
-    instructions=["Be polite", "Provide accurate information"],
-    success_criteria="User gets a helpful response",
-    debug_mode=True
+    model=OpenAIModel(),
+    description="A simple agent that can help with various tasks.",
 )
 
 response = agent.run("hello")

@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-from isek.agent.agent import Agent
+from isek.agent.isek_agent import IsekAgent
 from isek.models.openai import OpenAIModel
 from isek.tools.calculator import calculator_tools
 from isek.memory.memory import Memory as SimpleMemory
@@ -25,7 +25,7 @@ def main():
     # 1. Create the Agent
     # This agent has both memory (to remember facts) and tools (a calculator).
     print("Initializing the memory-tool agent...")
-    memory_tool_agent = Agent(
+    memory_tool_agent = IsekAgent(
         name="LV9-Agent",
         model=OpenAIModel(
             model_id=os.getenv("OPENAI_MODEL_NAME", "gpt-4o-mini"),

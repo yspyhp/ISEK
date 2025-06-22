@@ -49,25 +49,3 @@ class Team(ABC):
             NotImplementedError: If the concrete class doesn't implement this method
         """
         pass
-
-    @property
-    @abstractmethod
-    def name(self) -> str:
-        """
-        Get the team's name.
-
-        Returns:
-            str: The team's name
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def description(self) -> str:
-        """
-        Get the team's description.
-
-        Returns:
-            str: The team's description
-        """
-        pass
