@@ -1,9 +1,6 @@
-from .base import Team, TeamCard
 from .isek_team import IsekTeam
 
 __all__ = [
-    "Team",
-    "TeamCard",
     "IsekTeam",
 ]
 
