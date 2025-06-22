@@ -6,7 +6,7 @@ from litellm import completion
 
 from isek.models.base import Model, SimpleMessage, SimpleModelResponse
 from isek.models.provider import PROVIDER_MAP, DEFAULT_PROVIDER
-from isek.utils.logger import logger
+from isek.utils.log import log
 
 
 class LiteLLMModel(Model):
@@ -62,7 +62,7 @@ class LiteLLMModel(Model):
             os.environ.get(base_url_env_key) if base_url_env_key else None
         )
 
-        logger.info(f"LiteLLMModel initialized: {self.id} (provider: {_provider})")
+        log.info(f"LiteLLMModel initialized: {self.id} (provider: {_provider})")
 
     def invoke(self, messages: List[SimpleMessage], **kwargs: Any) -> Any:
         """Invoke the LiteLLM model.
@@ -99,14 +99,14 @@ class LiteLLMModel(Model):
         # Add any other kwargs
         params.update(kwargs)
 
-        logger.debug(f"LiteLLM request: {self.id}")
+        log.debug(f"LiteLLM request: {self.id}")
 
         try:
             response = completion(**params)
-            logger.debug("LiteLLM response received")
+            log.debug("LiteLLM response received")
             return response
         except Exception as e:
-            logger.error(f"LiteLLM API error: {e}")
+            log.error(f"LiteLLM API error: {e}")
             raise
 
     async def ainvoke(self, messages: List[SimpleMessage], **kwargs: Any) -> Any:

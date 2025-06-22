@@ -1,12 +1,18 @@
+from isek.utils.log import log
 from isek.node.node_v2 import Node
-from isek.utils.logger import LoggerManager, PRINT_LOG_LEVEL
+from isek.node.etcd_registry import EtcdRegistry
+from isek.agent.agent import Agent
+from isek.models.simpleModel import SimpleModel
+import asyncio
 
 def main():
     """
     This script acts as a client to interact with the agent hosted on the server node.
     Run this script in a separate terminal after starting the lv9 server.
     """
-    LoggerManager.init(level=PRINT_LOG_LEVEL)
+    # Logging is now automatically configured.
+    # You can set the log level via the LOG_LEVEL environment variable.
+    # e.g., export LOG_LEVEL=DEBUG
 
     # Server details must match the running server script
     server_node_id = "agent_server_1"
@@ -26,6 +32,7 @@ def main():
     print("--- LV9 Agent Client ---")
     print("This client will test the agent's memory and tool use.")
     print("------------------------\n")
+    log.info("Client is ready to send messages.")
 
     # --- Test 1: Memory ---
     print("Test 1: Storing a fact in the agent's memory...")

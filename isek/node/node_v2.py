@@ -8,7 +8,7 @@ from isek.node.registry import Registry
 from isek.protocol.a2a_protocol import A2AProtocol
 from isek.protocol.protocol import Protocol
 from isek.team.base import Team
-from isek.utils.logger import logger
+from isek.utils.log import log
 
 NodeDetails = Dict[str, Any]
 
@@ -49,7 +49,7 @@ class Node(ABC):
                 receiver_node_details = self.all_nodes.get(receiver_node_id)
                 if not receiver_node_details:
                     # Refresh nodes once if not found, in case cache is stale.
-                    logger.warning(
+                    log.warning(
                         f"Receiver node '{receiver_node_id}' not found in local cache. Refreshing node list once."
                     )
                     self.__refresh_nodes()
@@ -63,7 +63,7 @@ class Node(ABC):
                     receiver_node_details["metadata"]["url"], message
                 )
             except Exception as e:
-                logger.exception(
+                log.exception(
                     f"Attempt {current_retry + 1}/{retry_count}: Unexpected error sending message to "
                     f"node '{receiver_node_id}'. Message: '{message}'. Error: {e}",
                     exc_info=True,
@@ -71,7 +71,7 @@ class Node(ABC):
 
             current_retry += 1
 
-        logger.error(
+        log.error(
             f"Failed to send message to node '{receiver_node_id}' after {retry_count} retries."
         )
         return f"Error: Message delivery to '{receiver_node_id}' failed after {retry_count} attempts."
@@ -108,9 +108,9 @@ class Node(ABC):
         """
         try:
             self.registry.lease_refresh(self.node_id)
-            logger.debug(f"Node '{self.node_id}' lease refreshed successfully.")
+            log.debug(f"Node '{self.node_id}' lease refreshed successfully.")
         except Exception as e:
-            logger.warning(
+            log.warning(
                 f"Failed to refresh lease for node '{self.node_id}': {e}. "
                 "Node might be deregistered if this persists.",
                 exc_info=True,
@@ -120,7 +120,7 @@ class Node(ABC):
         try:
             self.__refresh_nodes()
         except Exception as e:
-            logger.warning(
+            log.warning(
                 f"Failed to refresh node list for '{self.node_id}': {e}", exc_info=True
             )
 
@@ -129,7 +129,7 @@ class Node(ABC):
         timer = threading.Timer(5, self.__bootstrap_heartbeat)
         timer.daemon = True  # Allows main program to exit even if timer is active
         timer.start()
-        logger.debug(f"Node '{self.node_id}' heartbeat scheduled.")
+        log.debug(f"Node '{self.node_id}' heartbeat scheduled.")
 
     def __refresh_nodes(self) -> None:
         """
@@ -148,12 +148,12 @@ class Node(ABC):
                 #             f"Previous count: {len(self.all_nodes)}, New count: {len(current_available_nodes)}.")
                 self.all_nodes = current_available_nodes
             else:
-                logger.debug(
+                log.debug(
                     f"Node list for '{self.node_id}' remains unchanged. Count: {len(self.all_nodes)}."
                 )
         except Exception as e:
             # This exception is from self.registry.get_available_nodes()
-            logger.error(
+            log.error(
                 f"Failed to retrieve available nodes from registry: {e}", exc_info=True
             )
             # self.all_nodes might become stale if this fails repeatedly.

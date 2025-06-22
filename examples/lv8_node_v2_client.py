@@ -1,13 +1,16 @@
 import time
+from isek.utils.log import log
 from isek.node.node_v2 import Node
-from isek.utils.logger import LoggerManager, PRINT_LOG_LEVEL
+from isek.node.etcd_registry import EtcdRegistry
 
 def main():
     """
     This script acts as a client to send a message to the server node.
     Run this script in a separate terminal after starting the server.
     """
-    LoggerManager.init(level=PRINT_LOG_LEVEL)
+    # Logging is now automatically configured.
+    # You can set the log level via the LOG_LEVEL environment variable.
+    # e.g., export LOG_LEVEL=DEBUG
 
     # Define the server's details so the client knows where to send the message.
     server_node_id = "server_node_1"
@@ -27,6 +30,7 @@ def main():
     }
     
     print(f"Client node is ready. Sending a message to '{server_node_id}'...")
+    log.info("This is an example log from the client.")
 
     # Send a message from the client to the server
     message_to_send = "Hello from the client!"

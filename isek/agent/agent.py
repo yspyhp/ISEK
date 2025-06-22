@@ -7,7 +7,7 @@ from uuid import uuid4
 from isek.memory.memory import Memory, UserMemory
 from isek.models.base import Model, SimpleMessage
 from isek.tools.toolkit import Toolkit
-from isek.utils.log import log_debug, set_log_level_to_debug
+from isek.utils.log import log, LoggerManager
 
 
 @dataclass
@@ -41,8 +41,8 @@ class Agent:
 
         # Set debug mode
         if self.debug_mode:
-            set_log_level_to_debug()
-            log_debug(
+            LoggerManager.set_level("DEBUG")
+            log.debug(
                 f"Agent initialized: {self.name or 'Unnamed'} (ID: {self.agent_id})"
             )
 
@@ -97,14 +97,14 @@ class Agent:
             self._store_conversation(user_id, session_id, message, response_content)
 
         if self.debug_mode:
-            log_debug(f"Session ID: {session_id}")
-            log_debug(f"User ID: {user_id}")
-            log_debug(f"System message: {system_message}")
-            log_debug(f"Memory context: {memory_context}")
-            log_debug(f"User message: {message}")
-            log_debug(f"Model response: {response_content}")
+            log.debug(f"Session ID: {session_id}")
+            log.debug(f"User ID: {user_id}")
+            log.debug(f"System message: {system_message}")
+            log.debug(f"Memory context: {memory_context}")
+            log.debug(f"User message: {message}")
+            log.debug(f"Model response: {response_content}")
             if tools_param:
-                log_debug(f"Tools: {tools_param}")
+                log.debug(f"Tools: {tools_param}")
 
         return response_content
 
@@ -147,7 +147,7 @@ class Agent:
         self.memory.add_run(session_id, run_data)
 
         if self.debug_mode:
-            log_debug(
+            log.debug(
                 f"Stored conversation in memory for user {user_id}, session {session_id}"
             )
 

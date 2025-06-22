@@ -1,12 +1,13 @@
 import time
 from isek.node.node_v2 import Node
-from isek.utils.logger import LoggerManager, PRINT_LOG_LEVEL
+from isek.utils.log import log
 from isek.team.simple_team import SimpleTeam
 
-# Initialize logger for debug output
-LoggerManager.init(level=PRINT_LOG_LEVEL)
-
 def main():
+    # Logging is now automatically configured.
+    # You can set the log level via the LOG_LEVEL environment variable.
+    # e.g., export LOG_LEVEL=DEBUG
+
     # Create teams for the nodes
     team1 = SimpleTeam(name="Node1Team", description="Team for Node1 communication")
     team2 = SimpleTeam(name="Node2Team", description="Team for Node2 communication")
@@ -18,6 +19,7 @@ def main():
     # Start both node servers in daemon mode (background threads)
     node1.build_server(daemon=True)
     node2.build_server(daemon=True)
+    log.info("Node servers started in background.")
 
     # Give some time for servers to start and register
     time.sleep(2)

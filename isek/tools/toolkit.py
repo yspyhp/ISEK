@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional
-from isek.utils.log import log_debug
+from isek.utils.log import log
 from isek.utils.tools import function_to_schema
 
 
@@ -92,7 +92,7 @@ class Toolkit:
         )
         self.functions[tool_name] = simple_function
         if self.debug:
-            log_debug(f"[Toolkit: {self.name}] Registered function: {tool_name}")
+            log.debug(f"[Toolkit: {self.name}] Registered function: {tool_name}")
         return simple_function
 
     def get_function(self, name: str) -> Optional[SimpleFunction]:
@@ -102,9 +102,9 @@ class Toolkit:
     def list_functions(self) -> List[str]:
         """List all registered function names."""
         if self.debug:
-            log_debug(f"[Toolkit: {self.name}] Listing functions:")
+            log.debug(f"[Toolkit: {self.name}] Listing functions:")
             for fname in self.functions:
-                log_debug(f"  - {fname}")
+                log.debug(f"  - {fname}")
         return list(self.functions.keys())
 
     def execute_function(self, name: str, **kwargs) -> Any:
@@ -114,7 +114,7 @@ class Toolkit:
             raise ValueError(f"Function '{name}' not found in toolkit '{self.name}'")
         result = function.execute(**kwargs)
         if self.debug:
-            log_debug(
+            log.debug(
                 f"[Toolkit: {self.name}] Executed '{name}' with args {kwargs} -> {result}"
             )
         return result

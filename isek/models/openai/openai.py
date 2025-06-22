@@ -6,7 +6,7 @@ from openai import OpenAI
 from openai.types.chat import ChatCompletion
 
 from isek.models.base import Model, SimpleMessage, SimpleModelResponse
-from isek.utils.logger import logger
+from isek.utils.log import log
 
 
 class OpenAIModel(Model):
@@ -41,7 +41,7 @@ class OpenAIModel(Model):
 
         self.client = OpenAI(api_key=_api_key, base_url=_base_url)
 
-        logger.info(f"OpenAIModel initialized: {self.id}")
+        log.info(f"OpenAIModel initialized: {self.id}")
 
     def invoke(self, messages: List[SimpleMessage], **kwargs: Any) -> ChatCompletion:
         """Invoke the OpenAI model.
@@ -78,14 +78,14 @@ class OpenAIModel(Model):
         # Add any other kwargs
         params.update(kwargs)
 
-        logger.debug(f"OpenAI request: {self.id}")
+        log.debug(f"OpenAI request: {self.id}")
 
         try:
             response = self.client.chat.completions.create(**params)
-            logger.debug(f"OpenAI response: {response.id}")
+            log.debug(f"OpenAI response: {response.id}")
             return response
         except Exception as e:
-            logger.error(f"OpenAI API error: {e}")
+            log.error(f"OpenAI API error: {e}")
             raise
 
     async def ainvoke(

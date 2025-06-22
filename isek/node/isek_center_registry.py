@@ -4,7 +4,7 @@ from typing import Optional, Dict, Any  # Added Any
 import requests  # type: ignore # If requests doesn't have stubs or for explicit ignoring
 from requests.exceptions import RequestException  # For better error handling
 
-from isek.utils.logger import logger  # Assuming logger is configured
+from isek.utils.log import log  # Assuming logger is configured
 from isek.node.registry import Registry  # Assuming Registry is an ABC or base class
 
 # Type alias for node metadata and node info
@@ -49,7 +49,7 @@ class IsekCenterRegistry(Registry):
         # by this instance, which might be confusing if multiple nodes use
         # the same registry instance. Consider if this state is necessary at instance level.
         # For now, I'll assume it's for the node this client represents.
-        logger.info(
+        log.info(
             f"IsekCenterRegistry initialized. Center address: {self.center_address}"
         )
 
@@ -77,7 +77,7 @@ class IsekCenterRegistry(Registry):
         try:
             response_json: Dict[str, Any] = response.json()
         except json.JSONDecodeError as e:
-            logger.error(
+            log.error(
                 f"Failed to decode JSON response during {operation_name} "
                 f"from {response.url}. Response text: '{response.text[:200]}...'"
             )
@@ -89,7 +89,7 @@ class IsekCenterRegistry(Registry):
             error_message = response_json.get(
                 "message", "Unknown error from Isek Center."
             )
-            logger.error(
+            log.error(
                 f"{operation_name.capitalize()} failed at Isek Center. "
                 f"Code: {response_json.get('code')}, Message: {error_message}, "
                 f"Full response: {response_json}"
@@ -133,7 +133,7 @@ class IsekCenterRegistry(Registry):
         # self.node_info = current_node_info # If self.node_info is intended to store this
 
         try:
-            logger.debug(
+            log.debug(
                 f"Registering node '{node_id}' at {register_url} with data: {current_node_info}"
             )
             response = requests.post(
@@ -143,18 +143,18 @@ class IsekCenterRegistry(Registry):
                 response, f"register node '{node_id}'"
             )
             # Assuming response_data might contain useful info, e.g., lease ID or confirmation details
-            logger.info(
+            log.info(
                 f"Node '{node_id}' registered successfully. "
                 f"Isek Center response: {response_data.get('message', 'OK')}"
             )
         except RequestException as e:
-            logger.error(
+            log.error(
                 f"Failed to register node '{node_id}' due to a network/HTTP error: {e}",
                 exc_info=True,
             )
             raise  # Re-raise the requests exception
         except (RuntimeError, ValueError) as e:  # From _handle_response
-            logger.error(
+            log.error(
                 f"Failed to register node '{node_id}' due to Isek Center error: {e}",
                 exc_info=True,
             )
@@ -175,27 +175,25 @@ class IsekCenterRegistry(Registry):
         payload = {"node_id": node_id}
 
         try:
-            logger.debug(
-                f"Refreshing lease for node '{node_id}' at {lease_refresh_url}"
-            )
+            log.debug(f"Refreshing lease for node '{node_id}' at {lease_refresh_url}")
             response = requests.post(
                 url=lease_refresh_url, json=payload, timeout=5
             )  # Added timeout
             response_data = self._handle_response(
                 response, f"refresh lease for node '{node_id}'"
             )
-            logger.debug(
+            log.debug(
                 f"Node '{node_id}' lease refreshed successfully. "
                 f"Isek Center response: {response_data.get('message', 'OK')}"
             )
         except RequestException as e:
-            logger.error(
+            log.error(
                 f"Failed to refresh lease for node '{node_id}' due to a network/HTTP error: {e}",
                 exc_info=True,
             )
             raise
         except (RuntimeError, ValueError) as e:
-            logger.error(
+            log.error(
                 f"Failed to refresh lease for node '{node_id}' due to Isek Center error: {e}",
                 exc_info=True,
             )
@@ -218,7 +216,7 @@ class IsekCenterRegistry(Registry):
         """
         available_nodes_url = f"{self.center_address}/isek_center/available_nodes"
         try:
-            logger.debug(f"Fetching available nodes from {available_nodes_url}")
+            log.debug(f"Fetching available nodes from {available_nodes_url}")
             response = requests.get(
                 url=available_nodes_url, timeout=10
             )  # Added timeout
@@ -226,23 +224,23 @@ class IsekCenterRegistry(Registry):
 
             nodes_data = response_data.get("data", {}).get("available_nodes")
             if nodes_data is None or not isinstance(nodes_data, dict):
-                logger.error(
+                log.error(
                     "Isek Center response for available nodes is missing 'data.available_nodes' "
                     f"or it's not a dictionary. Response: {response_data}"
                 )
                 raise RuntimeError(
                     "Invalid data structure for available nodes received from Isek Center."
                 )
-            logger.debug(f"Successfully fetched {len(nodes_data)} available nodes.")
+            log.debug(f"Successfully fetched {len(nodes_data)} available nodes.")
             return nodes_data  # type: ignore # If linter complains about Dict[str, NodeInfo] vs Dict[str, Any]
         except RequestException as e:
-            logger.error(
+            log.error(
                 f"Failed to get available nodes due to a network/HTTP error: {e}",
                 exc_info=True,
             )
             raise
         except (RuntimeError, ValueError) as e:
-            logger.error(
+            log.error(
                 f"Failed to get available nodes due to Isek Center error: {e}",
                 exc_info=True,
             )
@@ -263,25 +261,25 @@ class IsekCenterRegistry(Registry):
         payload = {"node_id": node_id}
 
         try:
-            logger.debug(f"Deregistering node '{node_id}' at {deregister_url}")
+            log.debug(f"Deregistering node '{node_id}' at {deregister_url}")
             response = requests.post(
                 url=deregister_url, json=payload, timeout=10
             )  # Added timeout
             response_data = self._handle_response(
                 response, f"deregister node '{node_id}'"
             )
-            logger.info(
+            log.info(
                 f"Node '{node_id}' deregistered successfully. "
                 f"Isek Center response: {response_data.get('message', 'OK')}"
             )
         except RequestException as e:
-            logger.error(
+            log.error(
                 f"Failed to deregister node '{node_id}' due to a network/HTTP error: {e}",
                 exc_info=True,
             )
             raise
         except (RuntimeError, ValueError) as e:
-            logger.error(
+            log.error(
                 f"Failed to deregister node '{node_id}' due to Isek Center error: {e}",
                 exc_info=True,
             )

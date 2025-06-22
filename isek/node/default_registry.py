@@ -1,7 +1,7 @@
 from typing import Optional, Dict
 
 from isek.node.registry import Registry
-from isek.utils.logger import logger
+from isek.utils.log import log
 
 
 class DefaultRegistry(Registry):
@@ -12,13 +12,13 @@ class DefaultRegistry(Registry):
         port: int,
         metadata: Optional[Dict[str, str]] = None,
     ):
-        logger.debug(f"Node {node_id} default registered.")
+        log.debug(f"Node {node_id} default registered.")
 
     def get_available_nodes(self) -> dict:
         return {}
 
     def deregister_node(self, node_id: str):
-        logger.debug(f"Node {node_id} default deregistered.")
+        log.debug(f"Node {node_id} default deregistered.")
 
     def lease_refresh(self, node_id: str):
-        logger.debug(f"Node {node_id} default lease refresh.")
+        log.debug(f"Node {node_id} default lease refresh.")

@@ -9,7 +9,7 @@ from isek.memory.memory import Memory
 from isek.models.base import Model, SimpleMessage
 from isek.team.base import Team, TeamCard
 from isek.tools.toolkit import Toolkit
-from isek.utils.log import log_debug, set_log_level_to_debug
+from isek.utils.log import team_log, LoggerManager
 
 
 @dataclass
@@ -47,12 +47,12 @@ class IsekTeam(Team):
 
         # Set debug mode
         if self.debug_mode:
-            set_log_level_to_debug()
-            log_debug(
+            LoggerManager.set_level("DEBUG", name="team")
+            team_log.debug(
                 f"Team initialized: {self.name or 'Unnamed'} (ID: {self.team_id})"
             )
-            log_debug(f"Team mode: {self.mode}")
-            log_debug(f"Number of members: {len(self.members)}")
+            team_log.debug(f"Team mode: {self.mode}")
+            team_log.debug(f"Number of members: {len(self.members)}")
 
     def run(self, prompt: str) -> str:
         """
@@ -64,7 +64,7 @@ class IsekTeam(Team):
             raise ValueError("Team must have at least one member")
 
         if self.debug_mode:
-            log_debug(f"Team run started with prompt: {prompt}")
+            team_log.debug(f"Team run started with prompt: {prompt}")
 
         # For simplicity, we delegate to the first member if there's only one.
         if len(self.members) == 1 and isinstance(self.members[0], Agent):
@@ -115,7 +115,7 @@ class IsekTeam(Team):
         routing_decision = response.content or ""
 
         if self.debug_mode:
-            log_debug(f"Routing decision: {routing_decision}")
+            team_log.debug(f"Routing decision: {routing_decision}")
 
         # Simple routing logic: route to first member for now
         # In a more sophisticated implementation, you'd parse the routing decision
@@ -139,7 +139,7 @@ class IsekTeam(Team):
                     results.append(f"{member.name or 'Member'}: {result}")
                 except Exception as e:
                     if self.debug_mode:
-                        log_debug(f"Member {member.name or 'Unknown'} failed: {e}")
+                        team_log.debug(f"Member {member.name or 'Unknown'} failed: {e}")
                     results.append(f"{member.name or 'Member'}: Error - {str(e)}")
 
             return "\n\n".join(results)
@@ -191,7 +191,7 @@ Please contribute to this collaborative discussion. Build on previous responses 
                 )
             except Exception as e:
                 if self.debug_mode:
-                    log_debug(f"Member {member.name or 'Unknown'} failed: {e}")
+                    team_log.debug(f"Member {member.name or 'Unknown'} failed: {e}")
                 conversation_history.append(
                     f"{member.name or f'Member {i+1}'}: Error - {str(e)}"
                 )
@@ -270,14 +270,14 @@ Please contribute to this collaborative discussion. Build on previous responses 
         """Add a member to the team."""
         self.members.append(member)
         if self.debug_mode:
-            log_debug(f"Added member to team: {member.name or 'Unnamed'}")
+            team_log.debug(f"Added member to team: {member.name or 'Unnamed'}")
 
     def remove_member(self, member: Union[Agent, "IsekTeam"]) -> bool:
         """Remove a member from the team."""
         try:
             self.members.remove(member)
             if self.debug_mode:
-                log_debug(f"Removed member from team: {member.name or 'Unnamed'}")
+                team_log.debug(f"Removed member from team: {member.name or 'Unnamed'}")
             return True
         except ValueError:
             return False

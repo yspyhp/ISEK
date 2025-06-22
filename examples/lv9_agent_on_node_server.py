@@ -7,7 +7,7 @@ from isek.tools.calculator import calculator_tools
 from isek.memory.memory import Memory as SimpleMemory
 from isek.node.node_v2 import Node
 from isek.team.isek_team import IsekTeam
-from isek.utils.logger import LoggerManager, PRINT_LOG_LEVEL
+from isek.utils.log import log
 
 # Load environment variables from .env file
 load_dotenv()
@@ -18,7 +18,9 @@ def main():
     encapsulated within a team.
     Run this script in one terminal.
     """
-    LoggerManager.init(level=PRINT_LOG_LEVEL)
+    # Logging is now automatically configured.
+    # You can set the log level via the LOG_LEVEL environment variable.
+    # e.g., export LOG_LEVEL=DEBUG
 
     # 1. Create the Agent
     # This agent has both memory (to remember facts) and tools (a calculator).
@@ -50,6 +52,7 @@ def main():
     server_node_id = "agent_server_1"
     server_port = 9005
     print(f"Starting server node '{server_node_id}' on port {server_port} to host the agent team...")
+    log.info("Server node is starting up...")
     
     server_node = Node(
         node_id=server_node_id,
