@@ -51,7 +51,7 @@ With native integration of large language models (LLMs) and a user-friendly CLI,
 pip install isek
 ```
 
-> Requires **Python 3.9+**
+> Requires **Python 3.10+**
 
 ---
 
@@ -67,25 +67,24 @@ OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_API_KEY=your_api_key
 ```
 
-### 2️⃣ Start Registry
-
-```bash
-isek registry
-```
-
-### 3️⃣ Launch Agent
+### 2️⃣ Launch Agent
 
 ```python
-from dotenv import load_dotenv
-from isek.agent.distributed_agent import DistributedAgent
+from isek.agent.agent import Agent
+from isek.models.openai import OpenAIModel
+import dotenv
+dotenv.load_dotenv()
 
-load_dotenv()
-agent = DistributedAgent()
-agent.build(daemon=True)
-agent.run_cli()
+agent = Agent(
+    name="My Agent",
+    model=OpenAIModel(model_id="gpt-4o-mini"),
+    description="A helpful assistant",
+    instructions=["Be polite", "Provide accurate information"],
+    success_criteria="User gets a helpful response"
+)
+
+response = agent.run("hello")
 ```
-
-Now you're ready to interact with your decentralized agent in the terminal!
 
 ---
 
@@ -105,26 +104,19 @@ isek/
 ├── examples                   # Sample scripts demonstrating Isek usage
 ├── isek                       # Core functionality and modules
 │   ├── agent                  # Agent logic and behavior
-│   ├── constant               # Shared constants
-│   ├── embedding              # Embedding systems
 │   ├── node                   # Node orchestration
-│   ├── llm                    # LLM backends and interfaces
-│   ├── util                   # Utility functions
+│   ├── protocol               # Inter-Agent communication Protocol Layer
+│   ├── memory                 # Agent state and context
+│   ├── models                 # LLM backends and interfaces
+│   ├── team                   # Multi-Agent Organization Interface
+│   ├── tools                  # The toolkit library for Agents
+│   ├── utils                  # Utility functions
 │   ├── cli.py                 # CLI entry point
-│   ├── isek_config.py         # Configuration handler
 │   └── isek_center.py         # Local registry and coordinator
 ├── script                     # Utility scripts (e.g., clean.py)
 ├── pyproject.toml             # Build and dependency configuration
 └── README.md                  # Project overview and documentation
 ```
-
----
-
-## ⚙️ Configuration
-
-Main configurations are managed via:
-
-* `isek/default_config.yaml`: Predefined defaults for rapid deployment.
 
 ---
 
