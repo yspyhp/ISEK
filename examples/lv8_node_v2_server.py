@@ -4,7 +4,7 @@ from isek.utils.log import log
 from isek.team.isek_team import IsekTeam
 from isek.agent.isek_agent import IsekAgent
 from isek.models.simpleModel import SimpleModel
-from isek.node.etcd_registry import EtcdRegistry
+from isek.adapter.isek_adapter import IsekAdapter
 
 def main():
     """
@@ -37,7 +37,7 @@ def main():
     )
 
     # Create the server node.
-    server_node = Node(node_id=server_node_id, port=server_port, team=echo_team)
+    server_node = Node(node_id=server_node_id, port=server_port, Adapter=IsekAdapter(isek_team=echo_team))
 
     # Start the server in the foreground.
     server_node.build_server(daemon=False)

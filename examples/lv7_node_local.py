@@ -1,7 +1,7 @@
 import time
 from isek.node.node_v2 import Node
 from isek.utils.log import log
-from isek.team.echo_team import EchoTeam
+from isek.adapter.simple_adapter import SimpleAdapter
 
 def main():
     # Logging is now automatically configured.
@@ -9,12 +9,12 @@ def main():
     # e.g., export LOG_LEVEL=DEBUG
 
     # Create teams for the nodes
-    team1 = EchoTeam(name="Node1Team", description="Team for Node1 communication")
-    team2 = EchoTeam(name="Node2Team", description="Team for Node2 communication")
+    team1 = SimpleAdapter(name="Node1Team", description="Team for Node1 communication")
+    team2 = SimpleAdapter(name="Node2Team", description="Team for Node2 communication")
     
     # Create two nodes with different ports and IDs, using the default registry (local, no real discovery)
-    node1 = Node(node_id="Node1", port=9000, team=team1)
-    node2 = Node(node_id="Node2", port=9001, team=team2)
+    node1 = Node(node_id="Node1", port=9000, Adapter=team1)
+    node2 = Node(node_id="Node2", port=9001, Adapter=team2)
 
     # Start both node servers in daemon mode (background threads)
     node1.build_server(daemon=True)

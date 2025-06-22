@@ -7,6 +7,7 @@ from isek.tools.calculator import calculator_tools
 from isek.memory.memory import Memory as SimpleMemory
 from isek.node.node_v2 import Node
 from isek.team.isek_team import IsekTeam
+from isek.adapter.isek_adapter import IsekAdapter
 from isek.utils.log import log
 
 # Load environment variables from .env file
@@ -57,7 +58,7 @@ def main():
     server_node = Node(
         node_id=server_node_id,
         port=server_port,
-        team=agent_team
+        Adapter=IsekAdapter(isek_team=agent_team)
     )
 
     # Start the server in the foreground. It will now listen for messages.

@@ -7,13 +7,12 @@ from uuid import uuid4
 from isek.agent.isek_agent import IsekAgent
 from isek.memory.memory import Memory, UserMemory
 from isek.models.base import Model, SimpleMessage
-from isek.team.base import Team, TeamCard
 from isek.tools.toolkit import Toolkit
 from isek.utils.log import log, LoggerManager
 
 
 @dataclass
-class IsekTeam(Team):
+class IsekTeam:
     """Ultra-simplified Team class that coordinates multiple agents."""
 
     # List of team members (agents or other teams) - required field
@@ -78,34 +77,6 @@ class IsekTeam(Team):
             return self._sequential_response(message, user_id, session_id)
         else:
             raise ValueError(f"Unknown coordination mode: {self.coordination_mode}")
-
-    def get_team_card(self) -> TeamCard:
-        """Get metadata about the team for discovery and identification purposes."""
-        routine_str = ""
-        if isinstance(self.instructions, list):
-            routine_str = "\n".join(self.instructions)
-        elif isinstance(self.instructions, str):
-            routine_str = self.instructions
-        elif callable(self.instructions):
-            routine_str = self.instructions()
-
-        return TeamCard(
-            name=self.name or "Unnamed Team",
-            bio=self.description or "No description",
-            lore="This is a team of agents.",
-            knowledge="",  # Knowledge is specific to agents, so leave blank for team.
-            routine=routine_str,
-        )
-
-    @property
-    def team_name(self) -> str:
-        """Get the team's name."""
-        return self.name or "Unnamed Team"
-
-    @property
-    def team_description(self) -> str:
-        """Get the team's description."""
-        return self.description or "No description"
 
     def _coordinate_response(self, message: str, user_id: str, session_id: str) -> str:
         """Coordinate multiple agents to generate a response."""

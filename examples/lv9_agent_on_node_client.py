@@ -1,9 +1,5 @@
 from isek.utils.log import log
 from isek.node.node_v2 import Node
-from isek.node.etcd_registry import EtcdRegistry
-from isek.agent.isek_agent import IsekAgent
-from isek.models.simpleModel import SimpleModel
-import asyncio
 
 def main():
     """

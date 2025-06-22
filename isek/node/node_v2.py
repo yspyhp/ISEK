@@ -7,7 +7,7 @@ from isek.node.default_registry import DefaultRegistry
 from isek.node.registry import Registry
 from isek.protocol.a2a_protocol import A2AProtocol
 from isek.protocol.protocol import Protocol
-from isek.team.base import Team
+from isek.adapter.base import Adapter
 from isek.utils.log import log
 
 NodeDetails = Dict[str, Any]
@@ -21,7 +21,7 @@ class Node(ABC):
         node_id: Optional[str] = None,
         protocol: Optional[Protocol] = None,
         registry: Optional[Registry] = None,
-        team: Optional[Team] = None,
+        adapter: Optional[Adapter] = None,
         **kwargs: Any,  # To absorb any extra arguments
     ):
         if not host:
@@ -37,9 +37,9 @@ class Node(ABC):
         self.all_nodes: Dict[str, NodeDetails] = {}
         self.p2p = False
         self.registry = registry or DefaultRegistry()
-        self.team = team
+        self.adapter = adapter
         self.protocol = protocol or A2AProtocol(
-            host=self.host, port=self.port, team=self.team
+            host=self.host, port=self.port, adapter=self.adapter
         )
 
     def send_message(self, receiver_node_id: str, message: str, retry_count: int = 3):
@@ -77,8 +77,8 @@ class Node(ABC):
         return f"Error: Message delivery to '{receiver_node_id}' failed after {retry_count} attempts."
 
     def build_server(self, daemon: bool = False) -> None:
-        if self.registry and self.team:
-            node_metadata = self.team.get_team_card().__dict__
+        if self.registry and self.adapter:
+            node_metadata = self.adapter.get_adapter_card().__dict__
             node_metadata["url"] = f"http://{self.host}:{self.port}"
             self.registry.register_node(
                 node_id=self.node_id,
