@@ -1,4 +1,4 @@
-from isek.agent.isek.agent import Agent
+from isek.agent.agent import Agent
 from isek.models.openai.openai import OpenAIModel
 from isek.memory.memory import Memory
 from isek.tools.calculator import calculator_tools

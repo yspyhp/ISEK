@@ -1,6 +1,6 @@
 import time
 from isek.node.node_v2 import Node
-from isek.util.logger import LoggerManager, PRINT_LOG_LEVEL
+from isek.utils.logger import LoggerManager, PRINT_LOG_LEVEL
 
 def main():
     """

@@ -1,17 +1,19 @@
 import time
 from isek.node.node_v2 import Node
-from isek.util.logger import LoggerManager
 from isek.node.etcd_registry import EtcdRegistry
-
-
-LoggerManager.init(debug=True)
+from isek.team.simple_team import SimpleTeam
 
 
 def test_node_message():
     registry = EtcdRegistry(host="47.236.116.81", port=2379)
-    node1 = Node(node_id="Node1", registry=registry, port=8080)
 
-    node2 = Node(node_id="Node2", registry=registry, port=8081)
+    # Create teams for the nodes
+    team1 = SimpleTeam(name="Node1Team", description="Team for Node1")
+    team2 = SimpleTeam(name="Node2Team", description="Team for Node2")
+
+    node1 = Node(node_id="Node1", registry=registry, port=8080, team=team1)
+    node2 = Node(node_id="Node2", registry=registry, port=8081, team=team2)
+
     node1.build_server(daemon=True)
     node2.build_server(daemon=True)
     time.sleep(5)
@@ -20,7 +22,10 @@ def test_node_message():
 
 
 def build_node():
-    Node().build_server()
+    # Create a simple team for the node
+    team = SimpleTeam(name="TestTeam", description="A test team for node testing")
+    Node(team=team).build_server()
 
 
-build_node()
+if __name__ == "__main__":
+    build_node()

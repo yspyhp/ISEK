@@ -148,7 +148,7 @@ def load_json_from_chat_response(chat_result: str) -> JsonType:
     Extracts and parses JSON data from a chat response string.
 
     It looks for JSON content enclosed in markdown-style code blocks
-    (e.g., \`\`\`json ... \`\`\`).
+    (e.g., ```json ... ```).
 
     :param chat_result: The string chat response, potentially containing JSON.
     :type chat_result: str

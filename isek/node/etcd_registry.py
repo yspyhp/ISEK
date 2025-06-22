@@ -6,7 +6,7 @@ import base64
 from ecdsa.keys import SigningKey, VerifyingKey
 from ecdsa.curves import NIST256p
 
-from isek.util.logger import logger
+from isek.utils.logger import logger
 from isek.node.registry import Registry
 
 

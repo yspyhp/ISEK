@@ -1,6 +1,6 @@
 import threading
 import time
-from isek.util.logger import logger
+from isek.utils.logger import logger
 from typing import Dict, Any, Optional, Tuple  # Added Optional, Tuple, Union
 
 from flask import Flask, request, jsonify, Blueprint

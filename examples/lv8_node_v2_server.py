@@ -1,8 +1,8 @@
 import asyncio
 from isek.node.node_v2 import Node
-from isek.util.logger import LoggerManager, PRINT_LOG_LEVEL
+from isek.utils.logger import LoggerManager, PRINT_LOG_LEVEL
 from isek.team.isek_team import IsekTeam
-from isek.agent.isek.agent import Agent
+from isek.agent.agent import Agent
 from isek.models.simpleModel import SimpleModel
 
 def main():

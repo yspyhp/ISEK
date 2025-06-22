@@ -1,13 +1,13 @@
 import os
 from dotenv import load_dotenv
 
-from isek.agent.isek.agent import Agent
+from isek.agent.agent import Agent
 from isek.models.openai import OpenAIModel
 from isek.tools.calculator import calculator_tools
 from isek.memory.memory import Memory as SimpleMemory
 from isek.node.node_v2 import Node
 from isek.team.isek_team import IsekTeam
-from isek.util.logger import LoggerManager, PRINT_LOG_LEVEL
+from isek.utils.logger import LoggerManager, PRINT_LOG_LEVEL
 
 # Load environment variables from .env file
 load_dotenv()

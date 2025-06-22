@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Callable, List, Optional, Union
 from uuid import uuid4
 
-from isek.agent.isek.agent import Agent
+from isek.agent.agent import Agent
 from isek.memory.memory import Memory
 from isek.models.base import Model, SimpleMessage
 from isek.team.base import Team, TeamCard

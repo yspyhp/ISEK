@@ -1,7 +1,7 @@
 from typing import Optional, Dict
 
 from isek.node.registry import Registry
-from isek.util.logger import logger
+from isek.utils.logger import logger
 
 
 class DefaultRegistry(Registry):

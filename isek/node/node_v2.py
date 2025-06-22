@@ -2,13 +2,13 @@ import threading
 import uuid
 from abc import ABC
 from typing import Dict, Any, Optional
-from isek.constant.exceptions import NodeUnavailableError
+from isek.exceptions import NodeUnavailableError
 from isek.node.default_registry import DefaultRegistry
 from isek.node.registry import Registry
 from isek.protocol.a2a_protocol import A2AProtocol
 from isek.protocol.protocol import Protocol
 from isek.team.base import Team
-from isek.util.logger import logger
+from isek.utils.logger import logger
 
 NodeDetails = Dict[str, Any]
 

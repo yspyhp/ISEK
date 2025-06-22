@@ -1,14 +1,19 @@
 import time
 from isek.node.node_v2 import Node
-from isek.util.logger import LoggerManager, PRINT_LOG_LEVEL
+from isek.utils.logger import LoggerManager, PRINT_LOG_LEVEL
+from isek.team.simple_team import SimpleTeam
 
 # Initialize logger for debug output
 LoggerManager.init(level=PRINT_LOG_LEVEL)
 
 def main():
+    # Create teams for the nodes
+    team1 = SimpleTeam(name="Node1Team", description="Team for Node1 communication")
+    team2 = SimpleTeam(name="Node2Team", description="Team for Node2 communication")
+    
     # Create two nodes with different ports and IDs, using the default registry (local, no real discovery)
-    node1 = Node(node_id="Node1", port=9000)
-    node2 = Node(node_id="Node2", port=9001)
+    node1 = Node(node_id="Node1", port=9000, team=team1)
+    node2 = Node(node_id="Node2", port=9001, team=team2)
 
     # Start both node servers in daemon mode (background threads)
     node1.build_server(daemon=True)

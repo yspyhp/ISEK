@@ -1,4 +1,4 @@
-from isek.agent.isek.agent import Agent
+from isek.agent.agent import Agent
 from isek.models.openai import OpenAIModel
 from isek.models.base import SimpleMessage
 import dotenv
