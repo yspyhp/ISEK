@@ -48,7 +48,7 @@ class LoggerManager:
         logger.propagate = False
 
     @classmethod
-    def plain_mode(cls, level="INFO"):
+    def plain_mode(cls, level="DEBUG"):
         return cls(mode="plain", level=level)
 
     @classmethod
