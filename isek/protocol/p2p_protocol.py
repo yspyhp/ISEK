@@ -176,10 +176,12 @@ class P2PProtocol(Protocol):
     def send_p2p_message(self, sender_node_id, p2p_address, message):
         request = build_send_message_request(sender_node_id, message)
         request_body = request.model_dump(mode="json", exclude_none=True)
-        httpx.post(
-            f"http://localhost:{self.p2p_server_port}/call_peer/{p2p_address}",
+        response = httpx.post(
+            url=f"http://localhost:{self.p2p_server_port}/call_peer/{p2p_address}",
             data=request_body,
         )
+        response_body = json.loads(response.content)
+        return response_body["result"]["parts"][0]["text"]
 
     def send_message(self, sender_node_id, target_address, message):
         httpx_client = httpx.AsyncClient()

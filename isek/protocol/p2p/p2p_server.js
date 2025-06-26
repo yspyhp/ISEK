@@ -46,28 +46,15 @@ class P2PNode {
     this.name = name
     this.handlers = {
       '/query': async (body) => {
-        const client = new isekNodeProto.IsekP2PNodeService(`localhost:${isek_agent_port}`, grpc.credentials.createInsecure());
-
-        const callPeerAsync = (request) => {
-          return new Promise((resolve, reject) => {
-            client.callPeer(request, (err, response) => {
-              if (err) {
-                return reject(err);
-              }
-              resolve(response.reply);
-            });
-          });
-        };
-
         try {
-          const reply = await callPeerAsync({
-            senderNodeId: 'sender_node_id',
-            receiverP2pAddress: 'receiver_p2p_address',
-            message: body,
+          const response = await fetch(`http://localhost:${isek_agent_port}/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
           });
-
-          console.log('Greeting:', reply);
-          return reply;
+          return await response.json();
         } catch (err) {
           console.error('Error:', err);
           return { received: null, status: 'error', message: err.message };
