@@ -18,6 +18,8 @@ class Node(ABC):
         self,
         host: str = "localhost",
         port: int = 8080,
+        p2p: bool = False,
+        p2p_server_port: int = 9000,
         node_id: Optional[str] = None,
         protocol: Optional[Protocol] = None,
         registry: Optional[Registry] = None,
@@ -33,13 +35,18 @@ class Node(ABC):
 
         self.host: str = host
         self.port: int = port
+        self.p2p: bool = p2p
+        self.p2p_server_port: int = p2p_server_port
         self.node_id: str = node_id
         self.all_nodes: Dict[str, NodeDetails] = {}
-        self.p2p = False
         self.registry = registry or DefaultRegistry()
         self.adapter = adapter
         self.protocol = protocol or A2AProtocol(
-            host=self.host, port=self.port, adapter=self.adapter
+            host=self.host,
+            port=self.port,
+            adapter=self.adapter,
+            p2p=self.p2p,
+            p2p_server_port=self.p2p_server_port,
         )
 
     def send_message(self, receiver_node_id: str, message: str, retry_count: int = 3):
@@ -59,8 +66,14 @@ class Node(ABC):
                             receiver_node_id,
                             "Node not found in registry after refresh.",
                         )
+                if self.p2p:
+                    return self.protocol.send_p2p_message(
+                        self.node_id,
+                        receiver_node_details["metadata"]["p2p_address"],
+                        message,
+                    )
                 return self.protocol.send_message(
-                    receiver_node_details["metadata"]["url"], message
+                    self.node_id, receiver_node_details["metadata"]["url"], message
                 )
             except Exception as e:
                 log.exception(
@@ -77,9 +90,13 @@ class Node(ABC):
         return f"Error: Message delivery to '{receiver_node_id}' failed after {retry_count} attempts."
 
     def build_server(self, daemon: bool = False) -> None:
+        if self.p2p:
+            self.protocol.bootstrap_p2p_extension()
         if self.registry and self.adapter:
             node_metadata = self.adapter.get_adapter_card().__dict__
             node_metadata["url"] = f"http://{self.host}:{self.port}"
+            node_metadata["peer_id"] = self.protocol.peer_id
+            node_metadata["p2p_address"] = self.protocol.p2p_address
             self.registry.register_node(
                 node_id=self.node_id,
                 host=self.host,
@@ -87,6 +104,10 @@ class Node(ABC):
                 metadata=node_metadata,
             )
             self.__bootstrap_heartbeat()  # Starts the recurring heartbeat
+
+        if self.p2p:
+            if not self.protocol.peer_id or not self.protocol.p2p_address:
+                raise RuntimeError("p2p server not started, please check.")
 
         if not daemon:
             self.protocol.bootstrap_server()
