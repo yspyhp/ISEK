@@ -5,7 +5,7 @@ from typing import Dict, Any, Optional
 from isek.exceptions import NodeUnavailableError
 from isek.node.default_registry import DefaultRegistry
 from isek.node.registry import Registry
-from isek.protocol.p2p_protocol import P2PProtocol
+from isek.protocol.a2a_protocol import A2AProtocol
 from isek.protocol.protocol import Protocol
 from isek.adapter.base import Adapter
 from isek.utils.log import log
@@ -39,10 +39,9 @@ class Node(ABC):
         self.p2p_server_port: int = p2p_server_port
         self.node_id: str = node_id
         self.all_nodes: Dict[str, NodeDetails] = {}
-        self.p2p = False
         self.registry = registry or DefaultRegistry()
         self.adapter = adapter
-        self.protocol = protocol or P2PProtocol(
+        self.protocol = protocol or A2AProtocol(
             host=self.host,
             port=self.port,
             adapter=self.adapter,
@@ -105,6 +104,10 @@ class Node(ABC):
                 metadata=node_metadata,
             )
             self.__bootstrap_heartbeat()  # Starts the recurring heartbeat
+
+        if self.p2p:
+            if not self.protocol.peer_id or not self.protocol.p2p_address:
+                raise RuntimeError("p2p server not started, please check.")
 
         if not daemon:
             self.protocol.bootstrap_server()

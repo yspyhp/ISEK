@@ -27,11 +27,13 @@ const QUERY_PATH = '/query'
 // 从命令行参数读取端口
 const args = process.argv.slice(2);
 const portArg = args.find(arg => arg.startsWith('--port='));
-if (!portArg) {
-  console.error(`Usage: node ${process.argv[1]} --port=<port_number>`);
+const agentPortArg = args.find(arg => arg.startsWith('--agent_port='));
+if (!portArg || !agentPortArg) {
+  console.error(`Usage: node ${process.argv[1]} --port=<port_number> --agent_port=<agent_port_number>`);
   process.exit(1);
 }
 const p2p_server_port = parseInt(portArg.split('=')[1], 10);
+const isek_agent_port = parseInt(agentPortArg.split('=')[1], 10);
 
 // 解决 __dirname 在 ES6 中不可用的问题
 const __filename = fileURLToPath(import.meta.url);
@@ -62,7 +64,7 @@ class P2PNode {
       }
     }
     this.requestHandler = this.requestHandler.bind(this)
-    this.setup()
+    // this.setup()
   }
 
   async setup() {
@@ -224,22 +226,21 @@ class P2PNode {
   }
 }
 
-const n = new P2PNode("node_name");
-
 // 创建Express应用
 const app = express();
 app.use(express.json());
 
+// 创建P2P节点但不立即初始化
+const n = new P2PNode("node_name");
+
 // 实现HTTP路由
-app.post('/call_peer/:p2p_address', async (req, res) => {
+app.post('/call_peer', async (req, res) => {
 //  const { senderNodeId, receiverP2pAddress, message } = req.body;
-  const receiverP2pAddress = req.params.p2p_address;
+  const receiverP2pAddress = req.query.p2p_address;
   try {
     const reply = await n.callPeer(receiverP2pAddress, req.body);
     console.log(`Received callPeer request: body=${req.body}, receiverP2pAddress=${receiverP2pAddress}`);
-    res.json({
-      reply: JSON.stringify(reply)
-    });
+    res.json(reply);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -249,12 +250,29 @@ app.get('/p2p_context', (req, res) => {
   console.log("peer_id: " + n.peerId);
   console.log("listenAddress: " + n.listenAddress);
   res.json({
-    peerId: n.peerId,
-    p2pAddress: n.listenAddress
+    peer_id: n.peerId,
+    p2p_address: n.listenAddress
   });
 });
 
-// 启动HTTP服务
-app.listen(p2p_server_port, () => {
-  console.log(`HTTP server running at 0.0.0.0:${p2p_server_port}`);
-});
+
+try {
+  const server = app.listen(p2p_server_port, '0.0.0.0', async () => {
+    console.log(`Libp2p server running at 0.0.0.0:${p2p_server_port}`);
+    try {
+      await n.setup();
+    } catch (err) {
+      console.error('Failed to initialize P2P node:', err);
+      process.exit(1);
+    }
+  });
+
+  server.on('error', (err) => {
+    console.error('Server error:', err);
+    process.exit(1);
+  });
+} catch (err) {
+  // Listen itself threw synchronously!
+  console.error('Listen failed immediately:', err);
+  process.exit(1);
+}
