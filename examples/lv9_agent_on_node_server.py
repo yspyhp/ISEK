@@ -58,7 +58,7 @@ def main():
     server_node = Node(
         node_id=server_node_id,
         port=server_port,
-        Adapter=IsekAdapter(isek_team=agent_team)
+        Adapter=IsekAdapter(agent=agent_team)
     )
 
     # Start the server in the foreground. It will now listen for messages.
