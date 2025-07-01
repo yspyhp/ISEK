@@ -37,7 +37,7 @@ def main():
     )
 
     # Create the server node.
-    server_node = Node(node_id=server_node_id, port=server_port, Adapter=IsekAdapter(isek_team=echo_team))
+    server_node = Node(node_id=server_node_id, port=server_port, adapter=IsekAdapter(isek_team=echo_team))
 
     # Start the server in the foreground.
     server_node.build_server(daemon=False)

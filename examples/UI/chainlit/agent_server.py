@@ -50,7 +50,7 @@ def main():
 
     # 3. Start the Node Server with the Agent Team
     server_node_id = "agent_server_1"
-    server_port = 9005
+    server_port = 9006
     print(f"Starting server node '{server_node_id}' on port {server_port} to host the agent team...")
     log.info("Server node is starting up...")
     

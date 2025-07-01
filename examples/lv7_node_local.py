@@ -13,8 +13,8 @@ def main():
     team2 = SimpleAdapter(name="Node2Team", description="Team for Node2 communication")
     
     # Create two nodes with different ports and IDs, using the default registry (local, no real discovery)
-    node1 = Node(node_id="Node1", port=9000, Adapter=team1)
-    node2 = Node(node_id="Node2", port=9001, Adapter=team2)
+    node1 = Node(node_id="Node1", port=9000, adapter=team1)
+    node2 = Node(node_id="Node2", port=9001, adapter=team2)
 
     # Start both node servers in daemon mode (background threads)
     node1.build_server(daemon=True)
