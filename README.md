@@ -26,6 +26,23 @@ With native integration of large language models (LLMs) and a user-friendly CLI,
 
 ---
 
+## 💡 Why ISEK?
+
+The world is shifting from human-defined workflows and centralized orchestration to autonomous, agent-driven coordination.
+
+While most frameworks treat agents as isolated executors, **ISEK** focuses on the missing layer: **decentralized agent collaboration and coordination**. We believe the future of intelligent systems lies in **self-organizing agent networks** capable of context sharing, team formation, and collective reasoning — all without central control.
+
+ISEK enables:
+
+- 🔍 **Autonomous agent discovery and recruitment** across a peer-to-peer network  
+- 🧠 **Model-agnostic intelligence**, allowing agents to use any LLM or backend  
+- 🤝 **Composable multi-agent teamwork**, with plug-and-play collaboration protocols  
+- 🌐 **Truly distributed deployments**, from local clusters to global swarms  
+
+> ISEK is not just about running agents — it's about empowering them to **find each other, reason together, and act as a decentralized system.**
+
+---
+
 ## 🌟 Features
 
 - **🧠 Decentralized Cooperation:**  
@@ -92,7 +109,6 @@ response = agent.run("hello")
 
 ```bash
 isek clean       # Clean temporary files
-isek setup       # Install dependencies
 isek --help      # View available commands
 ```
 
