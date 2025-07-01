@@ -92,6 +92,7 @@ response = agent.run("hello")
 
 ```bash
 isek clean       # Clean temporary files
+isek setup       # Install dependencies
 isek --help      # View available commands
 ```
 

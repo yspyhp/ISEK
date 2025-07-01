@@ -96,6 +96,7 @@ Congratulations! You've successfully set up and launched your first ISEK agent.
 
        isek --help      # View available commands
        isek clean       # Clean temporary files
+       isek setup       # Install dependencies
 
 *   **Examples**: Check out the ``examples/`` directory in the ISEK project repository for more advanced use cases and demonstration scripts.
 

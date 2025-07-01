@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import click
 import importlib.util
+import subprocess
 import sys
 from pathlib import Path
 
@@ -50,6 +51,20 @@ def registry():
     from isek.isek_center import main
 
     main()
+
+
+@cli.command()
+def setup():
+    """Install ISEK Python dependencies"""
+    project_root = Path(__file__).parent.parent
+    try:
+        subprocess.check_call(
+            [sys.executable, "-m", "pip", "install", "-e", str(project_root)]
+        )
+        click.secho("✓ Dependencies installed", fg="green")
+    except subprocess.CalledProcessError as e:
+        click.secho(f"Dependency installation failed: {e}", fg="red")
+        sys.exit(e.returncode)
 
 
 @cli.group()

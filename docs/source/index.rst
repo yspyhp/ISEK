@@ -65,6 +65,9 @@ Isek provides a simple CLI for common tasks:
    # Clean up temporary files
    isek clean
 
+   # Install dependencies
+   isek setup
+
    # See all commands
    isek --help
 
