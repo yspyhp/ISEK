@@ -93,6 +93,7 @@ response = agent.run("hello")
 
 ```bash
 isek clean       # 清理临时文件
+isek setup       # 安装依赖
 isek --help      # 查看可用命令
 ```
 

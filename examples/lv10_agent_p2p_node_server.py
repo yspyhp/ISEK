@@ -4,13 +4,14 @@ from agno.models.deepseek import DeepSeek
 from isek.adapter.base import Adapter, AdapterCard
 from isek.node.etcd_registry import EtcdRegistry
 from isek.node.node_v2 import Node
+import dotenv
 
-
+dotenv.load_dotenv()
 class RandomNumberAdapter(Adapter):
 
     def __init__(self):
         self.random_agent = Agent(
-            model=DeepSeek(api_key="sk-2d52100fe9b348afa71dc9d5b31db07f"),
+            model=DeepSeek(),
             tools=[],
             instructions=[
                 "Only can generator a random number"

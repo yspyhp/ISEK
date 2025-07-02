@@ -32,7 +32,9 @@ dependencies = [
     "etcd3gw",
     "mypy",
     "litellm",
-    "uvicorn"
+    "uvicorn",
+    "rich",
+    "fastmcp"
 ]
 
 [project.scripts]
