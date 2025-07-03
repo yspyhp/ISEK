@@ -9,6 +9,5 @@ client_node = Node(node_id="RN_client", port=8889, p2p=True, p2p_server_port=900
 
 # Start the server in the foreground.
 client_node.build_server(daemon=True)
-# time.sleep(5)
-reply = client_node.send_message("RN", "random a number 0-10")
+reply = client_node.send_message("RN", "random a number 10-100")
 print(f"RN say:\n{reply}")
