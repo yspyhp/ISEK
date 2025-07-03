@@ -78,7 +78,7 @@ class EtcdRegistry(Registry):
         key = f"/{self.parent_node_id}/{node_id}"
         self.etcd_client.put(key, json.dumps(node_entry), lease=lease)
 
-        log.info(f"Node {node_id} registered with info: {node_info}")
+        log.info(f"Node {node_id} has been registered to etcd.")
 
     def lease_refresh(self, node_id: str):
         lease_refresh_response = None

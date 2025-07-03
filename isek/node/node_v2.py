@@ -8,6 +8,7 @@ from isek.node.registry import Registry
 from isek.protocol.a2a_protocol import A2AProtocol
 from isek.protocol.protocol import Protocol
 from isek.adapter.base import Adapter
+from isek.adapter.simple_adapter import SimpleAdapter
 from isek.utils.log import log
 
 NodeDetails = Dict[str, Any]
@@ -40,7 +41,7 @@ class Node(ABC):
         self.node_id: str = node_id
         self.all_nodes: Dict[str, NodeDetails] = {}
         self.registry = registry or DefaultRegistry()
-        self.adapter = adapter
+        self.adapter = adapter or SimpleAdapter()
         self.protocol = protocol or A2AProtocol(
             host=self.host,
             port=self.port,
@@ -92,6 +93,7 @@ class Node(ABC):
     def build_server(self, daemon: bool = False) -> None:
         if self.p2p:
             self.protocol.bootstrap_p2p_extension()
+            log.info("The p2p service has been launched.")
         if self.registry and self.adapter:
             node_metadata = self.adapter.get_adapter_card().__dict__
             node_metadata["url"] = f"http://{self.host}:{self.port}"
