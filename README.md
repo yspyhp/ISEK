@@ -11,6 +11,11 @@
   <a href="mailto:team@isek.xyz"><img src="https://img.shields.io/badge/contact-team@isek.xyz-blue" alt="Email" /></a>
 </p>
 
+<h4 align="center">
+    <a href="README.md">English</a> |
+    <a href="README_CN.md">中文</a>
+</h4>
+
 ---
 
 **Isek** is a decentralized agent network framework designed for building intelligent, collaborative agent-to-agent (A2A) systems. Agents in Isek autonomously discover peers, share context, and cooperatively solve tasks, forming a self-organizing, decentralized society.
@@ -18,6 +23,23 @@
 With native integration of large language models (LLMs) and a user-friendly CLI, Isek empowers developers and researchers to quickly prototype, deploy, and manage intelligent agent networks.
 
 > 🧪 **ISEK is under active development.** Contributions, feedback, and experiments are highly welcome.
+
+---
+
+## 💡 Why ISEK?
+
+The world is shifting from human-defined workflows and centralized orchestration to autonomous, agent-driven coordination.
+
+While most frameworks treat agents as isolated executors, **ISEK** focuses on the missing layer: **decentralized agent collaboration and coordination**. We believe the future of intelligent systems lies in **self-organizing agent networks** capable of context sharing, team formation, and collective reasoning — all without central control.
+
+ISEK enables:
+
+- 🔍 **Autonomous agent discovery and recruitment** across a peer-to-peer network  
+- 🧠 **Model-agnostic intelligence**, allowing agents to use any LLM or backend  
+- 🤝 **Composable multi-agent teamwork**, with plug-and-play collaboration protocols  
+- 🌐 **Truly distributed deployments**, from local clusters to global swarms  
+
+> ISEK is not just about running agents — it's about empowering them to **find each other, reason together, and act as a decentralized system.**
 
 ---
 
@@ -44,8 +66,9 @@ With native integration of large language models (LLMs) and a user-friendly CLI,
 
 ```bash
 pip install isek
+```
 
-> Requires **Python 3.8+**
+> Requires **Python 3.10+**
 
 ---
 
@@ -61,25 +84,24 @@ OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_API_KEY=your_api_key
 ```
 
-### 2️⃣ Start Registry
-
-```bash
-isek registry
-```
-
-### 3️⃣ Launch Agent
+### 2️⃣ Launch Agent
 
 ```python
-from dotenv import load_dotenv
-from isek.agent.distributed_agent import DistributedAgent
+from isek.agent.isek_agent import IsekAgent
+from isek.models.openai import OpenAIModel
+import dotenv
+dotenv.load_dotenv()
 
-load_dotenv()
-agent = DistributedAgent()
-agent.build(daemon=True)
-agent.run_cli()
+agent = IsekAgent(
+    name="My Agent",
+    model=OpenAIModel(model_id="gpt-4o-mini"),
+    description="A helpful assistant",
+    instructions=["Be polite", "Provide accurate information"],
+    success_criteria="User gets a helpful response"
+)
+
+response = agent.run("hello")
 ```
-
-Now you're ready to interact with your decentralized agent in the terminal!
 
 ---
 
@@ -99,26 +121,19 @@ isek/
 ├── examples                   # Sample scripts demonstrating Isek usage
 ├── isek                       # Core functionality and modules
 │   ├── agent                  # Agent logic and behavior
-│   ├── constant               # Shared constants
-│   ├── embedding              # Embedding systems
 │   ├── node                   # Node orchestration
-│   ├── llm                    # LLM backends and interfaces
-│   ├── util                   # Utility functions
+│   ├── protocol               # Inter-Agent communication Protocol Layer
+│   ├── memory                 # Agent state and context
+│   ├── models                 # LLM backends and interfaces
+│   ├── team                   # Multi-Agent Organization Interface
+│   ├── tools                  # The toolkit library for Agents
+│   ├── utils                  # Utility functions
 │   ├── cli.py                 # CLI entry point
-│   ├── isek_config.py         # Configuration handler
 │   └── isek_center.py         # Local registry and coordinator
 ├── script                     # Utility scripts (e.g., clean.py)
 ├── pyproject.toml             # Build and dependency configuration
 └── README.md                  # Project overview and documentation
 ```
-
----
-
-## ⚙️ Configuration
-
-Main configurations are managed via:
-
-* `isek/default_config.yaml`: Predefined defaults for rapid deployment.
 
 ---
 
@@ -128,7 +143,7 @@ We welcome collaborators, researchers, and early adopters!
 
 * 💬 Open issues or suggestions via [GitHub Issues](https://github.com/your-repo/issues)
 * 📧 Contact us directly: [team@isek.xyz](mailto:team@isek.xyz)
-* 📄 See our [Contribution Guidelines](CONTRIBUTION.md)
+* 📄 See our [Contribution Guidelines](CONTRIBUTING.md)
 
 ---
 
@@ -137,7 +152,13 @@ We welcome collaborators, researchers, and early adopters!
 Licensed under the [MIT License](LICENSE).
 
 ---
+## ⚠️ Legal Notice
 
+ISEK is an open-source, permissionless framework for building decentralized agent coordination systems.  
+The contributors do not operate, control, or monitor any deployed agents or their behavior.  
+By using this project, you accept full responsibility for your actions. See [LEGAL.md](./LEGAL.md) for more details.
+
+---
 <p align="center">
   Made with ❤️ by the <strong>Isek Team</strong><br />
   <em>Autonomy is not isolation. It's cooperation, at scale.</em>

@@ -1,43 +1,31 @@
-import uuid
 import time
-import threading
-from isek.node.isek_center_registry import IsekCenterRegistry
-from isek.node.node import Node
-from isek import isek_center
+from isek.node.node_v2 import Node
+from isek.node.etcd_registry import EtcdRegistry
+from isek.adapter.simple_adapter import SimpleAdapter
 
 
-class DefaultNode(Node):
+def test_node_message():
+    registry = EtcdRegistry(host="47.236.116.81", port=2379)
 
-    def build_node_id(self) -> str:
-        return uuid.uuid1().hex
+    # Create teams for the nodes
+    team1 = SimpleAdapter(name="Node1Team", description="Team for Node1")
+    team2 = SimpleAdapter(name="Node2Team", description="Team for Node2")
 
-    def metadata(self):
-        return {}
+    node1 = Node(node_id="Node1", registry=registry, port=8080, team=team1)
+    node2 = Node(node_id="Node2", registry=registry, port=8081, team=team2)
 
-    def on_message(self, sender, message):
-        return f"{self.node_id}"
-
-
-def test_node():
-    server_thread = threading.Thread(target=isek_center.main, daemon=True)
-    server_thread.start()
-    time.sleep(2)
-    registry = IsekCenterRegistry()
-
-    def build_node(port):
-        node = DefaultNode(host="localhost", port=port, registry=registry)
-        node_thread = threading.Thread(target=node.build_server, daemon=True)
-        node_thread.start()
-        return node
-
-    node_a = build_node(8080)
-    node_b = build_node(8081)
-    time.sleep(2)
-    for n in node_a.registry.get_available_nodes():
-        print(n)
-    assert len(node_a.registry.get_available_nodes()) == 2
-    assert len(node_b.registry.get_available_nodes()) == 2
-    node_a.registry.deregister_node(node_a.node_id)
-    node_b.registry.deregister_node(node_b.node_id)
+    node1.build_server(daemon=True)
+    node2.build_server(daemon=True)
+    time.sleep(5)
+    result = node1.send_message(node2.node_id, "Hello, I am Node1")
+    print(result)
 
 
+def build_node():
+    # Create a simple team for the node
+    team = SimpleAdapter(name="TestTeam", description="A test team for node testing")
+    Node(team=team).build_server()
+
+
+if __name__ == "__main__":
+    build_node()
