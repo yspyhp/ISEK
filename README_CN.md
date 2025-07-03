@@ -137,7 +137,13 @@ isek/
 本项目采用 [MIT License](LICENSE) 开源。
 
 ---
+## ⚠️ 法律声明
 
+ISEK 是一个开源、无许可的技术框架，旨在支持去中心化智能体协作系统的构建。  
+本项目的贡献者不运营、控制或监控任何已部署的智能体或其行为。  
+使用本项目即表示您将为自己的行为承担全部责任。详情请参阅 [LEGAL.md](./LEGAL.md)。
+
+---
 <p align="center">
   Made with ❤️ by the <strong>Isek Team</strong><br />
   <em>Autonomy is not isolation. It's cooperation, at scale.</em>

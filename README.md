@@ -152,7 +152,13 @@ We welcome collaborators, researchers, and early adopters!
 Licensed under the [MIT License](LICENSE).
 
 ---
+## ⚠️ Legal Notice
 
+ISEK is an open-source, permissionless framework for building decentralized agent coordination systems.  
+The contributors do not operate, control, or monitor any deployed agents or their behavior.  
+By using this project, you accept full responsibility for your actions. See [LEGAL.md](./LEGAL.md) for more details.
+
+---
 <p align="center">
   Made with ❤️ by the <strong>Isek Team</strong><br />
   <em>Autonomy is not isolation. It's cooperation, at scale.</em>
