@@ -42,13 +42,11 @@ class LoggerManager:
             markup=True,
             show_path=False,
             show_time=False,
-            show_level=False,
+            show_level=True,
         )
 
         handler.addFilter(InfoOnlyFilter())
-        handler.setFormatter(
-            logging.Formatter("%(levelname)s | %(message)s", datefmt="[%X]")
-        )
+        handler.setFormatter(logging.Formatter("[blue]%(message)s[/]", datefmt="[%X]"))
         logger = logging.getLogger("isek")
         logger.setLevel(level)
         logger.handlers.clear()
