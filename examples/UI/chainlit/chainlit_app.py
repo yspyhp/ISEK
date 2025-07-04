@@ -30,13 +30,37 @@ async def start():
             "port": SERVER_PORT,
             "metadata": {"url": f"http://{SERVER_HOST}:{SERVER_PORT}"}
         }
+        agent_card = client_node.adapter.get_adapter_card()
         
+        # example of agent card
+        # • AdapterCard(name='SimpleAdapter', 
+        #               bio='A simple adapter for testing', 
+        #               lore='Created for testing purposes', 
+        #               knowledge='Basic testing knowledge', 
+        #               routine='Respond to messages')
         # Send welcome message
         await cl.Message(
-            content="🤖 Welcome to ISEK Agent Interface!\n\n"
-                   "I'm connected to your ISEK agent server. You can now interact with the agent "
-                   "that has memory and calculator tools.\n\n"
-                   "Try asking me questions or giving me information to remember!",
+            content=f"🤖 Welcome to ISEK Agent Interface!\n\n"
+                   f"I'm connected to your ISEK agent server. You can now interact with the agent ",
+            author="System"
+        ).send()
+        
+        # Create expandable widget for server information using HTML details/summary
+        server_info_content = (
+            f"<details>\n"
+            f"<summary>📋 Click to view Node Information</summary>\n\n"
+            f"**Server Node ID:** `{SERVER_NODE_ID}`\n\n"
+            f"**Agent Details:**\n"
+            f"• **Name:** `{agent_card.name}`\n"
+            f"• **Bio:** `{agent_card.bio}`\n"
+            f"• **Lore:** `{agent_card.lore}`\n"
+            f"• **Knowledge:** `{agent_card.knowledge}`\n"
+            f"• **Routine:** `{agent_card.routine}`\n"
+            f"</details>"
+        )
+        
+        await cl.Message(
+            content=server_info_content,
             author="System"
         ).send()
         
@@ -45,7 +69,7 @@ async def start():
     except Exception as e:
         await cl.Message(
             content=f"❌ Failed to connect to ISEK server: {str(e)}\n\n"
-                   "Please make sure the agent server is running on localhost:9005",
+                   "Please make sure the agent server is running on localhost:9006",
             author="System"
         ).send()
         log.error(f"Failed to connect to ISEK server: {e}")
@@ -63,12 +87,6 @@ async def main(message: cl.Message):
         return
     
     try:
-        # Show user message
-        await cl.Message(
-            content=message.content,
-            author="You"
-        ).send()
-        
         # Send message to ISEK agent and get response
         response = client_node.send_message(SERVER_NODE_ID, message.content)
         
