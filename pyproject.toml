@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "isek"
-version = "0.2.0.0"
+version = "0.2.0"
 description = "ISEK Distributed Multi-Agent Framework"
 readme = "README.md"
 license = { text = "MIT" }
@@ -35,7 +35,7 @@ dependencies = [
     "uvicorn",
     "rich",
     "fastmcp",
-    "a2a-cdk",
+    "a2a-sdk",
 ]
 
 [project.scripts]

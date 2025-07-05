@@ -38,32 +38,30 @@ def update_version(new_version: str) -> None:
     print(f"✅ Updated version to {new_version}")
 
 
-def parse_version(version: str) -> Tuple[int, int, int, int]:
+def parse_version(version: str) -> Tuple[int, int, int]:
     """Parse version string into components"""
     parts = version.split(".")
-    if len(parts) != 4:
-        raise ValueError(f"Version must have 4 parts: {version}")
+    if len(parts) != 3:
+        raise ValueError(f"Version must have 3 parts: {version}")
 
-    return (int(parts[0]), int(parts[1]), int(parts[2]), int(parts[3]))
+    return (int(parts[0]), int(parts[1]), int(parts[2]))
 
 
-def format_version(major: int, minor: int, patch: int, build: int) -> str:
+def format_version(major: int, minor: int, patch: int) -> str:
     """Format version components into string"""
-    return f"{major}.{minor}.{patch}.{build}"
+    return f"{major}.{minor}.{patch}"
 
 
 def suggest_next_version(current_version: str, release_type: str = "patch") -> str:
     """Suggest next version based on release type"""
-    major, minor, patch, build = parse_version(current_version)
+    major, minor, patch = parse_version(current_version)
 
     if release_type == "major":
-        return format_version(major + 1, 0, 0, 0)
+        return format_version(major + 1, 0, 0)
     elif release_type == "minor":
-        return format_version(major, minor + 1, 0, 0)
+        return format_version(major, minor + 1, 0)
     elif release_type == "patch":
-        return format_version(major, minor, patch + 1, 0)
-    elif release_type == "build":
-        return format_version(major, minor, patch, build + 1)
+        return format_version(major, minor, patch + 1)
     else:
         raise ValueError(f"Unknown release type: {release_type}")
 
@@ -107,13 +105,13 @@ def main():
             "  python scripts/version.py current                    # Show current version"
         )
         print(
-            "  python scripts/version.py next [major|minor|patch|build]  # Suggest next version"
+            "  python scripts/version.py next [major|minor|patch]  # Suggest next version"
         )
         print(
             "  python scripts/version.py update <version>          # Update to specific version"
         )
         print(
-            "  python scripts/version.py bump [major|minor|patch|build]  # Bump and update version"
+            "  python scripts/version.py bump [major|minor|patch]  # Bump and update version"
         )
         print(
             "  python scripts/version.py notes [version]           # Generate release notes template"
