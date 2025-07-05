@@ -55,16 +55,33 @@ def registry():
 
 @cli.command()
 def setup():
-    """Install ISEK Python dependencies"""
+    """Install ISEK Python dependencies and Node.js dependencies"""
     project_root = Path(__file__).parent.parent
+    p2p_dir = project_root / "isek" / "protocol" / "p2p"
+
+    # Install Python dependencies
     try:
         subprocess.check_call(
             [sys.executable, "-m", "pip", "install", "-e", str(project_root)]
         )
-        click.secho("✓ Dependencies installed", fg="green")
+        click.secho("✓ Python dependencies installed", fg="green")
     except subprocess.CalledProcessError as e:
-        click.secho(f"Dependency installation failed: {e}", fg="red")
+        click.secho(f"Python dependency installation failed: {e}", fg="red")
         sys.exit(e.returncode)
+
+    # Install Node.js dependencies
+    if p2p_dir.exists() and (p2p_dir / "package.json").exists():
+        try:
+            subprocess.check_call(["npm", "install"], cwd=str(p2p_dir))
+            click.secho("✓ Node.js dependencies installed", fg="green")
+        except subprocess.CalledProcessError as e:
+            click.secho(f"Node.js dependency installation failed: {e}", fg="red")
+            sys.exit(e.returncode)
+    else:
+        click.secho(
+            "⚠ No package.json found in p2p directory, skipping npm install",
+            fg="yellow",
+        )
 
 
 @cli.group()
