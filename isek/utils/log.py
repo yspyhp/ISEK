@@ -4,6 +4,11 @@ from threading import Lock
 from rich.logging import RichHandler
 
 
+class InfoOnlyFilter(logging.Filter):
+    def filter(self, record):
+        return record.levelno == logging.INFO
+
+
 class LoggerManager:
     _instance = None
     _lock = Lock()
@@ -37,10 +42,11 @@ class LoggerManager:
             markup=True,
             show_path=False,
             show_time=False,
-            show_level=False,
+            show_level=True,
         )
 
-        handler.setFormatter(logging.Formatter("%(message)s", datefmt="[%X]"))
+        handler.addFilter(InfoOnlyFilter())
+        handler.setFormatter(logging.Formatter("[blue]%(message)s[/]", datefmt="[%X]"))
         logger = logging.getLogger("isek")
         logger.setLevel(level)
         logger.handlers.clear()
@@ -48,7 +54,7 @@ class LoggerManager:
         logger.propagate = False
 
     @classmethod
-    def plain_mode(cls, level="DEBUG"):
+    def plain_mode(cls, level="INFO"):
         return cls(mode="plain", level=level)
 
     @classmethod
