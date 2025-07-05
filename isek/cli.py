@@ -104,6 +104,7 @@ def setup():
     click.secho("🎉 ISEK setup completed successfully!", fg="green")
     click.secho("   You can now run examples with 'isek example run <name>'", fg="blue")
 
+
 @cli.group()
 def example():
     """Example script management"""
