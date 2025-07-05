@@ -2,102 +2,132 @@
 Quick Start
 ================
 
-This guide will walk you through the basic steps to install ISEK, set up your environment, and launch your first decentralized agent.
+This guide provides a step-by-step introduction to installing ISEK, configuring your environment, and launching your first decentralized agent. It is designed for developers and researchers who want to quickly get started with the ISEK multi-agent framework.
 
 Prerequisites
 -------------
-
-*   **Python 3.8 or higher**
-*   An **OpenAI API Key** (or access to a compatible LLM API)
+* **Python 3.10 or higher**
+* An **LLM API Key** (OpenAI, Anthropic, Google, Azure, or other LiteLLM-supported providers)
+* **Node.js 18+** (required for P2P features)
 
 Installation
 ------------
-
-Install ISEK using pip:
+Install ISEK and its dependencies using pip:
 
 .. code-block:: bash
 
    pip install isek
+   isek setup
 
-Setting Up Your Environment
+The `isek setup` command will automatically install both Python and JavaScript dependencies required for full functionality.
+
+Environment Configuration
+-------------------------
+ISEK supports multiple LLM providers through LiteLLM integration. Configure your preferred model using environment variables.
+
+**OpenAI Configuration:**
+Create a `.env` file in your project root directory:
+
+.. code-block:: bash
+
+   OPENAI_MODEL_NAME=gpt-4o-mini
+   OPENAI_BASE_URL=https://api.openai.com/v1
+   OPENAI_API_KEY=your_api_key
+
+**Alternative Models via LiteLLM:**
+ISEK supports various models through LiteLLM. You can use:
+
+- **Anthropic Claude**: `ANTHROPIC_API_KEY=your_key`
+- **Google Gemini**: `GOOGLE_API_KEY=your_key`
+- **Azure OpenAI**: `AZURE_API_KEY=your_key`, `AZURE_API_BASE=your_endpoint`
+- **Custom endpoints**: Configure via LiteLLM's standard environment variables
+
+.. note::
+   Replace `your_api_key` with your actual API key. See the :doc:`user_guide/configuration` for detailed model configuration options.
+
+Launching the ISEK Registry
+--------------------------
+The ISEK registry acts as a local discovery and coordination service for agents. Start it in a dedicated terminal window:
+
+.. code-block:: bash
+
+   isek registry
+
+Keep this terminal open while running agents.
+
+Creating and Running Your First Agent
+-------------------------------------
+1. **Create a Python script** (e.g., `run_my_agent.py`) with the following content:
+
+   **Using OpenAI:**
+   .. code-block:: python
+
+      from dotenv import load_dotenv
+      from isek.agent.isek_agent import IsekAgent
+      from isek.models.openai import OpenAIModel
+
+      # Load environment variables from .env
+      load_dotenv()
+
+      # Initialize the agent with OpenAI
+      agent = IsekAgent(
+          name="My Agent",
+          model=OpenAIModel(model_id="gpt-4o-mini"),
+          description="A helpful assistant",
+          instructions=["Be polite", "Provide accurate information"],
+          success_criteria="User gets a helpful response"
+      )
+
+      # Run a simple interaction
+      response = agent.run("hello")
+      print(response)
+
+   **Using LiteLLM (for other models):**
+   .. code-block:: python
+
+      from dotenv import load_dotenv
+      from isek.agent.isek_agent import IsekAgent
+      from isek.models.litellm import LiteLLMModel
+
+      load_dotenv()
+
+      # Initialize the agent with any LiteLLM-supported model
+      agent = IsekAgent(
+          name="My Agent",
+          model=LiteLLMModel(model_id="claude-3-sonnet-20240229"),  # Anthropic Claude
+          description="A helpful assistant"
+      )
+
+      response = agent.run("hello")
+      print(response)
+
+2. **Run your agent** in a new terminal:
+
+   .. code-block:: bash
+
+      python run_my_agent.py
+
+You should see the agent's response printed in your terminal.
+
+Exploring the ISEK CLI
+----------------------
+ISEK provides a command-line interface for managing agents, running examples, and performing maintenance tasks:
+
+.. code-block:: bash
+
+   isek --help         # View all available commands
+   isek example list   # List available example scripts
+   isek example run <name> # Run a specific example
+   isek clean          # Clean up temporary files
+
+Advanced Usage and Examples
 ---------------------------
+For more advanced scenarios, including multi-agent collaboration, P2P networking, and custom tool integration, explore the `examples/` directory in the ISEK repository. Each example is documented and demonstrates a specific use case or feature.
 
-ISEK requires certain environment variables to be set, particularly for LLM integration.
+Further Reading
+---------------
+- **User Guide:** See the :doc:`user_guide/index` for in-depth concepts and configuration options.
+- **API Reference:** See the :doc:`api/index` for detailed API documentation.
+- **Contributing:** See :doc:`contributing` if you wish to contribute to ISEK.
 
-1.  **Create a ``.env`` file**:
-    In your project's root directory (or where you plan to run your agent scripts), create a file named ``.env``.
-
-2.  **Add API Configuration**:
-    Populate the ``.env`` file with your LLM API details. For OpenAI, it would look like this:
-
-    .. code-block:: bash
-
-       OPENAI_MODEL_NAME=gpt-4o-mini
-       OPENAI_BASE_URL=https://api.openai.com/v1
-       OPENAI_API_KEY=your_api_key
-
-    .. note::
-       Replace ``your_api_key`` with your actual OpenAI API key. Adjust ``OPENAI_MODEL_NAME`` and ``OPENAI_BASE_URL`` if you are using a different model or a custom/proxy endpoint.
-
-Running Your First Agent
-------------------------
-
-Follow these steps to launch the ISEK registry and your first agent.
-
-1.  **Start the ISEK Registry**:
-    The registry is a local component that helps agents discover each other. Open a terminal window and run:
-
-    .. code-block:: bash
-
-       isek registry
-
-    Keep this terminal window open. The registry needs to be running for agents to connect.
-
-2.  **Launch an Agent**:
-    In a *new* terminal window (while the registry is still running in the other), create a Python script (e.g., ``run_my_agent.py``) with the following content:
-
-    .. code-block:: python
-
-       from dotenv import load_dotenv
-       from isek.agent.distributed_agent import DistributedAgent
-
-       # Load environment variables from .env file
-       load_dotenv()
-
-       print("Initializing agent...")
-       agent = DistributedAgent()
-
-       print("Building agent (daemon=True)...")
-       # daemon=True runs the agent's internal services (like its API server)
-       # in background threads, allowing the CLI to be interactive.
-       agent.build(daemon=True)
-
-       print("Running agent CLI. Type 'help' for commands or 'exit' to quit.")
-       agent.run_cli()
-
-       print("Agent CLI exited.")
-
-    Save the file and then run it:
-
-    .. code-block:: bash
-
-       python run_my_agent.py
-
-    You should now be able to interact with your decentralized agent directly through the command-line interface that appears in your terminal. Try typing ``help`` to see available agent commands.
-
-Exploring Further
------------------
-
-Congratulations! You've successfully set up and launched your first ISEK agent.
-
-*   **Interact with your agent**: Use the CLI that appeared after running your Python script.
-*   **ISEK CLI Utilities**: Use the main ``isek`` command for other operations:
-    .. code-block:: bash
-
-       isek --help      # View available commands
-       isek clean       # Clean temporary files
-       isek setup       # Install dependencies
-
-*   **Examples**: Check out the ``examples/`` directory in the ISEK project repository for more advanced use cases and demonstration scripts.
-
-For more detailed information on configuration, features, and contributing, please refer to the main project documentation.
+If you encounter issues or have questions, please open an issue on GitHub or contact the ISEK team.
