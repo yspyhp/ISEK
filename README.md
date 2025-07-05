@@ -64,11 +64,17 @@ ISEK enables:
 
 ## 📦 Installation
 
+### Quick Install
 ```bash
 pip install isek
+isek setup
 ```
 
-> Requires **Python 3.10+**
+### Prerequisites
+- **Python 3.10+**
+- **Node.js 18+** (for P2P functionality)
+
+> 💡 **Tip:** The `isek setup` command automatically handles both Python and JavaScript dependencies.
 
 ---
 
@@ -103,12 +109,28 @@ agent = IsekAgent(
 response = agent.run("hello")
 ```
 
+### 3️⃣ Try Examples
+
+```bash
+# List available examples
+isek example list
+
+# Run a simple example
+isek example run lv1_single_agent
+
+# Run a more complex example
+isek example run lv5_team_agent
+```
+
 ---
 
 ## 🧪 CLI Commands
 
 ```bash
+isek setup       # Install Python and JavaScript dependencies
 isek clean       # Clean temporary files
+isek example list # List available examples
+isek example run <name> # Run a specific example
 isek --help      # View available commands
 ```
 
@@ -130,8 +152,7 @@ isek/
 │   ├── utils                  # Utility functions
 │   ├── cli.py                 # CLI entry point
 │   └── isek_center.py         # Local registry and coordinator
-├── script                     # Utility scripts (e.g., clean.py)
-├── pyproject.toml             # Build and dependency configuration
+├── docs/                      # Documentation
 └── README.md                  # Project overview and documentation
 ```
 

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "isek"
-version = "0.1.0.3"
+version = "0.2.0.0"
 description = "ISEK Distributed Multi-Agent Framework"
 readme = "README.md"
 license = { text = "MIT" }
@@ -34,8 +34,19 @@ dependencies = [
     "litellm",
     "uvicorn",
     "rich",
-    "fastmcp"
+    "fastmcp",
+    "a2a-cdk",
 ]
 
 [project.scripts]
 isek = "isek.cli:cli"
+
+[tool.hatch.build.targets.wheel]
+packages = ["isek"]
+
+[tool.hatch.build.targets.wheel.sources]
+"isek" = "isek"
+
+[tool.hatch.build.targets.wheel.include]
+"isek/protocol/p2p/*.js" = "isek/protocol/p2p/"
+"isek/protocol/p2p/package.json" = "isek/protocol/p2p/"
