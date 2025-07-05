@@ -20,7 +20,7 @@ With built-in LLM integration and an intuitive CLI, Isek is ideal for researcher
    installation
    quickstart
    user_guide/index
-   api/index
+   api
    contributing
 
 

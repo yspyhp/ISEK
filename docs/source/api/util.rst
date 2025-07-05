@@ -1,15 +1,17 @@
-************
-Util
-************
+Utils Module
+============
 
-.. automodule:: isek.util.logger
+.. automodule:: isek.utils
    :members:
    :undoc-members:
    :show-inheritance:
-   :inherited-members:
 
-.. automodule:: isek.util.tools
+.. automodule:: isek.utils.log
    :members:
    :undoc-members:
    :show-inheritance:
-   :inherited-members:
+
+.. automodule:: isek.utils.tools
+   :members:
+   :undoc-members:
+   :show-inheritance:
