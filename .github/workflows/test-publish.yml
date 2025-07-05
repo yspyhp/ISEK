@@ -34,7 +34,7 @@ jobs:
     - name: Install JavaScript dependencies
       run: |
         cd isek/protocol/p2p
-        npm ci
+        npm install
         
     - name: Build package
       run: python -m build
