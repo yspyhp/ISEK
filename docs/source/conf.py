@@ -15,7 +15,8 @@ sys.path.insert(0, os.path.abspath("../../"))
 project = "ISEK"
 copyright = "2025, ISEK Team"
 author = "Moshi"
-release = "0.1"
+release = "0.2.0"
+version = "0.2.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

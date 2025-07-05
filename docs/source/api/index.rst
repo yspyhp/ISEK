@@ -10,7 +10,11 @@ ISEK provides a comprehensive API for developers to interact with its components
 
    core     
    agent     
-   llm       
-   embedding 
    node      
-   util      
+   util
+   team
+   protocol
+   adapter
+   models
+   tools
+   memory      
