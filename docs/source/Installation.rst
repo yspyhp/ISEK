@@ -2,29 +2,33 @@
 Installation
 ************
 
-This guide covers how to install the ``isek`` framework.
+This guide covers how to install the ISEK framework and its dependencies.
 
 Prerequisites
 =============
 
-*   **Python:** Isek requires **Python 3.8 or higher**. Please ensure you have a compatible Python version installed. You can check your version using:
+*   **Python 3.10 or higher** - ISEK requires modern Python features
+*   **Node.js 18+** - Required for P2P networking functionality
+*   **Git** - For development installations
 
-    .. code-block:: bash
+Check your versions:
 
-       python --version
-       # or
-       python3 --version
+.. code-block:: bash
+
+   python --version
+   node --version
+   git --version
 
 Standard Installation (Recommended)
 ===================================
 
-We strongly recommend installing Isek within a Python virtual environment to manage dependencies effectively and avoid conflicts with other system packages.
+We strongly recommend installing ISEK within a Python virtual environment to manage dependencies effectively.
 
-1.  **(Optional but Recommended) Create and activate a virtual environment:**
+1.  **Create and activate a virtual environment:**
 
     .. code-block:: bash
 
-       # Choose a name for your environment, e.g., .venv
+       # Create virtual environment
        python -m venv .venv
 
        # Activate the environment
@@ -35,53 +39,93 @@ We strongly recommend installing Isek within a Python virtual environment to man
        # On Windows (PowerShell):
        # .venv\Scripts\Activate.ps1
 
-2.  **Install Isek using pip:**
-
-    Once your environment is activated (or if you choose to install globally), run:
+2.  **Install ISEK:**
 
     .. code-block:: bash
 
        pip install isek
 
-    This command will download and install the latest stable release of Isek from the Python Package Index (PyPI).
-
-
-Known Issues & Troubleshooting
-==================================
-
-**macOS: `faiss-cpu` Error during Installation**
-
-If you are using macOS and encounter an error related to the `faiss-cpu` package during installation (this has been observed with Python 3.9.6 but might affect other versions), you may need to install the `swig` dependency first using Homebrew.
-
-1.  Install `swig`:
+3.  **Run ISEK setup (Required):**
 
     .. code-block:: bash
 
-       brew install swig
+       isek setup
 
-2.  Retry the Isek installation:
+    This command installs JavaScript dependencies and configures the P2P networking components.
+
+Installation Verification
+========================
+
+Verify your installation:
+
+.. code-block:: bash
+
+   isek --help
+   isek example list
+
+You should see the ISEK CLI help and a list of available examples.
+
+Installation from Source (Development)
+=====================================
+
+For development or to use the latest features:
+
+1.  **Clone the repository:**
 
     .. code-block:: bash
 
-       pip install isek
-
-
-Installation from Source (for Development)
-==========================================
-
-If you wish to install the latest development version directly from the source code, for example, to contribute to the project:
-
-1.  Clone the repository:
-
-    .. code-block:: bash
-
-       git clone <Your-Repository-URL> # e.g., https://github.com/your_org/isek.git
+       git clone https://github.com/your-org/isek.git
        cd isek
 
-2.  Install in editable mode:
+2.  **Install in editable mode:**
 
     .. code-block:: bash
 
        pip install -e .
+       isek setup
 
-    The `-e` flag installs the package in "editable" mode, meaning changes you make to the source code will be reflected immediately without needing to reinstall.
+    The `-e` flag installs in "editable" mode, so code changes are reflected immediately.
+
+Troubleshooting
+==============
+
+**macOS: `faiss-cpu` Installation Error**
+
+If you encounter `faiss-cpu` errors on macOS:
+
+.. code-block:: bash
+
+   brew install swig
+   pip install isek
+
+**Node.js Dependencies Issues**
+
+If P2P features don't work:
+
+.. code-block:: bash
+
+   cd isek/protocol/p2p
+   npm install
+   cd ../../..
+   isek setup
+
+**Permission Errors**
+
+On Linux/macOS, if you get permission errors:
+
+.. code-block:: bash
+
+   pip install --user isek
+   # or use sudo (not recommended)
+   # sudo pip install isek
+
+Next Steps
+==========
+
+After installation:
+
+1.  Configure your LLM API keys (see :doc:`quickstart`)
+2.  Try running an example: `isek example run lv1_single_agent`
+3.  Explore the :doc:`user_guide/index` for advanced usage
+
+For issues or questions, please open an issue on GitHub or contact the ISEK team.

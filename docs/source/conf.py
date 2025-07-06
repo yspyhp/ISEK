@@ -9,24 +9,25 @@
 import os
 import sys
 
-# 假设 conf.py 在 docs/source/，那么你的项目根目录 (包含 isek/ 的目录) 是 ../../
+# Assuming conf.py is in docs/source/, the project root directory (containing isek/) is ../../
 sys.path.insert(0, os.path.abspath("../../"))
 
 project = "ISEK"
 copyright = "2025, ISEK Team"
 author = "Moshi"
-release = "0.1"
+release = "0.2.0"
+version = "0.2.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    "sphinx.ext.autodoc",  # 核心：从 docstrings 生成文档
-    "sphinx.ext.napoleon",  # 支持 Google/NumPy 风格 docstrings (如果使用)
-    "sphinx.ext.intersphinx",  # 链接到其他库的文档 (如 Python)
-    "sphinx.ext.viewcode",  # 添加源码链接
-    "sphinx.ext.githubpages",  # 支持 GitHub Pages 发布
-    # 'sphinx_rtd_theme',     # 如果使用 ReadTheDocs 主题
+    "sphinx.ext.autodoc",  # Core: generate docs from docstrings
+    "sphinx.ext.napoleon",  # Support Google/NumPy style docstrings
+    "sphinx.ext.intersphinx",  # Link to other libraries' docs (like Python)
+    "sphinx.ext.viewcode",  # Add source code links
+    "sphinx.ext.githubpages",  # Support GitHub Pages deployment
+    # 'sphinx_rtd_theme',     # If using ReadTheDocs theme
 ]
 
 templates_path = ["_templates"]
@@ -41,8 +42,8 @@ language = "English"
 html_static_path = ["_static"]
 intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
 
-# import sphinx_rtd_theme # 如果使用
-# html_theme = 'sphinx_rtd_theme' # 或者 'alabaster', 'pydata_sphinx_theme' 等
+# import sphinx_rtd_theme # If using
+# html_theme = 'sphinx_rtd_theme' # or 'alabaster', 'pydata_sphinx_theme', etc.
 html_permalinks_icon = "<span>#</span>"
 html_theme = "sphinxawesome_theme"
-# html_theme_path = [sphinx_rtd_theme.get_html_theme_path()] # 如果需要指定路径
+# html_theme_path = [sphinx_rtd_theme.get_html_theme_path()] # If path needs to be specified

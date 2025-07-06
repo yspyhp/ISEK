@@ -1,17 +1,17 @@
-Core Components
+Protocol Module
 ===============
 
-.. automodule:: isek.isek_center
+.. automodule:: isek.protocol
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: isek.cli
+.. automodule:: isek.protocol.protocol
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: isek.exceptions
+.. automodule:: isek.protocol.a2a_protocol
    :members:
    :undoc-members:
-   :show-inheritance:
+   :show-inheritance: 

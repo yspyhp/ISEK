@@ -1,32 +1,32 @@
-Node Module
-===========
+Models Module
+=============
 
-.. automodule:: isek.node
+.. automodule:: isek.models
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: isek.node.node_v2
+.. automodule:: isek.models.base
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: isek.node.registry
+.. automodule:: isek.models.provider
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: isek.node.default_registry
+.. automodule:: isek.models.simpleModel
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: isek.node.etcd_registry
+.. automodule:: isek.models.openai
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: isek.node.isek_center_registry
+.. automodule:: isek.models.litellm
    :members:
    :undoc-members:
-   :show-inheritance:
+   :show-inheritance: 

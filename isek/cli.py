@@ -55,16 +55,54 @@ def registry():
 
 @cli.command()
 def setup():
-    """Install ISEK Python dependencies"""
+    """Install ISEK Python and JavaScript dependencies"""
     project_root = Path(__file__).parent.parent
+    p2p_dir = project_root / "isek" / "protocol" / "p2p"
+
+    click.secho("🚀 Setting up ISEK dependencies...", fg="blue")
+
+    # Step 1: Install Python dependencies
+    click.secho("📦 Installing Python dependencies...", fg="yellow")
     try:
         subprocess.check_call(
-            [sys.executable, "-m", "pip", "install", "-e", str(project_root)]
+            [sys.executable, "-m", "pip", "install", "-e", str(project_root)],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
         )
-        click.secho("✓ Dependencies installed", fg="green")
+        click.secho("✓ Python dependencies installed", fg="green")
     except subprocess.CalledProcessError as e:
-        click.secho(f"Dependency installation failed: {e}", fg="red")
+        click.secho(f"✗ Python dependency installation failed: {e}", fg="red")
         sys.exit(e.returncode)
+
+    # Step 2: Check if Node.js is installed
+    try:
+        subprocess.run(["node", "--version"], check=True, capture_output=True)
+        subprocess.run(["npm", "--version"], check=True, capture_output=True)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        click.secho(
+            "⚠️  Node.js and npm are required for P2P functionality", fg="yellow"
+        )
+        click.secho("   Please install Node.js from https://nodejs.org/", fg="yellow")
+        click.secho("   Then run 'isek setup' again", fg="yellow")
+        return
+
+    # Step 3: Install JavaScript dependencies
+    if p2p_dir.exists() and (p2p_dir / "package.json").exists():
+        click.secho("📦 Installing JavaScript dependencies for P2P...", fg="yellow")
+        try:
+            subprocess.check_call(
+                ["npm", "install"],
+                cwd=p2p_dir,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            click.secho("✓ JavaScript dependencies installed", fg="green")
+        except subprocess.CalledProcessError as e:
+            click.secho(f"✗ JavaScript dependency installation failed: {e}", fg="red")
+            click.secho("   P2P functionality may not work correctly", fg="yellow")
+
+    click.secho("🎉 ISEK setup completed successfully!", fg="green")
+    click.secho("   You can now run examples with 'isek example run <name>'", fg="blue")
 
 
 @cli.group()

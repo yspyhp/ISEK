@@ -2,32 +2,17 @@
 Agent Module
 ############
 
-.. automodule:: isek.agent.abstract_agent
+.. automodule:: isek.agent
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: isek.agent.distributed_agent
+.. automodule:: isek.agent.base
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: isek.agent.memory
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. automodule:: isek.agent.persona
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. automodule:: isek.agent.single_agent
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. automodule:: isek.agent.toolbox
+.. automodule:: isek.agent.isek_agent
    :members:
    :undoc-members:
    :show-inheritance:
