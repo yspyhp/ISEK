@@ -6,7 +6,7 @@ class AgnoAdapter(Adapter):
     def __init__(self, agent: Agent):
         self._agno_agent = agent
 
-    def run(self, prompt: str) -> str:
+    def run(self, prompt: str, **kwargs) -> str:
         """Simple response for testing."""
         return self._agno_agent.run(prompt).content
 

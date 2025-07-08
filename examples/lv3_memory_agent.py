@@ -19,18 +19,11 @@ agent = IsekAgent(
     debug_mode=True
 )
 
-# Test conversation with memory
-print("=== First conversation ===")
-response1 = agent.run("Hello! My name is Alice.", user_id="alice", session_id="session1")
-print(f"Agent: {response1}")
+# # Test conversation with memory
 
-print("\n=== Second conversation ===")
-response2 = agent.run("What's my name?", user_id="alice", session_id="session1")
-print(f"Agent: {response2}")
-
-print("\n=== Third conversation ===")
-response3 = agent.run("Tell me about our previous conversations.", user_id="alice", session_id="session1")
-print(f"Agent: {response3}")
+agent.print_response("Hello! My name is Alice.", user_id="alice", session_id="session1")    
+agent.print_response("What's my name?", user_id="alice", session_id="session1")
+agent.print_response("Tell me about our previous conversations.", user_id="alice", session_id="session1")
 
 # Show memory contents
 print("\n=== Memory Contents ===")

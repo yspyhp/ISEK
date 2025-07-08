@@ -53,6 +53,8 @@ task = (
     "calculate the average number of new AI papers published per month in 2023, "
     "and write a concise summary for a general audience."
 )
-response = team.run(task)
+team.print_response(task)
 
-print("Team Response:\n", response)
+
+# response = team.run(task)
+# print("Team Response:\n", response)
