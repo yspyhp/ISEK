@@ -119,12 +119,15 @@ def test_simple_team():
     # Run the team on a task
     task = "Calculate 10 + 5 and explain what this means."
     
-    print(f"Task: {task}")
-    print("-" * 40)
+    # print(f"Task: {task}")
+    # print("-" * 40)
     
-    response = team.run(task)
-    print(f"Response:\n{response}")
-    print("-" * 40)
+    # response = team.run(task)
+    # print(f"Response:\n{response}")
+    # print("-" * 40)
+    
+    team.print_response(task)
+    
 
 if __name__ == "__main__":
     print("ISEK Team Agent Demo")

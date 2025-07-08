@@ -1,14 +1,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Optional, Union, Any, Dict, Sequence, Literal
 from uuid import uuid4
 
 from isek.agent.isek_agent import IsekAgent
 from isek.memory.memory import Memory, UserMemory
 from isek.models.base import Model, SimpleMessage
 from isek.tools.toolkit import Toolkit
-from isek.utils.log import log, LoggerManager
+from isek.utils.log import log
+from isek.utils.print_utils import print_response
 
 
 @dataclass
@@ -35,8 +36,8 @@ class IsekTeam:
     instructions: Optional[Union[str, List[str], Callable]] = None
     # Enable debug logs
     debug_mode: bool = False
-    # Coordination mode: 'coordinate' (default) or 'sequential'
-    coordination_mode: str = "coordinate"
+    # Coordination mode: 'coordinate' (default), 'route', 'collaborate', or 'sequential'
+    mode: Literal["coordinate", "route", "collaborate", "sequential"] = "coordinate"
 
     def __post_init__(self):
         """Initialize the team after creation."""
@@ -46,14 +47,33 @@ class IsekTeam:
 
         # Set debug mode
         if self.debug_mode:
-            LoggerManager.set_level("DEBUG")
             log.debug(
                 f"Team initialized: {self.name or 'Unnamed'} (ID: {self.team_id})"
             )
 
-    def run(self, prompt: str) -> str:
-        """Execute the team's main functionality with the given prompt."""
-        return self.run_with_context(prompt, user_id="default", session_id=None)
+    def run(
+        self,
+        message: str,
+        user_id: str = "default",
+        session_id: Optional[str] = None,
+        messages: Optional[List[Union[Dict, Any]]] = None,
+        audio: Optional[Sequence[Any]] = None,
+        images: Optional[Sequence[Any]] = None,
+        videos: Optional[Sequence[Any]] = None,
+        files: Optional[Sequence[Any]] = None,
+        stream: Optional[bool] = None,
+        stream_intermediate_steps: bool = False,
+        knowledge_filters: Optional[Dict[str, Any]] = None,
+        **kwargs: Any,
+    ) -> str:
+        """Execute the team's main functionality with the given message."""
+        return self.run_with_context(message, user_id, session_id)
+
+    def print_response(self, *args, **kwargs):
+        """
+        Proxy to the shared print_response utility, passing self.run as run_func.
+        """
+        return print_response(self.run, *args, **kwargs)
 
     def run_with_context(
         self, message: str, user_id: str = "default", session_id: Optional[str] = None
@@ -71,12 +91,16 @@ class IsekTeam:
             return self.members[0].run(message, user_id, session_id)
 
         # Handle team coordination
-        if self.coordination_mode == "coordinate":
+        if self.mode == "coordinate":
             return self._coordinate_response(message, user_id, session_id)
-        elif self.coordination_mode == "sequential":
+        elif self.mode == "route":
+            return self._route_response(message, user_id, session_id)
+        elif self.mode == "collaborate":
+            return self._collaborate_response(message, user_id, session_id)
+        elif self.mode == "sequential":
             return self._sequential_response(message, user_id, session_id)
         else:
-            raise ValueError(f"Unknown coordination mode: {self.coordination_mode}")
+            raise ValueError(f"Unknown coordination mode: {self.mode}")
 
     def _coordinate_response(self, message: str, user_id: str, session_id: str) -> str:
         """Coordinate multiple agents to generate a response."""
@@ -111,6 +135,78 @@ class IsekTeam:
 
         if self.debug_mode:
             log.debug(f"Team coordination response: {response_content}")
+
+        return response_content
+
+    def _route_response(self, message: str, user_id: str, session_id: str) -> str:
+        """Route the task to the most appropriate team member."""
+        if self.model is None:
+            raise ValueError("Model is required for team routing")
+
+        # Create system message for routing
+        system_message = self._build_routing_message(message)
+
+        # Get relevant memories if memory is available
+        memory_context = self._get_memory_context(user_id)
+
+        # Conversation history
+        messages = []
+        if system_message:
+            messages.append(SimpleMessage(role="system", content=system_message))
+        if memory_context:
+            messages.append(
+                SimpleMessage(
+                    role="system", content=f"Previous context:\n{memory_context}"
+                )
+            )
+        messages.append(SimpleMessage(role="user", content=message))
+
+        # Call the model for routing
+        response = self.model.response(messages=messages)
+        response_content = response.content or "No response generated"
+
+        # Store in memory if available
+        if self.memory:
+            self._store_conversation(user_id, session_id, message, response_content)
+
+        if self.debug_mode:
+            log.debug(f"Team routing response: {response_content}")
+
+        return response_content
+
+    def _collaborate_response(self, message: str, user_id: str, session_id: str) -> str:
+        """Collaborate with all team members to generate a response."""
+        if self.model is None:
+            raise ValueError("Model is required for team collaboration")
+
+        # Create system message for collaboration
+        system_message = self._build_collaboration_message(message)
+
+        # Get relevant memories if memory is available
+        memory_context = self._get_memory_context(user_id)
+
+        # Conversation history
+        messages = []
+        if system_message:
+            messages.append(SimpleMessage(role="system", content=system_message))
+        if memory_context:
+            messages.append(
+                SimpleMessage(
+                    role="system", content=f"Previous context:\n{memory_context}"
+                )
+            )
+        messages.append(SimpleMessage(role="user", content=message))
+
+        # Call the model for collaboration
+        response = self.model.response(messages=messages)
+        response_content = response.content or "No response generated"
+
+        # Store in memory if available
+        if self.memory:
+            self._store_conversation(user_id, session_id, message, response_content)
+
+        if self.debug_mode:
+            log.debug(f"Team collaboration response: {response_content}")
 
         return response_content
 
@@ -172,6 +268,102 @@ class IsekTeam:
             "\n- Determine which team members should be involved"
             "\n- Provide a comprehensive response that leverages the team's capabilities"
             "\n- If specific tools or calculations are needed, mention which agent would handle them"
+        )
+
+        return "\n".join(parts)
+
+    def _build_routing_message(self, user_message: str) -> str:
+        """Build the routing message for the team."""
+        parts = []
+
+        # Team description
+        if self.description:
+            parts.append(f"Team Description: {self.description}")
+        else:
+            parts.append("You are routing tasks to the most appropriate team members.")
+
+        # Team members info
+        parts.append("\nTeam Members:")
+        for i, member in enumerate(self.members, 1):
+            if isinstance(member, IsekAgent):
+                member_desc = member.description or f"Agent {member.name or i}"
+                parts.append(f"{i}. {member.name or f'Agent {i}'}: {member_desc}")
+            elif isinstance(member, IsekTeam):
+                member_desc = member.description or f"Team {member.name or i}"
+                parts.append(f"{i}. {member.name or f'Team {i}'}: {member_desc}")
+
+        # Success criteria
+        if self.success_criteria:
+            parts.append(f"\nSuccess Criteria: {self.success_criteria}")
+
+        # Instructions
+        if self.instructions:
+            if isinstance(self.instructions, str):
+                parts.append(f"\nInstructions: {self.instructions}")
+            elif isinstance(self.instructions, list):
+                parts.append("\nInstructions:")
+                for instruction in self.instructions:
+                    parts.append(f"- {instruction}")
+            elif callable(self.instructions):
+                parts.append(f"\nInstructions: {self.instructions()}")
+
+        # Routing instructions
+        parts.append(
+            "\nRouting Instructions:"
+            "\n- Analyze the user's request"
+            "\n- Determine which team member is most suitable for the task"
+            "\n- Route the task to the appropriate member"
+            "\n- Provide a response that leverages the team's capabilities"
+            "\n- If specific tools or calculations are needed, mention which agent would handle them"
+        )
+
+        return "\n".join(parts)
+
+    def _build_collaboration_message(self, user_message: str) -> str:
+        """Build the collaboration message for the team."""
+        parts = []
+
+        # Team description
+        if self.description:
+            parts.append(f"Team Description: {self.description}")
+        else:
+            parts.append(
+                "You are collaborating with all team members to respond to user requests."
+            )
+
+        # Team members info
+        parts.append("\nTeam Members:")
+        for i, member in enumerate(self.members, 1):
+            if isinstance(member, IsekAgent):
+                member_desc = member.description or f"Agent {member.name or i}"
+                parts.append(f"{i}. {member.name or f'Agent {i}'}: {member_desc}")
+            elif isinstance(member, IsekTeam):
+                member_desc = member.description or f"Team {member.name or i}"
+                parts.append(f"{i}. {member.name or f'Team {i}'}: {member_desc}")
+
+        # Success criteria
+        if self.success_criteria:
+            parts.append(f"\nSuccess Criteria: {self.success_criteria}")
+
+        # Instructions
+        if self.instructions:
+            if isinstance(self.instructions, str):
+                parts.append(f"\nInstructions: {self.instructions}")
+            elif isinstance(self.instructions, list):
+                parts.append("\nInstructions:")
+                for instruction in self.instructions:
+                    parts.append(f"- {instruction}")
+            elif callable(self.instructions):
+                parts.append(f"\nInstructions: {self.instructions()}")
+
+        # Collaboration instructions
+        parts.append(
+            "\nCollaboration Instructions:"
+            "\n- Work together with all team members"
+            "\n- Coordinate efforts to provide comprehensive responses"
+            "\n- Leverage each member's unique capabilities"
+            "\n- Provide a unified response that combines all members' expertise"
+            "\n- If specific tools or calculations are needed, coordinate with the appropriate agents"
         )
 
         return "\n".join(parts)

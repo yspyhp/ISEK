@@ -1,6 +1,8 @@
 from isek.node.etcd_registry import EtcdRegistry
 from isek.node.node_v2 import Node
+from isek.utils.log import LoggerManager
 
+LoggerManager.plain_mode()
 EXAMPLE_REGISTRY_HOST = "47.236.116.81"
 
 # Create the server node.

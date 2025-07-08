@@ -15,10 +15,5 @@ agent = IsekAgent(
     debug_mode=True
 )
 
-print("=== General greeting ===")
-response1 = agent.run("hello")
-print(f"Agent: {response1}")
-
-print("\n=== Math tool usage ===")
-response2 = agent.run("What is 7 times 8 plus 2?")
-print(f"Agent: {response2}")
+agent.print_response("hello")
+agent.print_response("What is 7 times 8 plus 2?")

@@ -67,10 +67,11 @@ def main():
     ]
     
     for query in test_queries:
-        print(f"\n🤖 User: {query}")
-        response = agent.run(query)
-        print(f"🤖 Assistant: {response}")
-        print("-" * 50)
+        # print(f"\n🤖 User: {query}")
+        # response = agent.run(query)
+        # print(f"🤖 Assistant: {response}")
+        # print("-" * 50)
+        agent.print_response(query)
 
 if __name__ == "__main__":
     main() 

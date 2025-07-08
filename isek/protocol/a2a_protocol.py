@@ -56,7 +56,7 @@ class DefaultAgentExecutor(AgentExecutor):
         context: RequestContext,
         event_queue: EventQueue,
     ) -> None:
-        prompt = str(context.message) if context.message else ""
+        prompt = context.get_user_input()
         result = self.adapter.run(prompt=prompt)
         await event_queue.enqueue_event(new_agent_text_message(result))
 
