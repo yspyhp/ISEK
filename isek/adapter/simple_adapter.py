@@ -20,7 +20,7 @@ class SimpleAdapter(Adapter):
     def description(self) -> str:
         return self._description
 
-    def run(self, prompt: str) -> str:
+    def run(self, prompt: str, **kwargs) -> str:
         """Simple response for testing."""
         return f"{self.name} received: {prompt}"
 

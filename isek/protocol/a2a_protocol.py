@@ -56,7 +56,7 @@ class DefaultAgentExecutor(AgentExecutor):
         context: RequestContext,
         event_queue: EventQueue,
     ) -> None:
-        prompt = str(context.message) if context.message else ""
+        prompt = context.get_user_input()
         result = self.adapter.run(prompt=prompt)
         await event_queue.enqueue_event(new_agent_text_message(result))
 
@@ -192,7 +192,7 @@ class A2AProtocol(Protocol):
         return response_body["result"]["parts"][0]["text"]
 
     def send_message(self, sender_node_id, target_address, message):
-        httpx_client = httpx.AsyncClient()
+        httpx_client = httpx.AsyncClient(timeout=60)
         client = A2AClient(httpx_client=httpx_client, url=target_address)
         request = build_send_message_request(sender_node_id, message)
         response = asyncio.run(client.send_message(request))

@@ -2,6 +2,12 @@ import time
 from isek.node.node_v2 import Node
 from isek.utils.log import log
 from isek.adapter.simple_adapter import SimpleAdapter
+from isek.utils.print_utils import print_send_message_result
+from isek.utils.log import LoggerManager
+
+# LoggerManager.debug_mode()
+LoggerManager.plain_mode()
+
 
 def main():
     # Logging is now automatically configured.
@@ -31,9 +37,13 @@ def main():
         "metadata": {"url": f"http://{node2.host}:{node2.port}"}
     }
 
-    # Send a message from node1 to node2
-    result = node1.send_message(node2.node_id, "Hello, I am Node1!")
-    print(f"Node1 sent message to Node2, got reply: {result}")
+    # Send a message from node1 to node2 with nice formatting
+    print_send_message_result(
+        lambda msg: node1.send_message(node2.node_id, msg),
+        source_node_id=node1.node_id,
+        target_node_id=node2.node_id,
+        message="Hello, I am Node1!"
+    )
 
     # Keep the script alive for a short while to allow background threads to run
     time.sleep(2)

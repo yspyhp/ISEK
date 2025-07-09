@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Optional, Union, Any, Dict, Sequence
 from uuid import uuid4
 
 from isek.agent.base import BaseAgent, AgentCard
@@ -9,6 +9,7 @@ from isek.memory.memory import Memory
 from isek.models.base import Model
 from isek.tools.toolkit import Toolkit
 from isek.utils.log import log
+from isek.utils.print_utils import print_response
 
 
 @dataclass
@@ -51,7 +52,19 @@ class IsekAgent(BaseAgent):
             )
 
     def run(
-        self, message: str, user_id: str = "default", session_id: Optional[str] = None
+        self,
+        message: str,
+        user_id: str = "default",
+        session_id: Optional[str] = None,
+        messages: Optional[List[Union[Dict, Any]]] = None,
+        audio: Optional[Sequence[Any]] = None,
+        images: Optional[Sequence[Any]] = None,
+        videos: Optional[Sequence[Any]] = None,
+        files: Optional[Sequence[Any]] = None,
+        stream: Optional[bool] = None,
+        stream_intermediate_steps: bool = False,
+        knowledge_filters: Optional[Dict[str, Any]] = None,
+        **kwargs: Any,
     ) -> str:
         """Run the agent with a message and return the response."""
         if self.model is None:
@@ -89,6 +102,12 @@ class IsekAgent(BaseAgent):
                 log.debug(f"Tools: {tools_param}")
 
         return response_content
+
+    def print_response(self, *args, **kwargs):
+        """
+        Proxy to the shared print_response utility, passing self.run as run_func.
+        """
+        return print_response(self.run, *args, **kwargs)
 
     def get_agent_card(self) -> AgentCard:
         """Get metadata about the agent for discovery and identification purposes."""

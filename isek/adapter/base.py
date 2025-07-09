@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from isek.utils.print_utils import print_response
 
 
 @dataclass
@@ -22,12 +23,13 @@ class Adapter(ABC):
     """
 
     @abstractmethod
-    def run(self, prompt: str) -> str:
+    def run(self, prompt: str, **kwargs) -> str:
         """
         Execute the team's main functionality with the given prompt.
 
         Args:
             prompt: The input prompt or task for the team to process
+            **kwargs: Additional keyword arguments
 
         Returns:
             str: The team's response or result
@@ -49,3 +51,9 @@ class Adapter(ABC):
             NotImplementedError: If the concrete class doesn't implement this method
         """
         pass
+
+    def print_response(self, *args, **kwargs):
+        """
+        Proxy to the shared print_response utility, passing self.run as run_func.
+        """
+        return print_response(self.run, *args, **kwargs)

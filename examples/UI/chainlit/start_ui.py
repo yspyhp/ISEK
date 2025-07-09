@@ -24,7 +24,7 @@ def check_dependencies():
         from isek.node.node_v2 import Node
         print("✅ ISEK package is available")
     except ImportError:
-        print("❌ ISEK package not found. Please install it: pip install -e ../../")
+        print("❌ ISEK Node not found. Please run: isek setup")
         return False
     
     return True

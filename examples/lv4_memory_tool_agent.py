@@ -22,21 +22,11 @@ agent = IsekAgent(
 )
 
 # Test conversation with memory
-print("=== First conversation ===")
-response1 = agent.run("Hello! My name is Alice.", user_id="alice", session_id="session1")
-print(f"Agent: {response1}")
+agent.print_response("Hello! My name is Alice.", user_id="alice", session_id="session1")
+agent.print_response("What's my name?", user_id="alice", session_id="session1")
+agent.print_response("What is 5 times 6? And what's my name?", user_id="alice", session_id="session1")
+agent.print_response("Tell me about our previous conversations and calculate 10 + 15.", user_id="alice", session_id="session1")
 
-print("\n=== Second conversation ===")
-response2 = agent.run("What's my name?", user_id="alice", session_id="session1")
-print(f"Agent: {response2}")
-
-print("\n=== Third conversation with math ===")
-response3 = agent.run("What is 5 times 6? And what's my name?", user_id="alice", session_id="session1")
-print(f"Agent: {response3}")
-
-print("\n=== Fourth conversation ===")
-response4 = agent.run("Tell me about our previous conversations and calculate 10 + 15.", user_id="alice", session_id="session1")
-print(f"Agent: {response4}")
 
 # Show memory contents
 print("\n=== Memory Contents ===")
