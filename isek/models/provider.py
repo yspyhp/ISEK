@@ -27,7 +27,7 @@ PROVIDER_MAP = {
         "model_env_key": "OLLAMA_MODEL_NAME",
         "default_model": "deepseek-coder:6.7b",
         "base_url_env_key": "OLLAMA_BASE_URL",
-    }
+    },
 }
 
 DEFAULT_PROVIDER = "openai"
