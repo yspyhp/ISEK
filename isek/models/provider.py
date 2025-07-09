@@ -23,6 +23,11 @@ PROVIDER_MAP = {
         "default_model": "deepseek-2.0",
         "base_url_env_key": "DEEPSEEK_BASE_URL",
     },
+    "ollama": {
+        "model_env_key": "OLLAMA_MODEL_NAME",
+        "default_model": "deepseek-coder:6.7b",
+        "base_url_env_key": "OLLAMA_BASE_URL",
+    }
 }
 
 DEFAULT_PROVIDER = "openai"

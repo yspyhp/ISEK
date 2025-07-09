@@ -24,7 +24,7 @@ class LiteLLMModel(Model):
         Args:
             provider: The provider name (e.g., "openai", "anthropic", "gemini")
             model_id: The model ID (e.g., "gpt-3.5-turbo", "claude-3-sonnet")
-            api_key: API key for the provider
+            api_key: Optional API key for the provider (if required)
             base_url: Custom base URL for the API
         """
         # Get provider with fallback
@@ -39,12 +39,15 @@ class LiteLLMModel(Model):
         provider_config = PROVIDER_MAP[_provider]
         model_env_key = provider_config.get("model_env_key")
         default_model = provider_config.get("default_model")
-        api_env_key = provider_config.get("api_env_key")
-        base_url_env_key = provider_config.get("base_url_env_key")
+        api_env_key = provider_config.get("api_env_key")  # May be None
+        base_url_env_key = provider_config.get("base_url_env_key")  # May be None
 
-        # Validate required configuration
-        if not model_env_key or not default_model or not api_env_key:
-            raise ValueError(f"Invalid provider configuration for {_provider}")
+        # Validate required configuration (model_env_key and default_model are mandatory)
+        if not model_env_key or not default_model:
+            raise ValueError(
+                f"Invalid provider configuration for {_provider}. "
+                f"Missing model_env_key or default_model."
+            )
 
         # Get model ID with fallback
         _model_id = model_id or os.environ.get(model_env_key, default_model)
@@ -57,7 +60,15 @@ class LiteLLMModel(Model):
         self.supports_json_schema_outputs = True
 
         # Store configuration
-        self.api_key = api_key or os.environ.get(api_env_key)
+        self.api_key = None
+        if api_env_key or api_key:  # Only set api_key if provider supports it
+            self.api_key = api_key or os.environ.get(api_env_key)
+            if not self.api_key and provider_config.get("requires_api_key", True):
+                raise ValueError(
+                    f"API key is required for provider {_provider}, "
+                    f"but none was provided or found in {api_env_key}."
+                )
+
         self.base_url = base_url or (
             os.environ.get(base_url_env_key) if base_url_env_key else None
         )

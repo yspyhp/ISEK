@@ -1,5 +1,5 @@
-from isek.models.litellm.chat import LiteLLM
+from isek.models.litellm.chat import LiteLLMModel
 
 __all__ = [
-    "LiteLLM",
+    "LiteLLMModel",
 ]
