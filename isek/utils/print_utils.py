@@ -6,6 +6,7 @@ from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.status import Status
 from rich.text import Text
+from rich.align import AlignMethod
 
 
 class Timer:
@@ -17,6 +18,11 @@ class Timer:
 
     def start(self):
         self.start_time = time.time()
+
+    def get_elapsed(self):
+        if self.start_time is not None:
+            self.elapsed = time.time() - self.start_time
+        return self.elapsed
 
     def stop(self):
         if self.start_time is not None:
@@ -35,8 +41,15 @@ def get_text_from_message(message: Any) -> str:
         return str(message)
 
 
-def create_panel(content: Any, title: str, border_style: str = "blue") -> Panel:
-    return Panel(content, title=title, border_style=border_style)
+def create_panel(
+    content: Any,
+    title: str,
+    border_style: str = "blue",
+    title_align: AlignMethod = "center",
+) -> Panel:
+    return Panel(
+        content, title=title, border_style=border_style, title_align=title_align
+    )
 
 
 def escape_markdown_tags(content: str, tags_to_include: Set[str]) -> str:
@@ -74,7 +87,7 @@ def _update_display_panels(
     if thinking_content:
         thinking_panel = create_panel(
             content=Text(thinking_content),
-            title=f"Thinking ({timer.elapsed:.1f}s)",
+            title=f"Thinking ({timer.get_elapsed():.1f}s)",
             border_style="green",
         )
         current_panels.append(thinking_panel)
@@ -88,7 +101,7 @@ def _update_display_panels(
             response_display = Text(response_content)
         response_panel = create_panel(
             content=response_display,
-            title=f"Response ({timer.elapsed:.1f}s)",
+            title=f"Response ({timer.get_elapsed():.1f}s)",
             border_style="magenta",
         )
         current_panels.append(response_panel)
@@ -181,6 +194,17 @@ def print_response(
             )
             panels.append(error_panel)
             live_log.update(Group(*panels))
+
+
+def print_panel(title, content, color="blue", title_align: AlignMethod = "center"):
+    with Live() as live_log:
+        panel = create_panel(
+            content=Text(content, style=color),
+            title=title,
+            border_style=color,
+            title_align=title_align,
+        )
+        live_log.update(Group(*[panel]))
 
 
 def print_send_message_result(
