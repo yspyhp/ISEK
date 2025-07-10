@@ -61,18 +61,35 @@ def setup():
 
     click.secho("🚀 Setting up ISEK dependencies...", fg="blue")
 
-    # Step 1: Install Python dependencies
-    click.secho("📦 Installing Python dependencies...", fg="yellow")
-    try:
-        subprocess.check_call(
-            [sys.executable, "-m", "pip", "install", "-e", str(project_root)],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+    # Step 1: Install Python dependencies (only in development)
+    def is_development_environment():
+        # Look for pyproject.toml in current or parent directories
+        cwd = Path.cwd()
+        for parent in [cwd] + list(cwd.parents):
+            if (parent / "pyproject.toml").exists():
+                return True
+        return False
+
+    if is_development_environment():
+        click.secho(
+            "📦 Installing Python dependencies (development mode)...", fg="yellow"
         )
-        click.secho("✓ Python dependencies installed", fg="green")
-    except subprocess.CalledProcessError as e:
-        click.secho(f"✗ Python dependency installation failed: {e}", fg="red")
-        sys.exit(e.returncode)
+        try:
+            subprocess.check_call(
+                [sys.executable, "-m", "pip", "install", "-e", str(Path.cwd())],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            click.secho("✓ Python dependencies installed (editable mode)", fg="green")
+        except subprocess.CalledProcessError as e:
+            click.secho(f"✗ Python dependency installation failed: {e}", fg="red")
+            sys.exit(e.returncode)
+    else:
+        click.secho("📦 Skipping Python dependency install (PyPI mode)", fg="yellow")
+        click.secho(
+            "   If you need dev dependencies, clone the repo and run 'isek setup' from the project root.",
+            fg="yellow",
+        )
 
     # Step 2: Check if Node.js is installed
     try:
