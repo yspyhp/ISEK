@@ -16,7 +16,7 @@ class RandomNumberAdapter(Adapter):
 
     def __init__(self):
         self.random_agent = Agent(
-            model=OpenAIChat(),
+            model=DeepSeek(),
             tools=[],
             instructions=[
                 "Only can generator a random number"

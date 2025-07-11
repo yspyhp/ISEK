@@ -41,7 +41,7 @@ class OpenAIModel(Model):
 
         self.client = OpenAI(api_key=_api_key, base_url=_base_url)
 
-        log.info(f"OpenAIModel initialized: {self.id}")
+        log.debug(f"OpenAIModel initialized: {self.id}")
 
     def invoke(self, messages: List[SimpleMessage], **kwargs: Any) -> ChatCompletion:
         """Invoke the OpenAI model.

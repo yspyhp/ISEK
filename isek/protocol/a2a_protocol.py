@@ -70,6 +70,7 @@ def build_send_message_request(sender_node_id, message):
             "role": "user",
             "parts": [{"kind": "text", "text": message}],
             "messageId": uuid4().hex,
+            "metadata": {"sender_node_id": sender_node_id},
         },
         "metadata": {"sender_node_id": sender_node_id},
     }

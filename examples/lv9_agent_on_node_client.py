@@ -1,5 +1,6 @@
 from isek.utils.log import log
 from isek.node.node_v2 import Node
+from isek.utils.print_utils import print_send_message_result, print_panel
 
 def main():
     """
@@ -25,26 +26,30 @@ def main():
         "metadata": {"url": f"http://{server_host}:{server_port}"}
     }
     
-    print("--- LV9 Agent Client ---")
-    print("This client will test the agent's memory and tool use.")
-    print("------------------------\n")
-    log.info("Client is ready to send messages.")
+    print_panel(title="LV9 Agent Client",
+                content="This client will test the agent's memory and tool use.",
+                color="bright_yellow")
 
     # --- Test 1: Memory ---
-    print("Test 1: Storing a fact in the agent's memory...")
-    prompt1 = "Hi there, please remember that my favorite color is blue."
-    print(f"CLIENT: {prompt1}")
-    response1 = client_node.send_message(server_node_id, prompt1)
-    print(f"AGENT: {response1}\n")
+    print_panel(title="Test 1", content="Storing a fact in the agent's memory...", color="yellow")
+    print_send_message_result(
+        lambda msg: client_node.send_message(server_node_id, msg),
+        source_node_id=client_node.node_id,
+        target_node_id=server_node_id,
+        message="Hi there, please remember that my favorite color is blue."
+    )
 
     # --- Test 2: Retrieval and Tool Use ---
-    print("Test 2: Asking a question that requires both memory and a tool...")
-    prompt2 = "What is 15 plus 8? And what is my favorite color?"
-    print(f"CLIENT: {prompt2}")
-    response2 = client_node.send_message(server_node_id, prompt2)
-    print(f"AGENT: {response2}\n")
+    print_panel(title="Test 2", content="Asking a question that requires both memory and a tool...", color="yellow")
+    print_send_message_result(
+        lambda msg: client_node.send_message(server_node_id, msg),
+        source_node_id=client_node.node_id,
+        target_node_id=server_node_id,
+        message="What is 15 plus 8? And what is my favorite color?"
+    )
 
-    print("--- Test Complete ---")
+    print_panel(title="Test Complete", color="bright_yellow")
+
 
 if __name__ == "__main__":
     main() 

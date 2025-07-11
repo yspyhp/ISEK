@@ -7,7 +7,7 @@ dotenv.load_dotenv()
 
 agent = IsekAgent(
     name="My Agent",
-    model=OpenAIModel(model_id="gpt-4o-mini"),
+    model=OpenAIModel(),
     tools=[calculator_tools],
     description="A helpful assistant with calculator abilities",
     instructions=["Be polite", "Provide accurate information", "Use tools for math questions when possible"],
