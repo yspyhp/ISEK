@@ -2,6 +2,7 @@ import time
 from isek.utils.log import log
 from isek.node.node_v2 import Node
 from isek.node.etcd_registry import EtcdRegistry
+from isek.utils.print_utils import print_send_message_result, print_panel
 
 def main():
     """
@@ -29,15 +30,15 @@ def main():
         "metadata": {"url": f"http://{server_host}:{server_port}"}
     }
     
-    print(f"Client node is ready. Sending a message to '{server_node_id}'...")
-    log.info("This is an example log from the client.")
-
-    # Send a message from the client to the server
-    message_to_send = "Hello from the client!"
-    response = client_node.send_message(server_node_id, message_to_send)
-
-    print(f"\nSent message: '{message_to_send}'")
-    print(f"Received response from server: {response}")
+    print_panel(title="ISEK Node Send Message Demo",
+                content=f"Client node is ready. Sending a message to '{server_node_id}'...",
+                color="bright_yellow")
+    print_send_message_result(
+        lambda msg: client_node.send_message(server_node_id, msg),
+        source_node_id=client_node.node_id,
+        target_node_id=server_node_id,
+        message="Hello from the client!"
+    )
 
 if __name__ == "__main__":
     main() 

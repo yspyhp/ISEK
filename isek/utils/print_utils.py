@@ -196,7 +196,7 @@ def print_response(
             live_log.update(Group(*panels))
 
 
-def print_panel(title, content, color="blue", title_align: AlignMethod = "center"):
+def print_panel(title, content="", color="blue", title_align: AlignMethod = "center"):
     with Live() as live_log:
         panel = create_panel(
             content=Text(content, style=color),

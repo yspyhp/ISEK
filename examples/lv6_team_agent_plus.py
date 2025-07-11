@@ -4,6 +4,7 @@ from isek.memory.memory import Memory
 from isek.tools.calculator import calculator_tools
 from isek.tools.toolkit import Toolkit
 from isek.team.isek_team import IsekTeam
+from isek.utils.print_utils import print_panel
 import dotenv
 import os
 
@@ -11,11 +12,12 @@ dotenv.load_dotenv()
 
 def test_team_modes():
     """Test different team modes to demonstrate their capabilities."""
-    
+    print_panel(title="Testing Team Modes (Coordination Model)", color="yellow")
+
     # Set up models
-    researcher_model = OpenAIModel(model_id="gpt-3.5-turbo")
-    writer_model = OpenAIModel(model_id="gpt-3.5-turbo")
-    team_model = OpenAIModel(model_id="gpt-3.5-turbo")
+    researcher_model = OpenAIModel()
+    writer_model = OpenAIModel()
+    team_model = OpenAIModel()
 
     # Set up memory for each agent
     researcher_memory = Memory()
@@ -45,9 +47,14 @@ def test_team_modes():
     modes = ["coordinate", "route", "collaborate"]
     
     for mode in modes:
-        print(f"\n{'='*60}")
-        print(f"Testing Team Mode: {mode.upper()}")
-        print(f"{'='*60}")
+        # Run the team on a task
+        task = (
+            "Calculate 15 * 23 and then write a brief explanation of what this calculation represents."
+        )
+        print_panel(title=f"Testing Team Mode: {mode.upper()}", content=f"Task: {task}", color="bright_blue")
+        # print(f"\n{'='*60}")
+        # print(f"Testing Team Mode: {mode.upper()}")
+        # print(f"{'='*60}")
         
         # Create the team with current mode
         team = IsekTeam(
@@ -59,29 +66,20 @@ def test_team_modes():
             debug_mode=True  # Enable debug to see what's happening
         )
 
-        # Run the team on a task
-        task = (
-            "Calculate 15 * 23 and then write a brief explanation of what this calculation represents."
-        )
-        
-        print(f"Task: {task}")
-        print(f"Team Mode: {mode}")
-        print("-" * 40)
-        
         response = team.run(task)
-        print(f"Response:\n{response}")
-        print("-" * 40)
+        print_panel(title="Response", content=response)
+        # print(f"Response:\n{response}")
+        # print("-" * 40)
 
 def test_simple_team():
     """Test a simple team without coordination model."""
-    
-    print(f"\n{'='*60}")
-    print("Testing Simple Team (No Coordination Model)")
-    print(f"{'='*60}")
-    
+
+    print_panel(title="Testing Simple Team (No Coordination Model)", color="yellow")
+
     # Set up models
-    researcher_model = OpenAIModel(model_id="gpt-3.5-turbo")
-    writer_model = OpenAIModel(model_id="gpt-3.5-turbo")
+    researcher_model = OpenAIModel()
+    writer_model = OpenAIModel()
+    team_model = OpenAIModel()
 
     # Set up memory for each agent
     researcher_memory = Memory()
@@ -111,6 +109,7 @@ def test_simple_team():
     team = IsekTeam(
         name="Simple Research Team",
         members=[agent1, agent2],
+        model=team_model,
         mode="coordinate",  # Will use simple coordination since no model
         description="A simple team that researches and writes reports.",
         debug_mode=True
@@ -118,25 +117,17 @@ def test_simple_team():
 
     # Run the team on a task
     task = "Calculate 10 + 5 and explain what this means."
-    
-    # print(f"Task: {task}")
-    # print("-" * 40)
-    
-    # response = team.run(task)
-    # print(f"Response:\n{response}")
-    # print("-" * 40)
-    
+
     team.print_response(task)
     
 
 if __name__ == "__main__":
-    print("ISEK Team Agent Demo")
-    print("Testing different team modes and configurations...")
-    
+
+    print_panel(title="ISEK Team Agent Demo", content="Testing different team modes and configurations...", color="bright_yellow")
+
     # Test simple team first
     test_simple_team()
     
     # Test different team modes
     test_team_modes()
-    
-    print("\nDemo completed!")
+    print_panel(title="ISEK Team Agent Demo", content="Demo completed!", color="bright_yellow")

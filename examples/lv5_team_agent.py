@@ -10,9 +10,9 @@ import os
 dotenv.load_dotenv()
 
 # Set up models
-researcher_model = OpenAIModel(model_id="gpt-3.5-turbo")
-writer_model = OpenAIModel(model_id="gpt-3.5-turbo")
-team_model = OpenAIModel(model_id="gpt-3.5-turbo")
+researcher_model = OpenAIModel()
+writer_model = OpenAIModel()
+team_model = OpenAIModel()
 
 # Set up memory for each agent
 researcher_memory = Memory()
