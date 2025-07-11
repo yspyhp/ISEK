@@ -11,6 +11,8 @@ def load_module(script_path: Path):
     try:
         module_name = script_path.stem
         spec = importlib.util.spec_from_file_location(module_name, script_path)
+        if spec is None or spec.loader is None:
+            raise ImportError(f"Could not load module from {script_path}")
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         return module
@@ -57,22 +59,47 @@ def registry():
 def setup():
     """Install ISEK Python and JavaScript dependencies"""
     project_root = Path(__file__).parent.parent
-    p2p_dir = project_root / "isek" / "protocol" / "p2p"
+    # Use importlib.resources to find P2P directory in both dev and PyPI environments
+    import importlib.resources
+
+    try:
+        p2p_resource = importlib.resources.files("isek").joinpath("protocol/p2p")
+        p2p_dir = Path(str(p2p_resource))
+    except Exception:
+        # Fallback to old method for development environment
+        p2p_dir = project_root / "isek" / "protocol" / "p2p"
 
     click.secho("🚀 Setting up ISEK dependencies...", fg="blue")
 
-    # Step 1: Install Python dependencies
-    click.secho("📦 Installing Python dependencies...", fg="yellow")
-    try:
-        subprocess.check_call(
-            [sys.executable, "-m", "pip", "install", "-e", str(project_root)],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+    # Step 1: Install Python dependencies (only in development)
+    def is_development_environment():
+        # Check if we're in a development environment by looking for pyproject.toml
+        # relative to the ISEK package directory, not the current working directory
+        isek_package_dir = Path(__file__).parent.parent
+        return (isek_package_dir / "pyproject.toml").exists()
+
+    if is_development_environment():
+        click.secho(
+            "📦 Installing Python dependencies (development mode)...", fg="yellow"
         )
-        click.secho("✓ Python dependencies installed", fg="green")
-    except subprocess.CalledProcessError as e:
-        click.secho(f"✗ Python dependency installation failed: {e}", fg="red")
-        sys.exit(e.returncode)
+        try:
+            # Use the project root directory, not the current working directory
+            project_root = Path(__file__).parent.parent
+            subprocess.check_call(
+                [sys.executable, "-m", "pip", "install", "-e", str(project_root)],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            click.secho("✓ Python dependencies installed (editable mode)", fg="green")
+        except subprocess.CalledProcessError as e:
+            click.secho(f"✗ Python dependency installation failed: {e}", fg="red")
+            sys.exit(e.returncode)
+    else:
+        click.secho("📦 Skipping Python dependency install (PyPI mode)", fg="yellow")
+        click.secho(
+            "   If you need dev dependencies, clone the repo and run 'isek setup' from the project root.",
+            fg="yellow",
+        )
 
     # Step 2: Check if Node.js is installed
     try:
